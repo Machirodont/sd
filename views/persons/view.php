@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
                  'title' => mb_convert_case($model->traits["специальность"][0]->description, MB_CASE_TITLE) . " " . $model->fullname
             ]) ?>
         </div>
-        <div class="col-sm-8">
+        <div class="col-sm-8" style="color:lightgrey;<?php //ToDo?>">
             <h1><?= $model->fullname ?></h1>
             <h2>
                 <?php
