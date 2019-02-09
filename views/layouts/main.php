@@ -30,13 +30,13 @@ AppAsset::register($this);
 <header class="header-a">
     <div class="container">
         <div class="row">
-            <div class="col-sm-6"><img src="/images/logo100.jpg"></div>
+            <div class="col-sm-6"><img src="/images/tmp_logo100.jpg"></div> <?php //ToDO obf ?>
             <div class="col-sm-6 header-info">
-                <div class="col-md-6 head-phone-number">+7(915)480-03-03</div>
+                <div class="col-md-6 head-phone-number" style="color:#141f93">+7(800)123-45-67</div> <?php //ToDO obf ?>
                 <div class="col-md-6">
                     <?= Html::dropDownList("place", null,
                         [
-                            "" => "Выберите вашу клинику",
+                            "" => "Выберите ваше подразделение",//ToDO obf
                             "Московская область" => [
                                 "1" => "Руза",
                                 "2" => "Тучково",
@@ -75,7 +75,7 @@ AppAsset::register($this);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => 'Доктора', 'url' => ['/persons/index']],
+            ['label' => 'Сотрудники', 'url' => ['/persons/index']],
             ['label' => 'Учреждения', 'url' => ['/institutions/index']],
             ['label' => 'Home', 'url' => ['/site/index']],
             ['label' => 'About', 'url' => ['/site/about']],
