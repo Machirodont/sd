@@ -20,18 +20,19 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row">
         <div class="col-sm-4 portrait">
             <?= Html::img($model->portraitUrl, [
-                 'title' => mb_convert_case($model->traits["специальность"][0]->description, MB_CASE_TITLE) . " " . $model->fullname
+                'title' => mb_convert_case($model->traits["специальность"][0]->description, MB_CASE_TITLE) . " " . $model->fullname
             ]) ?>
         </div>
         <div class="col-sm-8" style="color:lightgrey;<?php //ToDo?>">
             <h1><?= $model->fullname ?></h1>
             <h2>
                 <?php
-                for ($i = 0; $i < count($model->traits["специальность"]); $i++) {
-                    if ($i > 0) echo ", ";
-                    echo $model->traits["специальность"][$i]->description;
+                if (is_array($model->traits["специальность"])) {
+                    for ($i = 0; $i < count($model->traits["специальность"]); $i++) {
+                        if ($i > 0) echo ", ";
+                        echo $model->traits["специальность"][$i]->description;
+                    }
                 }
-
                 ?>
             </h2>
             <?php if (!is_null($model->education)): ?>
@@ -39,6 +40,16 @@ $this->params['breadcrumbs'][] = $this->title;
                     Образование: <?= $model->education0->name ?>
                 </p>
             <?php endif; ?>
+            <?php
+            if(count($model->clinics)>0) {
+                echo "Ведет прием в отделениях: ";
+                for ($i = 0; $i < count($model->clinics); $i++) {
+                    if ($i > 0) echo ", ";
+                    echo Html::a($model->clinics[$i]->city, ["clinic/contacts", "cid"=>$model->clinics[$i]->id]);
+                }
+            }
+
+            ?>
         </div>
     </div>
     <hr>
