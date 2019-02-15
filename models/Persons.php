@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Nerp
- * Date: 01.12.2018
- * Time: 11:55
- */
+
 
 namespace app\models;
 
@@ -15,6 +10,7 @@ use app\models\Generated\PersonsGenerated;
  * Class Persons
  * @package app\models
  * @property string $fullname Полное имя
+ * @property string $portraitUrl url адрес фотографии
  * @property Clinic[] $clinics Клиники
  *
  */
@@ -39,6 +35,18 @@ class Persons extends PersonsGenerated
         return $this->hasMany(Clinic::class, ['hash_id' => 'subdivision_hash'])
             ->viaTable("sd_schedule", ['person_id' => 'person_id']);
 
+    }
+
+    public function traitString($traitTitle, $glue = ", ")
+    {
+        $s = "";
+        if (isset($this->traits[$traitTitle]) && is_array($this->traits[$traitTitle])) {
+            for ($i = 0; $i < count($this->traits[$traitTitle]); $i++) {
+                if ($i > 0) $s .= $glue;
+                $s .= $this->traits[$traitTitle][$i]->description;
+            }
+        }
+        return $s;
     }
 
 }

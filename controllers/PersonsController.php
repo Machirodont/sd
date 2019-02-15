@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Clinic;
 use Yii;
 use yii\filters\AccessControl;
 use app\models\Persons;
@@ -10,6 +11,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\models\Institutions;
+use yii\data\ActiveDataProvider;
 
 /**
  * PersonsController implements the CRUD actions for Persons model.
@@ -47,12 +49,30 @@ class PersonsController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new PersonsSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $query = Persons::find();
+        $clinic=null;
+        if (isset(Yii::$app->request->queryParams["cid"])) {
+            $query
+                ->from([
+                    "p" => "sd_persons",
+                    "c" => "sd_clinics",
+                    "s" => "sd_schedule",
+                ])
+                ->where(["and",
+                    "c.id = ".intval(Yii::$app->request->queryParams["cid"]),
+                    "c.hash_id = s.subdivision_hash",
+                    "p.person_id=s.person_id"
+                ]);
+            $clinic=Clinic::findOne(Yii::$app->request->queryParams["cid"]);
+
+        }
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'clinic'=>$clinic
         ]);
     }
 
@@ -80,7 +100,7 @@ class PersonsController extends Controller
 
         $institutionsList = array_map(
             function ($instituton) {
-                return ($instituton->shortname && $instituton->shortname!=="") ? $instituton->shortname : $instituton->name;
+                return ($instituton->shortname && $instituton->shortname !== "") ? $instituton->shortname : $instituton->name;
             },
             Institutions::find()
                 ->indexBy('institution_id')
@@ -109,14 +129,13 @@ class PersonsController extends Controller
         $model = $this->findModel($id);
 
 
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->person_id]);
         }
 
         $institutionsList = array_map(
             function ($instituton) {
-                return ($instituton->shortname && $instituton->shortname!=="") ? $instituton->shortname : $instituton->name;
+                return ($instituton->shortname && $instituton->shortname !== "") ? $instituton->shortname : $instituton->name;
             },
             Institutions::find()
                 ->indexBy('institution_id')

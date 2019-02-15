@@ -4,24 +4,30 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\PersonsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $clinic \app\models\Clinic|null */
 
-$this->title = 'Persons';
+$this->title = "Врачи" . (is_object($clinic) ? " - " . $clinic->city : "");
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="persons-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <h1>«Столичная диагностика»<?= (is_object($clinic) ? " - " . $clinic->city : "") ?></h1>
+    <h2>Врачи</h2>
 
-    <p>
-        <?= Html::a('Create Persons', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <?php
+    $persons = $dataProvider->models;
+    foreach ($persons as $person) {
+        echo $this->render('_card', [
+            'model' => $person,
+        ]);
+    }
+    ?>
 
+
+    <hr>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
@@ -35,4 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
+    <p>
+        <?= Html::a('Create Persons', ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
 </div>

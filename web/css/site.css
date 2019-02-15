@@ -8,6 +8,7 @@
 html,
 body {
     height: 100%;
+    color: rgb(211, 211, 211);
 }
 
 .wrap {
@@ -55,12 +56,14 @@ header img {
     font-size: 12px;
     padding-top: 0px;
 }
-.portrait img{
-    width:200px;
+
+.portrait img {
+    width: 200px;
     margin: 0 auto;
 }
-.portrait{
-    text-align:center;
+
+.portrait {
+    text-align: center;
 }
 
 .footer {
@@ -161,4 +164,18 @@ a.desc:after {
 
 .nav > li > form > button.logout:focus {
     outline: none;
+}
+
+h1 {
+    color: rgb(211, 211, 211);
+}
+
+/* Карточка врача в \views\persons\_card.php*/
+.person_card{
+    margin: 10px;
+    padding:5px;
+}
+
+.person_card img{
+    height: 100px;
 }
