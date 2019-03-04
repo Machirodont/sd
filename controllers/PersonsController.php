@@ -50,7 +50,7 @@ class PersonsController extends Controller
     public function actionIndex()
     {
         $query = Persons::find();
-        $clinic=null;
+        $clinic = null;
         if (isset(Yii::$app->request->queryParams["cid"])) {
             $query
                 ->from([
@@ -59,11 +59,11 @@ class PersonsController extends Controller
                     "s" => "sd_schedule",
                 ])
                 ->where(["and",
-                    "c.id = ".intval(Yii::$app->request->queryParams["cid"]),
+                    "c.id = " . intval(Yii::$app->request->queryParams["cid"]),
                     "c.hash_id = s.subdivision_hash",
                     "p.person_id=s.person_id"
                 ]);
-            $clinic=Clinic::findOne(Yii::$app->request->queryParams["cid"]);
+            $clinic = Clinic::findOne(Yii::$app->request->queryParams["cid"]);
 
         }
         $dataProvider = new ActiveDataProvider([
@@ -72,7 +72,7 @@ class PersonsController extends Controller
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
-            'clinic'=>$clinic
+            'clinic' => $clinic
         ]);
     }
 
@@ -84,8 +84,10 @@ class PersonsController extends Controller
      */
     public function actionView($id)
     {
+        $person = $this->findModel($id);
+        if (Yii::$app->request->get("cid")) $person->currentClinic = Clinic::findOne(Yii::$app->request->get("cid"));
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $person,
         ]);
     }
 

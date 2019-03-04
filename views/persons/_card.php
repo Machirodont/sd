@@ -10,6 +10,6 @@ use app\models\Persons;
 <a href="<?= Url::toRoute(["persons/view", "id"=>$model->person_id]) ?>" class="person_card">
     <?= Html::img($model->portraitUrl, [
     ]) ?>
-    <div><?= $model->fullname ?></div>
+    <div><nobr><?= $model->fullname ?></nobr></div>
     <div><?= $model->traitString("специальность") ?></div>
 </a>

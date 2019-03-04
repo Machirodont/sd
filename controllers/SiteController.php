@@ -10,6 +10,7 @@ use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\Sheduler;
+use app\models\SheduleDays;
 
 class SiteController extends Controller
 {
@@ -172,10 +173,10 @@ class SiteController extends Controller
     {
         $f = [];
         $folder = "/uploads/ckeditor_images/";
-        foreach (glob(".".$folder."*.*") as $filename) {
+        foreach (glob("." . $folder . "*.*") as $filename) {
             $f[] = [
-                "image" => $folder.basename($filename),
-                "thumb" => $folder.basename($filename),
+                "image" => $folder . basename($filename),
+                "thumb" => $folder . basename($filename),
             ];
         }
 
@@ -185,24 +186,57 @@ class SiteController extends Controller
 
     public function actionParce()
     {
-        $s=Sheduler::parceFile("r.json");
-        $r="<table>";
-        foreach ($s->subdivisions as $subdiv_hash=>$subdiv){
-            foreach ($subdiv->workplaces as $workplace_hash=>$workplace){
-                foreach ($workplace->schedules as $schedule_hash=>$schedule) {
-                    $r .= "<tr><td>" . $subdiv_hash . "</td><td>" . $subdiv->name . "</td><td>" . $workplace_hash . "</td><td>" . $workplace->name . "</td><td>" . $schedule_hash . "</td><td>" . $schedule->name . "</td></tr>";
-                    $sh=new Sheduler();
-                    $sh->hash=$schedule_hash;
-                    $sh->person_name=$schedule->name;
-                    $sh->workplace_hash=$workplace_hash;
-                    $sh->workplace_name=$workplace->name;
-                    $sh->subdivision_hash=$subdiv_hash;
-                    $sh->subdivision_name=$subdiv->name;
-                    $sh->save();
+        $s = Sheduler::parceFile("r.json");
+        $r = "<table>";
+        foreach ($s->subdivisions as $subdiv_hash => $subdiv) {
+            foreach ($subdiv->workplaces as $workplace_hash => $workplace) {
+                foreach ($workplace->schedules as $schedule_hash => $schedule) {
+                    $sh = new Sheduler();
+                    $sh->hash = $schedule_hash;
+                    $sh->person_name = $schedule->name;
+                    $sh->workplace_hash = $workplace_hash;
+                    $sh->workplace_name = $workplace->name;
+                    $sh->subdivision_hash = $subdiv_hash;
+                    $sh->subdivision_name = $subdiv->name;
+                    //$sh->save();
+                    $days = "";
+                    /*
+                     * ToDo shedule hash - фигня, надо ориентироваться на shedule_id
+                     * И ввести workplaces как базовую сущность
+                     * Врач может быть связан с несколькими workplaces
+                     * Workplace может быть связан с несколькими врачами
+                     * Shedule связано только с одним врачом и одним workplace
+                     * Далее workplace привязано только к одной клинике
+                    */
+                    foreach ($schedule->days_active as $date => $day_is_active) {
+                        $days .= $date . " : " . $day_is_active . "<br>";
+                        $shedule_day = SheduleDays::findOne(["day" => $date, "shedule_hash" => $schedule_hash, "workplace_hash" => $workplace_hash]);
+                        if (is_null($shedule_day)) {
+                            $shedule_day = new SheduleDays(["day" => $date, "shedule_hash" => $schedule_hash, "workplace_hash" => $workplace_hash]);
+                        }
+                        $shedule_day->is_active = intval($day_is_active);
+                        $shedule_day->save();
+                    }
+
                 }
+
+
+                $r .= <<<EOT
+<tr>
+<td>" . $subdiv_hash . "</td>
+<td>" . $subdiv->name . "</td>
+<td>" . $workplace_hash . "</td>
+<td>" . $workplace->name . "</td>
+<td>" . $schedule_hash . "</td>
+<td>" . $schedule->name . "</td>
+<td>" . $days . "</td>
+</tr>
+EOT;
             }
         }
-        $r.="</table>";
+
+
+        $r .= "</table>";
 
 
         return $r;

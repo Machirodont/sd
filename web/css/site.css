@@ -171,11 +171,39 @@ h1 {
 }
 
 /* Карточка врача в \views\persons\_card.php*/
-.person_card{
+.person_card {
     margin: 10px;
-    padding:5px;
+    padding: 5px;
+    display: block;
+    width: 30%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.person_card img{
+.person_card div {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.person_card div {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.person_card img {
     height: 100px;
 }
+
+
+@media (max-width: 768px) {
+    .person_card {
+        width: 45%;
+    }
+}
+
+@media (max-width: 426px) {
+    .person_card {
+        width: 100%;
+    }
+}
+

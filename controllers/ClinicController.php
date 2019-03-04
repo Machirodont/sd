@@ -3,18 +3,22 @@
 namespace app\controllers;
 
 use app\models\Clinic;
+use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
 
 class ClinicController extends \yii\web\Controller
 {
     public function actionIndex()
     {
-        return $this->render('index');
+        $clinics = Clinic::find()->all();
+        return $this->render('index', [
+            'clinics' => $clinics,
+        ]);
     }
 
     public function actionContacts($cid)
     {
-        $clinic=$this->findModel($cid);
+        $clinic = $this->findModel($cid);
 
         return $this->render('contacts', [
             'clinic' => $clinic,

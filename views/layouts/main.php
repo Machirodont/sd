@@ -76,6 +76,7 @@ AppAsset::register($this);
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => 'Сотрудники', 'url' => ['/persons/index']],
+            ['label' => 'Клиники', 'url' => ['/clinic/index']],
             ['label' => 'Учреждения', 'url' => ['/institutions/index']],
             ['label' => 'Home', 'url' => ['/site/index']],
             ['label' => 'About', 'url' => ['/site/about']],

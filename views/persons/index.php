@@ -8,24 +8,26 @@ use yii\grid\GridView;
 /* @var $clinic \app\models\Clinic|null */
 
 $this->title = "Врачи" . (is_object($clinic) ? " - " . $clinic->city : "");
-$this->params['breadcrumbs'][] = $this->title;
+if (is_object($clinic)) $this->params['breadcrumbs'][] = ['label' => $clinic->city, 'url' => ['/clinic/contacts', "cid" => $clinic->id]];
+$this->params['breadcrumbs'][] = "Врачи";
 ?>
 <div class="persons-index">
 
     <h1>«Столичная диагностика»<?= (is_object($clinic) ? " - " . $clinic->city : "") ?></h1>
     <h2>Врачи</h2>
 
-    <?php
-    $persons = $dataProvider->models;
-    foreach ($persons as $person) {
-        echo $this->render('_card', [
-            'model' => $person,
-        ]);
-    }
-    ?>
+    <div style="display:flex; flex-wrap: wrap">
+              <?php
+            $persons = $dataProvider->models;
+            foreach ($persons as $person) {
+                echo $this->render('_card', [
+                    'model' => $person,
+                ]);
+            }
+            ?>
+    </div>
 
-
-    <hr>
+    <!--hr>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
@@ -36,12 +38,11 @@ $this->params['breadcrumbs'][] = $this->title;
             'lastname:ntext',
             'patronymic:ntext',
             'education',
-            //'years_work',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
     <p>
         <?= Html::a('Create Persons', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    </p-->
 </div>

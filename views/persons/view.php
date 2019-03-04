@@ -8,8 +8,10 @@ use yii\data\ArrayDataProvider;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Persons */
+/* @var $clinic \app\models\Clinic */
 
 $this->title = $model->fullname;
+if ($model->currentClinic) $this->params['breadcrumbs'][] = ['label' => $model->currentClinic->city, 'url' => ['/clinic/contacts', "cid" => $model->currentClinic->id]];
 $this->params['breadcrumbs'][] = ['label' => 'Доктора', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
@@ -45,8 +47,16 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                     if ($i > 0) echo ", ";
                     echo Html::a($model->clinics[$i]->city, ["clinic/contacts", "cid" => $model->clinics[$i]->id]);
                 }
+                echo "<br>Смотреть расписание отделении: ";
+                for ($i = 0; $i < count($model->clinics); $i++) {
+                    if ($i > 0) echo ", ";
+                    echo Html::a($model->clinics[$i]->city, ["persons/view", "id" => $model->person_id, "cid" => $model->clinics[$i]->id]);
+                }
             }
 
+            if($model->currentClinic){
+                echo "<br>Расписание: ".$model->sheduleHash;
+            }
             ?>
         </div>
     </div>
