@@ -53,6 +53,7 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                     echo Html::a($model->clinics[$i]->city, ["persons/view", "id" => $model->person_id, "cid" => $model->clinics[$i]->id]);
                 }
             }
+            Date
 
             if($model->currentClinic){
                 echo "<br>Расписание: ".$model->sheduleHash;
