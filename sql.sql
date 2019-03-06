@@ -45,6 +45,32 @@ INSERT INTO `sd_clinics` (`id`, `city`, `region`, `address`, `phone`, `hash_id`)
 UNLOCK TABLES;
 
 --
+-- Table structure for table `sd_html_block`
+--
+
+DROP TABLE IF EXISTS `sd_html_block`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `sd_html_block` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `itemKey` int(11) NOT NULL,
+  `itemTable` text NOT NULL,
+  `html` text NOT NULL,
+  `order` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sd_html_block`
+--
+
+LOCK TABLES `sd_html_block` WRITE;
+/*!40000 ALTER TABLE `sd_html_block` DISABLE KEYS */;
+/*!40000 ALTER TABLE `sd_html_block` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `sd_institutions`
 --
 
@@ -304,4 +330,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-06 13:58:21
+-- Dump completed on 2019-03-06 17:49:43

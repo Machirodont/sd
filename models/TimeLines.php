@@ -12,7 +12,7 @@ use app\models\Generated\TimeLinesGenerated;
 
 /**
  * @property TimelineDays $days Дни расписания TimeLine
- *
+ * @property array $activeDays
  */
 class TimeLines extends TimeLinesGenerated
 {
@@ -22,4 +22,16 @@ class TimeLines extends TimeLinesGenerated
             ->where(["timelineId" => $this->id])
             ->all();
     }
+
+    public function getActiveDays()
+    {
+        $days = TimelineDays::find()
+            ->where(["timelineId" => $this->id, "is_active" => 1])
+            ->indexBy("day")
+            ->all();
+
+        if (!is_array($days)) return [];
+        return $days;
+    }
+
 }

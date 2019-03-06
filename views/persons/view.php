@@ -54,25 +54,55 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                 }
             }
             ?>
-
-            <table class="table table-bordered">
-                <?php
-                if ($model->timeLine && is_array($model->timeLine->days)) {
-                    foreach ($model->timeLine->days as $day) {
-                        /**@var $day \app\models\TimelineDays */
-                        ?>
-                        <tr class="<?= $day->is_active ? "success" : "" ?>">
-                            <td><?= $day->day ?></td>
-                            <td><?= $day->is_active ? "Принимает" : "" ?></td>
-                        </tr>
-                        <?php
+            <hr>
+            <?php
+            //Календарь приема
+            if ($model->timeLine) {
+                $activeDays = $model->timeLine->activeDays;
+                $dateCounter = new DateTime(date("Ymd"));
+                $dateCounter = new DateTime("2018-12-15");
+                $nowWeekDay = intval($dateCounter->format("N"));
+                $dateCounter->sub(new DateInterval('P' . ($nowWeekDay - 1) . 'D'));
+                $yesterdayMonth = "";
+                $interval = new DateInterval('P1D');
+                for ($i = 0; $i < (7 * 2); $i++) {
+                    if ($yesterdayMonth !== $dateCounter->format("m")) {
+                        echo $dateCounter->format("F");
+                        echo "<table class=\"table\">";
+                        if ($dateCounter->format("N") !== "1") {
+                            echo "<td style='border:none;' colspan='" . (intval($dateCounter->format("N")) - 1) . "'> </td>";
+                        }
                     }
+                    if ($dateCounter->format("N") === "1") echo "<tr>";
+                    ?>
+                    <td class="text-center <?= array_key_exists($dateCounter->format("Y-m-d"), $activeDays) ? "success" : ""; ?>"> <?= $dateCounter->format("j"); ?></td>
+                    <?php
+                    if ($dateCounter->format("N") === "7") echo "</tr>";
+                    if ($dateCounter->format("j") === $dateCounter->format("t")) echo "</table>";
+                    $yesterdayMonth = $dateCounter->format("m");
+                    $dateCounter->add($interval);
                 }
-                ?>
+            }
+            ?>
+
+            <?php
+            if (false && $model->timeLine && is_array($model->timeLine->days)) {
+                foreach ($model->timeLine->days as $day) {
+                    /**@var $day \app\models\TimelineDays */
+                    ?>
+                    <tr class="<?= $day->is_active ? "success" : "" ?>">
+                        <td><?= $day->day ?></td>
+                        <td><?= $day->is_active ? "Принимает" : "" ?></td>
+                    </tr>
+                    <?php
+                }
+            }
+            ?>
             </table>
 
         </div>
     </div>
+    
     <hr>
 
     <p>
