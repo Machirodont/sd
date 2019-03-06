@@ -53,12 +53,24 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                     echo Html::a($model->clinics[$i]->city, ["persons/view", "id" => $model->person_id, "cid" => $model->clinics[$i]->id]);
                 }
             }
-            Date
-
-            if($model->currentClinic){
-                echo "<br>Расписание: ".$model->sheduleHash;
-            }
             ?>
+
+            <table class="table table-bordered">
+                <?php
+                if ($model->timeLine && is_array($model->timeLine->days)) {
+                    foreach ($model->timeLine->days as $day) {
+                        /**@var $day \app\models\TimelineDays */
+                        ?>
+                        <tr class="<?= $day->is_active ? "success" : "" ?>">
+                            <td><?= $day->day ?></td>
+                            <td><?= $day->is_active ? "Принимает" : "" ?></td>
+                        </tr>
+                        <?php
+                    }
+                }
+                ?>
+            </table>
+
         </div>
     </div>
     <hr>

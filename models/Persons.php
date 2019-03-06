@@ -14,6 +14,7 @@ use yii\db\Query;
  * @property string $portraitUrl url адрес фотографии
  * @property Clinic[] $clinics Клиники
  * @property Clinic $currentClinic Выбранная клиника
+ * @property TimeLines $timeLine Таймлайн выбранной клиники
  * @property string $sheduleHash Хэш-ID расписания для выбранной клиники
  *
  */
@@ -32,32 +33,39 @@ class Persons extends PersonsGenerated
             return "/images/persons/" . $this->person_id . ".jpg";
         }
         return "/images/persons/0.jpg";
-
     }
 
     public function getClinics()
     {
-        return $this->hasMany(Clinic::class, ['hash_id' => 'subdivision_hash'])
-            ->viaTable("sd_schedule", ['person_id' => 'person_id']);
+        return Clinic::find()
+            ->select("c.*")
+            ->from(["c" => "sd_clinics"])
+            ->leftJoin(["w" => "sd_workplaces"], "w.clinic_hash = c.hash_id")
+            ->leftJoin(["t" => "sd_timelines"], "t.workplace_hash = w.workplace_hash")
+            ->where(["t.person_id" => $this->person_id])
+            ->all();
     }
 
-    public function getSheduleHash()
+    /**
+     * @return TimeLines
+     */
+    public function getTimeLine()
     {
         if (!$this->currentClinic instanceof Clinic) return null;
-        $shedules = (new Query())
-            ->select("hash")
-            ->from("sd_schedule")
+        $res = TimeLines::find()
+            ->select("tl.*")
+            ->from(["tl" => "sd_timelines"])
+            ->leftJoin(["w" => "sd_workplaces"], "tl.workplace_hash = w.workplace_hash")
             ->where([
-                "person_id" => $this->person_id,
-                "subdivision_hash" => $this->currentClinic->hash_id
+                "w.clinic_hash" => $this->currentClinic->hash_id,
+                "tl.person_id" => $this->person_id
             ])
-            ->column();
-        if (count($shedules) !== 1) return null;
-        return ($shedules[0]);
+            ->all();
+        if (count($res) === 1) return $res[0];
+        return null;
     }
 
-    public
-    function traitString($traitTitle, $glue = ", ")
+    public function traitString($traitTitle, $glue = ", ")
     {
         $s = "";
         if (isset($this->traits[$traitTitle]) && is_array($this->traits[$traitTitle])) {
@@ -69,4 +77,21 @@ class Persons extends PersonsGenerated
         return $s;
     }
 
+    /**
+     * @param $sheduleHash
+     * @return null|Persons
+     */
+    public static function findBySheduleHash($sheduleHash)
+    {
+        $res = self::find()
+            ->select("p.*")
+            ->from(["p" => "sd_persons", "a" => "sd_shedule_assign"])
+            ->where(["and",
+                "p.person_id = a.personId",
+                "a.shedule_hash = \"" . $sheduleHash . "\"",
+            ])
+            ->all();
+        if (count($res) === 1) return $res[0];
+        return null;
+    }
 }

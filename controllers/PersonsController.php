@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Clinic;
 use Yii;
+use yii\db\Query;
 use yii\filters\AccessControl;
 use app\models\Persons;
 use app\models\PersonsSearch;
@@ -86,6 +87,7 @@ class PersonsController extends Controller
     {
         $person = $this->findModel($id);
         if (Yii::$app->request->get("cid")) $person->currentClinic = Clinic::findOne(Yii::$app->request->get("cid"));
+
         return $this->render('view', [
             'model' => $person,
         ]);
