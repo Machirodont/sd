@@ -16,6 +16,8 @@ use yii\db\Query;
  * @property Clinic $currentClinic Выбранная клиника
  * @property TimeLines $timeLine Таймлайн выбранной клиники
  * @property string $sheduleHash Хэш-ID расписания для выбранной клиники
+ * @property array $htmlBlocks
+ * @property string $htmlDescription
  *
  */
 class Persons extends PersonsGenerated
@@ -63,6 +65,27 @@ class Persons extends PersonsGenerated
             ->all();
         if (count($res) === 1) return $res[0];
         return null;
+    }
+
+    /**
+     * @return array
+     */
+    public function getHtmlBlocks()
+    {
+        return HtmlBlock::find()
+            ->where([
+                "itemTable" => "sd_persons",
+                "itemKey" => $this->person_id
+            ])
+            ->orderBy("order")
+            ->all();
+    }
+
+    public function getHtmlDescription()
+    {
+        return array_reduce($this->htmlBlocks, function ($html, HtmlBlock $b) {
+            return $html . "\n<div>" . $b->html."</div>";
+        }, "");
     }
 
     public function traitString($traitTitle, $glue = ", ")

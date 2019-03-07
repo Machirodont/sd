@@ -58,7 +58,7 @@ CREATE TABLE `sd_html_block` (
   `html` text NOT NULL,
   `order` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,6 +67,7 @@ CREATE TABLE `sd_html_block` (
 
 LOCK TABLES `sd_html_block` WRITE;
 /*!40000 ALTER TABLE `sd_html_block` DISABLE KEYS */;
+INSERT INTO `sd_html_block` (`id`, `itemKey`, `itemTable`, `html`, `order`) VALUES (1,5,'sd_persons','HTML BLOCK 1','1'),(2,5,'sd_persons','HTML BLOCK 2','2');
 /*!40000 ALTER TABLE `sd_html_block` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -330,4 +331,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-06 17:49:43
+-- Dump completed on 2019-03-07 17:42:33

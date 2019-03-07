@@ -10,6 +10,8 @@ use yii\data\ArrayDataProvider;
 /* @var $model app\models\Persons */
 /* @var $clinic \app\models\Clinic */
 
+$this->registerLinkTag(['rel' => 'canonical', 'href' => \yii\helpers\Url::to(["view", "id" => $model->person_id], true),]);
+
 $this->title = $model->fullname;
 if ($model->currentClinic) $this->params['breadcrumbs'][] = ['label' => $model->currentClinic->city, 'url' => ['/clinic/contacts', "cid" => $model->currentClinic->id]];
 $this->params['breadcrumbs'][] = ['label' => 'Доктора', 'url' => ['index']];
@@ -58,30 +60,11 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
             <?php
             //Календарь приема
             if ($model->timeLine) {
-                $activeDays = $model->timeLine->activeDays;
-                $dateCounter = new DateTime(date("Ymd"));
-                $dateCounter = new DateTime("2018-12-15");
-                $nowWeekDay = intval($dateCounter->format("N"));
-                $dateCounter->sub(new DateInterval('P' . ($nowWeekDay - 1) . 'D'));
-                $yesterdayMonth = "";
-                $interval = new DateInterval('P1D');
-                for ($i = 0; $i < (7 * 2); $i++) {
-                    if ($yesterdayMonth !== $dateCounter->format("m")) {
-                        echo $dateCounter->format("F");
-                        echo "<table class=\"table\">";
-                        if ($dateCounter->format("N") !== "1") {
-                            echo "<td style='border:none;' colspan='" . (intval($dateCounter->format("N")) - 1) . "'> </td>";
-                        }
-                    }
-                    if ($dateCounter->format("N") === "1") echo "<tr>";
-                    ?>
-                    <td class="text-center <?= array_key_exists($dateCounter->format("Y-m-d"), $activeDays) ? "success" : ""; ?>"> <?= $dateCounter->format("j"); ?></td>
-                    <?php
-                    if ($dateCounter->format("N") === "7") echo "</tr>";
-                    if ($dateCounter->format("j") === $dateCounter->format("t")) echo "</table>";
-                    $yesterdayMonth = $dateCounter->format("m");
-                    $dateCounter->add($interval);
-                }
+                echo $this->render('_calendar', [
+                    "startDay" => "2018-12-15",
+                    "period" => 15,
+                    "activeDays" => $model->timeLine->activeDays
+                ]);
             }
             ?>
 
@@ -99,10 +82,10 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
             }
             ?>
             </table>
-
         </div>
     </div>
-    
+    <?= $model->htmlDescription; ?>
+
     <hr>
 
     <p>
