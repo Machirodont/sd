@@ -60,6 +60,17 @@ class SiteController extends Controller
     }
 
     /**
+     * @inheritdoc
+     */
+    public function beforeAction($action)
+    {
+        if ($action->id == 'load-schedule') {
+            $this->enableCsrfValidation = false;
+        }
+        return parent::beforeAction($action);
+    }
+
+    /**
      * Displays homepage.
      *
      * @return string
@@ -187,10 +198,63 @@ class SiteController extends Controller
         return json_encode($f);
     }
 
+    public function actionLoadSchedule($code)
+    {
+        function writeLog($text, $fName = "error_log.txt")
+        {
+            $f = fopen($fName, 'a');
+            $s = date("Y-m-d H:j:s " . $_SERVER["REMOTE_ADDR"]) . " " . $text . "\n";
+            fwrite($f, $s);
+        }
+        if ($code !== "799855594adc0f2bd7302c69d3234b5a") {
+            writeLog("ERROR: wrong GET code");
+            return 'FALSE';
+        }
+
+        $postRaw = file_get_contents("php://input");
+        if ($postRaw === false) {
+            writeLog("ERROR: wrong php://input");
+            return 'FALSE';
+        }
+
+        try {
+            $postDecompressStr = gzdecode($postRaw);
+        } catch (\Exception $e) {
+            writeLog("ERROR: GZip exception " . $e->getCode());
+            return 'FALSE';
+        }
+
+        if ($postDecompressStr === false) {
+            writeLog("ERROR: GZip (false returned)");
+            return 'FALSE';
+        }
+        $postData = array();
+        parse_str($postDecompressStr, $postData);
+
+        if (!array_key_exists('json', $postData)) {
+            writeLog("ERROR: no json key in URL data");
+            return 'FALSE';
+        }
+
+        $json = json_decode($postData['json'], true);
+        if (!is_array($json)) {
+            writeLog("ERROR: data is not json");
+            return 'FALSE';
+        }
+
+        if (file_exists("../data/schedule.json")) {
+            rename("../data/schedule.json", "../data/schedule_" . date("Y-m-d-H-j-s") . ".json");
+        }
+        file_put_contents("../data/schedule.json", $postData['json']);
+
+        //Обрабока данных
+        return 'TRUE ';
+    }
+
     public function actionParce()
     {
 
-        $s = json_decode(file_get_contents("r.json"));
+        $s = json_decode(file_get_contents("r1.json"));
         $r = "<table>";
         foreach ($s->subdivisions as $subdiv_hash => $subdiv) {
             foreach ($subdiv->workplaces as $workplace_hash => $workplace) {

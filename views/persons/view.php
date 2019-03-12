@@ -61,8 +61,8 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
             //Календарь приема
             if ($model->timeLine) {
                 echo $this->render('_calendar', [
-                    "startDay" => "2018-12-15",
-                    "period" => 75,
+                    "startDay" => date("Y-m-d"),
+                    "period" => 7*3,
                     "activeDays" => $model->timeLine->activeDays
                 ]);
             }
