@@ -5,3 +5,4 @@
 2019-03-12 13:12:03 127.0.0.1 ERROR: GZip exception 2
 2019-03-12 13:12:44 127.0.0.1 ERROR: GZip exception 2
 2019-03-12 13:12:13 127.0.0.1 ERROR: wrong GET code
+2019-03-12 14:12:06 127.0.0.1 ERROR: wrong GET code
