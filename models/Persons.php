@@ -3,6 +3,7 @@
 
 namespace app\models;
 
+use app\helpers\Extra;
 use app\models\Generated\PersonsGenerated;
 use yii\db\Query;
 
@@ -18,6 +19,7 @@ use yii\db\Query;
  * @property string $sheduleHash Хэш-ID расписания для выбранной клиники
  * @property array $htmlBlocks
  * @property string $htmlDescription
+ * @property string $primarySpec
  *
  */
 class Persons extends PersonsGenerated
@@ -74,8 +76,8 @@ class Persons extends PersonsGenerated
     {
         return HtmlBlock::find()
             ->where([
-                "itemTable" => "sd_persons",
-                "itemKey" => $this->person_id
+                "itemTable" => self::tableName(),
+                "itemKey" => $this->primaryKey
             ])
             ->orderBy("order")
             ->all();
@@ -84,20 +86,37 @@ class Persons extends PersonsGenerated
     public function getHtmlDescription()
     {
         return array_reduce($this->htmlBlocks, function ($html, HtmlBlock $b) {
-            return $html . "\n<div>" . $b->html."</div>";
+            return $html . "\n<div>" . $b->content . "</div>";
         }, "");
     }
 
     public function traitString($traitTitle, $glue = ", ")
     {
-        $s = "";
-        if (isset($this->traits[$traitTitle]) && is_array($this->traits[$traitTitle])) {
-            for ($i = 0; $i < count($this->traits[$traitTitle]); $i++) {
-                if ($i > 0) $s .= $glue;
-                $s .= $this->traits[$traitTitle][$i]->description;
-            }
+        return Extra::implodeField($this->traits[$traitTitle], "description", $glue);
+    }
+
+    public function getPrimarySpec()
+    {
+        if (isset($this->traits["специальность"]) && is_array($this->traits["специальность"])) {
+            $specs = $this->traits["специальность"];
+            if (count($specs) === 0) return "";
+            $specs = Extra::sortByField($specs, "sort");
+            return mb_strtoupper($specs[0]->description);
         }
-        return $s;
+        return "";
+    }
+
+
+    public function getSecondarySpecs()
+    {
+        if (isset($this->traits["специальность"]) && is_array($this->traits["специальность"])) {
+            $specs = $this->traits["специальность"];
+            if (count($specs) < 2) return "";
+            $specs = Extra::sortByField($specs, "sort");
+            array_shift($specs);
+            return Extra::implodeField($specs, "description", ", ");
+        }
+        return "";
     }
 
     /**

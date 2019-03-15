@@ -75,6 +75,7 @@ class PersonsGenerated extends \yii\db\ActiveRecord
     }
 
     private $_sortedTraits=null;
+
     public function getTraits(){
         if(is_null($this->_sortedTraits)) {
             $traits = $this->allTraits;

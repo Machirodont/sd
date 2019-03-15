@@ -2,7 +2,7 @@
     font-family: 'Benguiat Rus';
     font-style: normal;
     font-weight: 400;
-    src: local('Benguiat Rus'), local('BenguiatRus-Regular'), url(http://yii/images/benguiat-rus.woff) format('woff')
+    src: local('Benguiat Rus'), local('BenguiatRus-Regular'), url("/images/benguiat-rus.woff") format('woff')
 }
 
 html,
@@ -178,6 +178,13 @@ h1 {
     width: 30%;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: center;
+    box-shadow: 3px 3px 5px 1px #E0F7FF;
+}
+
+.person_card:hover {
+
+    box-shadow: 3px 3px 5px 1px #ace1ff;
 }
 
 .person_card div {
@@ -207,3 +214,16 @@ h1 {
     }
 }
 
+/* DEV элементы (удалить в продакшне)*/
+.head-phone-number{
+    opacity: .05;
+}
+.header-logo img{
+    opacity: .05;
+}
+img{
+    opacity: .05;
+}
+a h4{
+    opacity: .3;
+}

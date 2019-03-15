@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Pages;
 use app\models\Persons;
 use app\models\TimelineDays;
 use app\models\TimeLines;
@@ -71,16 +72,6 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays homepage.
-     *
-     * @return string
-     */
-    public function actionIndex()
-    {
-        return $this->render('index');
-    }
-
-    /**
      * Login action.
      *
      * @return Response|string
@@ -114,33 +105,16 @@ class SiteController extends Controller
         return $this->goHome();
     }
 
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionContact()
+    public function actionPage()
     {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
+        $pageId = intval(Yii::$app->request->get("id"));
+        if (!$pageId) $pageId = 1;
+        $page = Pages::findOne($pageId);
+        return $this->render('page', [
+            'page' => $page,
         ]);
     }
 
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
-    }
 
     public function actionCkeditor_image_upload()
     {
@@ -206,6 +180,7 @@ class SiteController extends Controller
             $s = date("Y-m-d H:j:s " . $_SERVER["REMOTE_ADDR"]) . " " . $text . "\n";
             fwrite($f, $s);
         }
+
         if ($code !== "799855594adc0f2bd7302c69d3234b5a") {
             writeLog("ERROR: wrong GET code");
             return 'FALSE';
@@ -311,11 +286,7 @@ EOT;
                 }
             }
         }
-
-
         $r .= "</table>";
-
-
         return $r;
     }
 

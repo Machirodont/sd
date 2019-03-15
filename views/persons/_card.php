@@ -8,8 +8,9 @@ use app\models\Persons;
 ?>
 
 <a href="<?= Url::toRoute(["persons/view", "id"=>$model->person_id]) ?>" class="person_card">
+    <h4><?= $model->primarySpec ?></h4>
     <?= Html::img($model->portraitUrl, [
     ]) ?>
     <div><nobr><?= $model->fullname ?></nobr></div>
-    <div><?= $model->traitString("специальность") ?></div>
+    <div><?= $model->secondarySpecs ?></div>
 </a>

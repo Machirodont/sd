@@ -7,7 +7,6 @@ use Yii;
 use yii\db\Query;
 use yii\filters\AccessControl;
 use app\models\Persons;
-use app\models\PersonsSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -29,9 +28,14 @@ class PersonsController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'view', 'create', 'update', 'delete'],
+                        'actions' => ['create', 'update', 'delete'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['index', 'view',],
+                        'allow' => true,
+                        'roles' => ['?'],
                     ],
                 ],
             ],
@@ -51,22 +55,24 @@ class PersonsController extends Controller
     public function actionIndex()
     {
         $query = Persons::find();
-        $clinic = null;
-        if (isset(Yii::$app->request->queryParams["cid"])) {
+        $clinic = Clinic::findOne(Yii::$app->session->get("cid"));
+        if ($clinic) {
             $query
                 ->from([
                     "p" => "sd_persons",
+                    "t" => "sd_timelines",
+                    "w" => "sd_workplaces",
                     "c" => "sd_clinics",
-                    "s" => "sd_schedule",
                 ])
                 ->where(["and",
-                    "c.id = " . intval(Yii::$app->request->queryParams["cid"]),
-                    "c.hash_id = s.subdivision_hash",
-                    "p.person_id=s.person_id"
+                    "c.id = " . $clinic->id,
+                    "c.hash_id = w.clinic_hash",
+                    "c.hash_id = w.clinic_hash",
+                    "w.workplace_hash = t.workplace_hash",
+                    "t.person_id=p.person_id"
                 ]);
-            $clinic = Clinic::findOne(Yii::$app->request->queryParams["cid"]);
-
         }
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -86,7 +92,7 @@ class PersonsController extends Controller
     public function actionView($id)
     {
         $person = $this->findModel($id);
-        if (Yii::$app->request->get("cid")) $person->currentClinic = Clinic::findOne(Yii::$app->request->get("cid"));
+        $person->currentClinic = Clinic::findOne(Yii::$app->session->get("cid"));
 
         return $this->render('view', [
             'model' => $person,

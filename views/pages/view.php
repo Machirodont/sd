@@ -1,26 +1,14 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
-use yii\grid\GridView;
-use yii\data\ArrayDataProvider;
 
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Persons */
-/* @var $clinic \app\models\Clinic */
-
-$this->registerLinkTag(['rel' => 'canonical', 'href' => \yii\helpers\Url::to(["view", "id" => $model->person_id], true),]);
 
 $this->title = $model->fullname;
 if ($model->currentClinic) $this->params['breadcrumbs'][] = ['label' => $model->currentClinic->city, 'url' => ['/clinic/contacts', "cid" => $model->currentClinic->id]];
 $this->params['breadcrumbs'][] = ['label' => 'Доктора', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-
-$mainSpecialization = isset($model->traits["специальность"]) && isset($model->traits["специальность"][0])
-    ? mb_convert_case($model->traits["специальность"][0]->description, MB_CASE_TITLE)
-    : "";
-
 
 ?>
 <div class="persons-view row">
@@ -62,7 +50,7 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
             if ($model->timeLine) {
                 echo $this->render('_calendar', [
                     "startDay" => date("Y-m-d"),
-                    "period" => 7 * 3,
+                    "period" => 7*3,
                     "activeDays" => $model->timeLine->activeDays
                 ]);
             }
@@ -84,6 +72,5 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
             </table>
         </div>
     </div>
-
-    <?php echo $model->htmlDescription; ?>
+    <?= $model->htmlDescription; ?>
 </div>

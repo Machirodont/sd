@@ -16,9 +16,10 @@ class ClinicController extends \yii\web\Controller
         ]);
     }
 
-    public function actionContacts($cid)
+    public function actionContacts()
     {
-        $clinic = $this->findModel($cid);
+        $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
+        if (!$clinic) return $this->redirect(["/site/page", "id" => 2]);
 
         return $this->render('contacts', [
             'clinic' => $clinic,
@@ -33,5 +34,4 @@ class ClinicController extends \yii\web\Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-
 }

@@ -30,28 +30,37 @@ AppAsset::register($this);
 <header class="header-a">
     <div class="container">
         <div class="row">
-            <div class="col-sm-6"><img src="/images/tmp_logo100.jpg"></div> <?php //ToDO obf ?>
+            <div class="col-sm-6 header-logo"><a href="/"><img src="/images/logo100.jpg"></a></div>
             <div class="col-sm-6 header-info">
-                <div class="col-md-6 head-phone-number" style="color:#141f93">+7(800)123-45-67</div> <?php //ToDO obf ?>
+                <div class="col-md-6 head-phone-number">+7(800)123-45-67</div>
                 <div class="col-md-6">
-                    <?= Html::dropDownList("place", null,
+                    <?php
+                    $route = Yii::$app->request->queryParams;
+                    $r = "/" . Yii::$app->requestedRoute;
+                    unset($route["cid"]);
+                    unset($route["r"]);
+                    array_unshift($route, $r);
+                    $url_tmp = \yii\helpers\Url::toRoute($route);
+                    $url_tmp .= (strpos($url_tmp, "?") === false) ? "?" : "&";
+                    ?>
+                    <?= Html::dropDownList("place", Yii::$app->session->get("cid"),
                         [
-                            "" => "Выберите ваше подразделение",//ToDO obf
+                            "" => "Выберите",//ToDO obf
                             "Московская область" => [
-                                "1" => "Руза",
-                                "2" => "Тучково",
+                                "2" => "Руза",
+                                "1" => "Тучково",
                             ],
                             "Брянская область" => [
-                                "1" => "Клинцы",
-                                "2" => "Новозыбков",
-                                "3" => "Климово",
-                                "4" => "Почеп",
-                                "5" => "Стародуб",
-                                "6" => "Унеча",
+                                "6" => "Клинцы",
+                                "7" => "Новозыбков",
+                                "9" => "Климово",
+                                "8" => "Почеп",
+                                "4" => "Стародуб",
                             ],
                         ],
                         [
-                            'class' => "form-control"
+                            'class' => "form-control",
+                            'onChange' => 'window.location.href="' . $url_tmp . 'cid="+this.value+"";',
                         ]
                     )
                     ?>
@@ -66,8 +75,6 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-   //     'brandLabel' => Yii::$app->name,
-   //     'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar',
         ],
@@ -77,22 +84,7 @@ AppAsset::register($this);
         'items' => [
             ['label' => 'Сотрудники', 'url' => ['/persons/index']],
             ['label' => 'Клиники', 'url' => ['/clinic/index']],
-            ['label' => 'Учреждения', 'url' => ['/institutions/index']],
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
-            Yii::$app->user->isGuest ? (
-            ['label' => 'Login', 'url' => ['/site/login']]
-            ) : (
-                '<li>'
-                . Html::beginForm(['/site/logout'], 'post')
-                . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->username . ')',
-                    ['class' => 'btn btn-link logout']
-                )
-                . Html::endForm()
-                . '</li>'
-            )
+            ['label' => 'Контакты', 'url' => ['/clinic/contacts']],
         ],
     ]);
     NavBar::end();

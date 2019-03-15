@@ -9,7 +9,7 @@ $config = [
     'bootstrap' => ['log'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
+        '@npm' => '@vendor/npm-asset',
     ],
     'components' => [
         'request' => [
@@ -51,6 +51,14 @@ $config = [
             ],
         ],
     ],
+    'defaultRoute' => '/site/page',
+    'on beforeRequest' => function ($e) {
+        //Обработка переключения по проектам
+        if (isset(Yii::$app->request->queryParams["cid"])) {
+            Yii::$app->session->open();
+            Yii::$app->session["cid"] = Yii::$app->request->queryParams["cid"];
+        }
+    },
     'params' => $params,
 ];
 
