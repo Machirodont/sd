@@ -14,7 +14,7 @@ $this->registerLinkTag(['rel' => 'canonical', 'href' => \yii\helpers\Url::to(["v
 
 $this->title = $model->fullname;
 if ($model->currentClinic) $this->params['breadcrumbs'][] = ['label' => $model->currentClinic->city, 'url' => ['/clinic/contacts', "cid" => $model->currentClinic->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Доктора', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Доктора', 'url' => ['index', "cid" => Yii::$app->session->get("cid")]];
 $this->params['breadcrumbs'][] = $this->title;
 
 $mainSpecialization = isset($model->traits["специальность"]) && isset($model->traits["специальность"][0])

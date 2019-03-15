@@ -154,6 +154,31 @@ INSERT INTO `sd_persons` (`person_id`, `firstname`, `lastname`, `patronymic`, `e
 UNLOCK TABLES;
 
 --
+-- Table structure for table `sd_redirect`
+--
+
+DROP TABLE IF EXISTS `sd_redirect`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `sd_redirect` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `from` text,
+  `to` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sd_redirect`
+--
+
+LOCK TABLES `sd_redirect` WRITE;
+/*!40000 ALTER TABLE `sd_redirect` DISABLE KEYS */;
+INSERT INTO `sd_redirect` (`id`, `from`, `to`) VALUES (1,'specialisty/nevrolog/','clinics/');
+/*!40000 ALTER TABLE `sd_redirect` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `sd_shedule_assign`
 --
 
@@ -358,4 +383,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-15 10:19:11
+-- Dump completed on 2019-03-15 17:05:26

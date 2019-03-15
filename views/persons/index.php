@@ -7,6 +7,8 @@ use yii\grid\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $clinic \app\models\Clinic|null */
 
+$this->registerLinkTag(['rel' => 'canonical', 'href' => \yii\helpers\Url::to(["index"], true),]);
+
 $this->title = "Врачи" . (is_object($clinic) ? " - " . $clinic->city : "");
 if (is_object($clinic)) $this->params['breadcrumbs'][] = ['label' => $clinic->city, 'url' => ['/clinic/contacts', "cid" => $clinic->id]];
 $this->params['breadcrumbs'][] = "Врачи";
@@ -26,23 +28,4 @@ $this->params['breadcrumbs'][] = "Врачи";
             }
             ?>
     </div>
-
-    <!--hr>
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'person_id',
-            'firstname:ntext',
-            'lastname:ntext',
-            'patronymic:ntext',
-            'education',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
-    <p>
-        <?= Html::a('Create Persons', ['create'], ['class' => 'btn btn-success']) ?>
-    </p-->
 </div>

@@ -48,17 +48,15 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                [
+                    'pattern' => '.+',
+                    'route' => '*',
+                    'class' => 'app\components\SdUrlRule',
+                ],
             ],
         ],
     ],
     'defaultRoute' => '/site/page',
-    'on beforeRequest' => function ($e) {
-        //Обработка переключения по проектам
-        if (isset(Yii::$app->request->queryParams["cid"])) {
-            Yii::$app->session->open();
-            Yii::$app->session["cid"] = Yii::$app->request->queryParams["cid"];
-        }
-    },
     'params' => $params,
 ];
 

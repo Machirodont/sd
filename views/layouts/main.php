@@ -10,6 +10,10 @@ use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
+use kartik\dropdown\DropdownX;
+use yii\bootstrap\Dropdown;
+use yii\bootstrap\ButtonDropdown;
+
 
 AppAsset::register($this);
 ?>
@@ -35,39 +39,40 @@ AppAsset::register($this);
                 <div class="col-md-6 head-phone-number">+7(800)123-45-67</div>
                 <div class="col-md-6">
                     <?php
-                    $route = Yii::$app->request->queryParams;
-                    $r = "/" . Yii::$app->requestedRoute;
-                    unset($route["cid"]);
-                    unset($route["r"]);
-                    array_unshift($route, $r);
-                    $url_tmp = \yii\helpers\Url::toRoute($route);
-                    $url_tmp .= (strpos($url_tmp, "?") === false) ? "?" : "&";
+
+                    function urlWithCID($cid)
+                    {
+                        $route = Yii::$app->request->queryParams;
+                        $r = "/" . Yii::$app->requestedRoute;
+                        unset($route["cid"]);
+                        unset($route["r"]);
+                        array_unshift($route, $r);
+                        $route["cid"] = $cid;
+                        return \yii\helpers\Url::toRoute($route);
+                    }
+
                     ?>
-                    <?= Html::dropDownList("place", Yii::$app->session->get("cid"),
-                        [
-                            "" => "Выберите",//ToDO obf
-                            "Московская область" => [
-                                "2" => "Руза",
-                                "1" => "Тучково",
+                    <?= ButtonDropdown::widget([
+                        'label' => 'Выберите клинику',
+                        'dropdown' => [
+                            'items' => [
+                                ['label' => 'Все', 'url' => urlWithCID(0)],
+                                'Московская область',
+                                ['label' => 'Руза', 'url' => urlWithCID(2)],
+                                ['label' => 'Тучково', 'url' => urlWithCID(1)],
+                                '<li class="divider"></li>',
+                                'Брянская область',
+                                ['label' => 'Клинцы', 'url' => urlWithCID(6)],
+                                ['label' => 'Новозыбков', 'url' => urlWithCID(7)],
+                                ['label' => 'Климово', 'url' => urlWithCID(9)],
+                                ['label' => 'Почеп', 'url' => urlWithCID(8)],
+                                ['label' => 'Стародуб', 'url' => urlWithCID(4)],
                             ],
-                            "Брянская область" => [
-                                "6" => "Клинцы",
-                                "7" => "Новозыбков",
-                                "9" => "Климово",
-                                "8" => "Почеп",
-                                "4" => "Стародуб",
-                            ],
-                        ],
-                        [
-                            'class' => "form-control",
-                            'onChange' => 'window.location.href="' . $url_tmp . 'cid="+this.value+"";',
                         ]
-                    )
+                    ]);
                     ?>
                 </div>
-
             </div>
-
         </div>
     </div>
 </header>
@@ -82,9 +87,9 @@ AppAsset::register($this);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => 'Сотрудники', 'url' => ['/persons/index']],
-            ['label' => 'Клиники', 'url' => ['/clinic/index']],
-            ['label' => 'Контакты', 'url' => ['/clinic/contacts']],
+            ['label' => 'Сотрудники', 'url' => ['/persons/index', "cid" => Yii::$app->session->get("cid")]],
+            ['label' => 'Клиники', 'url' => ['/clinic/index', "cid" => Yii::$app->session->get("cid")]],
+            ['label' => 'Контакты', 'url' => ['/clinic/contacts', "cid" => Yii::$app->session->get("cid")]],
         ],
     ]);
     NavBar::end();
