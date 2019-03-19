@@ -34,10 +34,19 @@ AppAsset::register($this);
 <header class="header-a">
     <div class="container">
         <div class="row">
-            <div class="col-sm-6 header-logo"><a href="/"><img src="/images/logo100.jpg"></a></div>
-            <div class="col-sm-6 header-info">
-                <div class="col-md-6 head-phone-number">+7(800)123-45-67</div>
-                <div class="col-md-6">
+            <div class="col-sm-8 header-logo bordered">
+                <a href="/">
+                    <img src="/images/logo100_0.jpg">
+                    <div class="head-name">
+                        Медицинский центр<br>
+                        &laquo;СТОЛИЧНАЯ ДИАГНОСТИКА&raquo;<br>
+                        <b>РУЗА</b>
+                    </div>
+                </a>
+            </div>
+            <div class="col-sm-4 header-info">
+                <div class="col-lg-6 head-phone-number bordered">+7(800)123-45-67</div>
+                <div class="col-lg-6 bordered">
                     <?php
 
                     function urlWithCID($cid)

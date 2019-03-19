@@ -32,7 +32,7 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                 'title' => $mainSpecialization . " " . $model->fullname
             ]) ?>
         </div>
-        <div class="col-sm-8" style="color:lightgrey;<?php //ToDo?>">
+        <div class="col-sm-8">
             <h1><?= $model->fullname ?></h1>
             <h2>
                 <?= $model->traitString("специальность") ?>

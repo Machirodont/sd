@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Clinic;
 use Yii;
+use yii\data\ArrayDataProvider;
 use yii\db\Query;
 use yii\filters\AccessControl;
 use app\models\Persons;
@@ -54,8 +55,8 @@ class PersonsController extends Controller
      */
     public function actionIndex()
     {
-        $query = Persons::find();
         $clinic = Clinic::findOne(Yii::$app->session->get("cid"));
+        $query = Persons::find();
         if ($clinic) {
             $query
                 ->from([
@@ -73,9 +74,17 @@ class PersonsController extends Controller
                 ]);
         }
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+        $persons = $query->all();
+        usort($persons, function (Persons $a, Persons $b) {
+            return $a->primarySpec > $b->primarySpec;
+        });
+
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $persons,
+
         ]);
+        $dataProvider->pagination->pageSize=count($persons);
+
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
