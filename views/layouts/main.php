@@ -10,12 +10,13 @@ use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
-use kartik\dropdown\DropdownX;
-use yii\bootstrap\Dropdown;
 use yii\bootstrap\ButtonDropdown;
-
+use app\models\Clinic;
 
 AppAsset::register($this);
+$clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
+
+
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -40,13 +41,13 @@ AppAsset::register($this);
                     <div class="head-name">
                         Медицинский центр<br>
                         &laquo;СТОЛИЧНАЯ ДИАГНОСТИКА&raquo;<br>
-                        <b>РУЗА</b>
+                        <?= $clinic ? "&nbsp;<strong>" . $clinic->city . "</strong>" : "" ?>
                     </div>
                 </a>
             </div>
-            <div class="col-sm-4 header-info">
-                <div class="col-lg-6 head-phone-number bordered">+7(800)123-45-67</div>
-                <div class="col-lg-6 bordered">
+            <div class="col-sm-4 flex flex-column header-info">
+                <div class="head-phone-number bordered">+7(800)123-45-67</div>
+                <div class="bordered">
                     <?php
 
                     function urlWithCID($cid)
@@ -62,21 +63,17 @@ AppAsset::register($this);
 
                     ?>
                     <?= ButtonDropdown::widget([
-                        'label' => 'Выберите клинику',
+                        'label' => ($clinic ? 'Сменить клинику' : 'Выберите клинику'),
                         'dropdown' => [
                             'items' => [
                                 ['label' => 'Все', 'url' => urlWithCID(0)],
-                                'Московская область',
+                                ['label' => 'Гагарин', 'url' => urlWithCID(5)],
                                 ['label' => 'Руза', 'url' => urlWithCID(2)],
                                 ['label' => 'Тучково', 'url' => urlWithCID(1)],
-                                '<li class="divider"></li>',
-                                'Брянская область',
-                                ['label' => 'Клинцы', 'url' => urlWithCID(6)],
-                                ['label' => 'Новозыбков', 'url' => urlWithCID(7)],
-                                ['label' => 'Климово', 'url' => urlWithCID(9)],
-                                ['label' => 'Почеп', 'url' => urlWithCID(8)],
-                                ['label' => 'Стародуб', 'url' => urlWithCID(4)],
                             ],
+                        ],
+                        'options' => [
+                            'class' => ($clinic ? "" : "btn-danger")
                         ]
                     ]);
                     ?>

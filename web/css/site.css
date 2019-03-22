@@ -74,6 +74,9 @@ header img {
     }
 }
 
+.header-info{
+    padding:3px;
+}
 .header-logo a {
     display: flex;
     color: white;
@@ -255,11 +258,14 @@ a.desc:after {
 }
 
 /* DEV элементы (удалить в продакшне)*/
-/*
-.head-phone-number{
-    opacity: .05;
+
+.header-a{
+    opacity: .2;
 }
-.header-logo img{
+.header-a img{
+    opacity: .5;
+}
+h1 {
     opacity: .05;
 }
 img{
@@ -268,4 +274,3 @@ img{
 a h4{
     opacity: .3;
 }
-*/

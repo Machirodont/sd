@@ -1,13 +1,13 @@
--- MySQL dump 10.13  Distrib 5.6.38, for Win32 (AMD64)
+-- MySQL dump 10.13  Distrib 8.0.12, for Win64 (x86_64)
 --
 -- Host: localhost    Database: yii
 -- ------------------------------------------------------
--- Server version	5.6.38
+-- Server version	8.0.12
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+ SET NAMES utf8mb4 ;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -21,7 +21,7 @@
 
 DROP TABLE IF EXISTS `sd_clinics`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_clinics` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `city` text NOT NULL COMMENT 'город',
@@ -40,7 +40,7 @@ CREATE TABLE `sd_clinics` (
 
 LOCK TABLES `sd_clinics` WRITE;
 /*!40000 ALTER TABLE `sd_clinics` DISABLE KEYS */;
-INSERT INTO `sd_clinics` (`id`, `city`, `region`, `address`, `phone`, `hash_id`) VALUES (1,'Тучково',NULL,NULL,NULL,'f041c4c2da484ea0aa5b7cc8d91dc798'),(2,'Руза',NULL,NULL,NULL,'5cc8fea2ed2f483282c9fdd2a4a84341'),(3,'Сафоново',NULL,NULL,NULL,'19d6da22f59a4d82b8840fc95db5c4e7'),(4,'Стародуб',NULL,NULL,NULL,'41ddca448e2d45b9ac99d6bcb551161e'),(5,'Гагарин',NULL,NULL,NULL,'1722cf1e95a345fc8863dfe6a48ac0d3'),(6,'Клинцы',NULL,NULL,NULL,'3e68757c2faa460f8f0410d4fc90ce05'),(7,'Новозыбков',NULL,NULL,NULL,'76563309d6244354b748057237bda61f'),(8,'Почеп',NULL,NULL,NULL,'2a85465c0d8d4b9b928646f91fd7ace5'),(9,'Климово',NULL,NULL,NULL,'268334bbd12e417ebc3947a94a9d4ba4');
+INSERT INTO `sd_clinics` (`id`, `city`, `region`, `address`, `phone`, `hash_id`) VALUES (1,'Тучково',NULL,NULL,'+7(800)123-45-11','f041c4c2da484ea0aa5b7cc8d91dc798'),(2,'Руза',NULL,NULL,'+7(800)123-45-22','5cc8fea2ed2f483282c9fdd2a4a84341'),(3,'Сафоново',NULL,NULL,'+7(800)123-45-33','19d6da22f59a4d82b8840fc95db5c4e7'),(4,'Стародуб',NULL,NULL,'+7(800)123-45-44','41ddca448e2d45b9ac99d6bcb551161e'),(5,'Гагарин',NULL,NULL,'+7(800)123-45-55','1722cf1e95a345fc8863dfe6a48ac0d3'),(6,'Клинцы',NULL,NULL,'+7(800)123-45-66','3e68757c2faa460f8f0410d4fc90ce05'),(7,'Новозыбков',NULL,NULL,'+7(800)123-45-77','76563309d6244354b748057237bda61f'),(8,'Почеп',NULL,NULL,'+7(800)123-45-88','2a85465c0d8d4b9b928646f91fd7ace5'),(9,'Климово',NULL,NULL,'+7(800)123-45-99','268334bbd12e417ebc3947a94a9d4ba4');
 /*!40000 ALTER TABLE `sd_clinics` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -50,7 +50,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_html_block`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_html_block` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `itemKey` int(11) NOT NULL,
@@ -77,7 +77,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_institutions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_institutions` (
   `institution_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` text COMMENT 'название заведения',
@@ -102,7 +102,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_pages`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_pages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` text,
@@ -128,7 +128,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_persons`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_persons` (
   `person_id` int(11) NOT NULL AUTO_INCREMENT,
   `firstname` text NOT NULL COMMENT 'Имя',
@@ -159,7 +159,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_redirect`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_redirect` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `from` text,
@@ -184,7 +184,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_shedule_assign`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_shedule_assign` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `personId` int(11) DEFAULT NULL,
@@ -209,7 +209,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_timeline_days`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_timeline_days` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `timelineId` int(11) NOT NULL DEFAULT '0',
@@ -237,7 +237,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_timelines`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_timelines` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `workplace_hash` text NOT NULL,
@@ -263,7 +263,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_traits`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_traits` (
   `trait_id` int(11) NOT NULL AUTO_INCREMENT,
   `person_id` int(11) NOT NULL DEFAULT '0' COMMENT 'врач',
@@ -295,7 +295,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_workplaces`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_workplaces` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `workplace_hash` text NOT NULL,
@@ -321,7 +321,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `z_schedule`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `z_schedule` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `hash` text NOT NULL,
@@ -351,7 +351,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `z_schedule_parsing`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `z_schedule_parsing` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `hash` text NOT NULL,
@@ -383,4 +383,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-19  8:30:41
+-- Dump completed on 2019-03-22 17:24:15
