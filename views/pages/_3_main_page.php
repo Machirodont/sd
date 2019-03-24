@@ -1,4 +1,3 @@
-<h1>Сеть медицинских центров <br>«Столичная диагностика»</h1>
 <div>
 
     <p>«Столичная диагностика» — это правильный диагноз и современный подход к лечению! С позиции доказательной
@@ -44,7 +43,7 @@
     <h2>АНАЛИЗЫ ВЫСОКОГО КАЧЕСТВА</h2>
 
 
-    <div>
+    <!--div>
         <div>
             <figure><img src="http://sdmed/wp-content/uploads/2014/03/хеликс-тест-системы-1024x732.jpg" alt=""
                          srcset="http://sd-med.ru/wp-content/uploads/2014/03/хеликс-тест-системы-1024x732.jpg 1024w, http://sd-med.ru/wp-content/uploads/2014/03/хеликс-тест-системы-300x214.jpg 300w, http://sd-med.ru/wp-content/uploads/2014/03/хеликс-тест-системы.jpg 1109w"
@@ -62,7 +61,7 @@
                          srcset="http://sd-med.ru/wp-content/uploads/2018/07/mg.png 604w, http://sd-med.ru/wp-content/uploads/2018/07/mg-300x83.png 300w"
                          sizes="(max-width: 465px) 100vw, 465px" width="465" height="129"></figure>
         </div>
-    </div>
+    </div-->
 
 
     <ul>

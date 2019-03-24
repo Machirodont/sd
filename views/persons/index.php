@@ -15,8 +15,7 @@ $this->params['breadcrumbs'][] = "Врачи";
 ?>
 <div class="persons-index">
 
-    <h1>«Столичная диагностика»<?= (is_object($clinic) ? " - " . $clinic->city : "") ?></h1>
-    <h2>Врачи</h2>
+    <h2>Врачи медицинского центра «Столичная диагностика»<?= (is_object($clinic) ? " - " . $clinic->city : "") ?></h2>
 
     <div style="display:flex; flex-wrap: wrap">
               <?php

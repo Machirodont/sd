@@ -3,6 +3,7 @@
 
 namespace app\components;
 
+use app\models\UrlTags;
 use Yii;
 use yii\db\Query;
 use yii\helpers\Url;
@@ -24,11 +25,15 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
     {
         $url = "/";
         if (isset($params['cid'])) {
-            $url .= "clinic_" . $params['cid'] . "/";
+            if ($tag = UrlTags::findOne(["param" => "cid", "value" => $params['cid']])) {
+                $url .= $tag->tag . "/";
+            } else {
+                $url .= "clinic_" . $params['cid'] . "/";
+            }
         }
 
         if ($route === 'clinic/index') {
-            $url = "clinics/";
+            $url .= "clinics/";
             return $url;
         }
 
@@ -38,9 +43,12 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
         }
 
         if ($route === 'persons/view') {
-            if (isset($params['id'])) {
+            if (!array_key_exists("id", $params)) return false;
+            if ($tag = UrlTags::findOne(["route" => $route, "param" => "id", "value" => $params['id']])) {
+                $url .= $tag->tag . "/";
+            } else {
                 $url .= "doctor_" . $params['id'] . '/';
-            } else return false;
+            }
             return $url;
         }
 
@@ -48,7 +56,8 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
             $url .= "doctors/";
             return $url;
         }
-        return false;  // данное правило не применимо
+
+        return $url;
     }
 
     /**
@@ -62,29 +71,34 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
         $pathInfo = $request->getPathInfo();
 
         //---- 301 редиректы
-        $redirects=(new Query())
+        $redirects = (new Query())
             ->select("*")
             ->from("sd_redirect")
             ->where(
-                "\"".htmlspecialchars($pathInfo)."\" LIKE CONCAT(\"%\",`from`, \"%\")"
+                "\"" . htmlspecialchars($pathInfo) . "\" LIKE CONCAT(\"%\",`from`, \"%\")"
             )
             ->all();
-        if(count($redirects)>0){
-            Yii::$app->response->redirect("/".$redirects[0]["to"], 301)->send();
+        if (count($redirects) > 0) {
+            Yii::$app->response->redirect("/" . $redirects[0]["to"], 301)->send();
             exit;
         }
         //--/- 301 редиректы
 
+
         $params = [];
-        $route = "";
+        $route = Yii::$app->defaultRoute;
         if (preg_match_all('/([^\\/]+)/', $pathInfo, $matches)) {
             foreach ($matches[1] as $part) {
+                $tag = UrlTags::findOne(["tag" => $part]);
+                if ($tag) {
+                    $params[$tag->param] = $tag->value;
+                    if ($tag->route) $route = $tag->route;
+                }
+
                 if (preg_match('/clinic_([0-9]+)/', $part, $matches)) {
                     $params["cid"] = $matches[1];
-                    Yii::$app->session->open();
-                    Yii::$app->session["cid"] = $params["cid"];
-                    if (!Yii::$app->session["cid"]) Yii::$app->session->remove("cid");
                 }
+
                 if ($part === "clinics") $route = "clinic/index";
                 if ($part === "contacts") $route = "clinic/contacts";
                 if ($part === "doctors") $route = "persons/index";
@@ -93,6 +107,15 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
                     $params["id"] = $matches[1];
                 }
             }
+            if (array_key_exists("cid", $params)) {
+                if ($params["cid"]) {
+                    Yii::$app->session->open();
+                    Yii::$app->session["cid"] = $params["cid"];
+                } else {
+                    Yii::$app->session->remove("cid");
+                }
+            }
+
             if ($route !== "") {
                 return [$route, $params];
             }

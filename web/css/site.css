@@ -19,7 +19,7 @@ body {
 }
 
 .wrap > .container {
-    padding: 10px 15px 20px;
+    padding: 5px 15px 5px;
 }
 
 header {
@@ -97,12 +97,12 @@ header img {
 }
 
 .navbar {
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
 .container.breadcrumb-container {
     font-size: 12px;
-    padding-top: 0px;
+    padding-top: 0;
 }
 
 .portrait img {
@@ -258,7 +258,7 @@ a.desc:after {
 }
 
 /* DEV элементы (удалить в продакшне)*/
-
+/*
 .header-a{
     opacity: .2;
 }
@@ -274,3 +274,4 @@ img{
 a h4{
     opacity: .3;
 }
+*/

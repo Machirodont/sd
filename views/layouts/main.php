@@ -35,19 +35,19 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
 <header class="header-a">
     <div class="container">
         <div class="row">
-            <div class="col-sm-8 header-logo bordered">
+            <div class="col-sm-8 header-logo">
                 <a href="/">
                     <img src="/images/logo100_0.jpg">
                     <div class="head-name">
-                        Медицинский центр<br>
+                        <?= $clinic ? "Медицинский центр" : "Сеть медицинских центров" ?><br>
                         &laquo;СТОЛИЧНАЯ ДИАГНОСТИКА&raquo;<br>
                         <?= $clinic ? "&nbsp;<strong>" . $clinic->city . "</strong>" : "" ?>
                     </div>
                 </a>
             </div>
             <div class="col-sm-4 flex flex-column header-info">
-                <div class="head-phone-number bordered">+7(800)123-45-67</div>
-                <div class="bordered">
+                <div class="head-phone-number"><?= $clinic ? $clinic->phone : "+7(915) 480-03-03" ?></div>
+                <div class="">
                     <?php
 
                     function urlWithCID($cid)
@@ -63,7 +63,7 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
 
                     ?>
                     <?= ButtonDropdown::widget([
-                        'label' => ($clinic ? 'Сменить клинику' : 'Выберите клинику'),
+                        'label' => ($clinic ? 'Выбрать другую клинику' : 'Выберите клинику'),
                         'dropdown' => [
                             'items' => [
                                 ['label' => 'Все', 'url' => urlWithCID(0)],
@@ -73,7 +73,7 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
                             ],
                         ],
                         'options' => [
-                            'class' => ($clinic ? "" : "btn-danger")
+                            'class' => ($clinic ? "btn-info" : "btn-danger")
                         ]
                     ]);
                     ?>
@@ -105,9 +105,13 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
+    </div>
+    <div class="container">
         <?= Alert::widget() ?>
         <?= $content ?>
     </div>
+
+
 </div>
 
 <footer class="footer">

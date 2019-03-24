@@ -19,7 +19,7 @@ class ClinicController extends \yii\web\Controller
     public function actionContacts()
     {
         $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
-        if (!$clinic) return $this->redirect(["/site/page", "id" => 2]);
+        if (!$clinic) return $this->redirect(["index", "id" => 2]);
 
         return $this->render('contacts', [
             'clinic' => $clinic,
