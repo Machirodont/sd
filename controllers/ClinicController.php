@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Clinic;
+use app\models\Pages;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
 
@@ -24,6 +25,23 @@ class ClinicController extends \yii\web\Controller
         return $this->render('contacts', [
             'clinic' => $clinic,
         ]);
+    }
+
+    public function actionCompany()
+    {
+        $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
+        if ($clinic->companyPage) {
+
+            $page = Pages::findOne($clinic->companyPage);
+            return $this->render('/site/page', [
+                'page' => $page,
+            ]);
+        }
+
+        return $this->render('contacts', [
+            'clinic' => $clinic,
+        ]);
+
     }
 
     protected function findModel($id)

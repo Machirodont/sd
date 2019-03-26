@@ -14,6 +14,7 @@ use app\models\Generated\ClinicsGenerated;
  * Class Clinic
  * @property array $htmlBlocks
  * @property string $htmlDescription
+ * @property int $companyPage
  *
  */
 class Clinic extends ClinicsGenerated

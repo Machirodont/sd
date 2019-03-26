@@ -87,15 +87,24 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
     <?php
     NavBar::begin([
         'options' => [
-            'class' => 'navbar',
+            'class' => 'navbar navbar-default',
         ],
     ]);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
+            [
+                'label' => 'Услуги',
+                'items' => [
+                    ['label' => 'Тест на отцовство', 'url' => ['/site/page', "id" => 6]],
+                    ['label' => 'Резус-конфликт: профилактика', 'url' => ['/site/page', "id" => 5]],
+                    ['label' => 'Раннее исследование генетического здоровья плода PrenaTest', 'url' => ['/site/page', "id" => 7]],
+                ]
+            ],
             ['label' => 'Сотрудники', 'url' => ['/persons/index', "cid" => Yii::$app->session->get("cid")]],
             ['label' => 'Клиники', 'url' => ['/clinic/index', "cid" => Yii::$app->session->get("cid")]],
             ['label' => 'Контакты', 'url' => ['/clinic/contacts', "cid" => Yii::$app->session->get("cid")]],
+            ['label' => 'Юридическая информация', 'url' => ['/clinic/company', "cid" => Yii::$app->session->get("cid")]],
         ],
     ]);
     NavBar::end();
@@ -114,12 +123,10 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
 
 </div>
 
-<footer class="footer">
+<footer class="footer text-center">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
-
-        <p class="pull-right"><?= Yii::powered() ?></p>
-    </div>
+        «СТОЛИЧНАЯ ДИАГНОСТИКА» - сеть медицинских центров. &copy; <?= date("Y") ?>
+       </div>
 </footer>
 
 <?php $this->endBody() ?>
