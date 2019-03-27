@@ -119,6 +119,25 @@ class Persons extends PersonsGenerated
         return "";
     }
 
+    public function getWorkExperiences()
+    {
+        $exp = [];
+        if (isset($this->traits["Основное место работы"]) && is_array($this->traits["Основное место работы"])) {
+            foreach ($this->traits["Основное место работы"] as $trait) {
+                /**@var $trait Traits */
+                $expirienceDescription = ($trait->description) ? $trait->description : "Специалист";
+                if ($trait->institution) {
+                    $expirienceDescription .= ", ";
+                    $expirienceDescription .= ($trait->institution->shortname)
+                        ? $trait->institution->shortname . " (" . $trait->institution->name . ")"
+                        : $trait->institution->name;
+                }
+                $exp[]=$expirienceDescription;
+            }
+        }
+        return $exp;
+    }
+
     /**
      * @param $sheduleHash
      * @return null|Persons
@@ -135,5 +154,12 @@ class Persons extends PersonsGenerated
             ->all();
         if (count($res) === 1) return $res[0];
         return null;
+    }
+
+    public function getYearsWorkString()
+    {
+        $word = ($this->years_work !== 11 && $this->years_work % 10 === 1) ? "года" : "лет";
+        return "более " . $this->years_work . " " . $word;
+
     }
 }

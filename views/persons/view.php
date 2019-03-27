@@ -42,6 +42,19 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                     Образование: <?= $model->education0->name ?>
                 </p>
             <?php endif; ?>
+
+            <p>
+            <?php
+            echo implode("<br>", $model->workExperiences);
+            ?>
+            </p>
+
+
+            <?php if (!is_null($model->years_work)): ?>
+                <p>
+                    Имеет <?= $model->yearsWorkString ?> опыта.
+                </p>
+            <?php endif; ?>
             <?php
             if (count($model->clinics) > 0) {
                 echo "Ведет прием в отделениях: ";

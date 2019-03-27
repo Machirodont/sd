@@ -1,3 +1,4 @@
+<h1>Подготовка к сдаче анализов</h1>
 <p><strong>Процедурный кабинет работает Ежедневно с 8 до 15</strong><span  >&nbsp;</span></p>
 <p><strong>Анализ</strong><strong>&nbsp;крови:</strong></p>
 <ul>
