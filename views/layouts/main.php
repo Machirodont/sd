@@ -90,23 +90,17 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
             'class' => 'navbar navbar-default',
         ],
     ]);
+    $pages=\app\models\Pages::find()->where("id > 4")->orderBy("title")->all();
+    $pagesItems=[];
+    foreach ($pages as $page){
+        $pagesItems[]=["label"=>$page->title, "url"=>  ['/site/page', "id" => $page->id]];
+    }
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             [
                 'label' => 'Услуги',
-                'items' => [
-                    ['label' => 'Тест на отцовство', 'url' => ['/site/page', "id" => 6]],
-                    ['label' => 'Резус-конфликт: профилактика', 'url' => ['/site/page', "id" => 5]],
-                    ['label' => 'Раннее исследование генетического здоровья плода PrenaTest', 'url' => ['/site/page', "id" => 7]],
-                    ['label' => 'Определение пола ребенка по анализу крови матери', 'url' => ['/site/page', "id" => 8]],
-                    ['label' => 'Лазерная медицина. ВЛОК.', 'url' => ['/site/page', "id" => 9]],
-                    ['label' => 'Пренатальный генетический тест', 'url' => ['/site/page', "id" => 10]],
-                    ['label' => 'Холтер. ЭКГ. ЭЭГ.', 'url' => ['/site/page', "id" => 11]],
-                    ['label' => 'Электрокардиограмма (ЭКГ)', 'url' => ['/site/page', "id" => 12]],
-                    ['label' => 'Подготовка к УЗИ', 'url' => ['/site/page', "id" => 13]],
-                    ['label' => 'Подготовка к анализам', 'url' => ['/site/page', "id" => 14]],
-                ]
+                'items' => $pagesItems
             ],
             ['label' => 'Сотрудники', 'url' => ['/persons/index', "cid" => Yii::$app->session->get("cid")]],
             ['label' => 'Клиники', 'url' => ['/clinic/index', "cid" => Yii::$app->session->get("cid")]],

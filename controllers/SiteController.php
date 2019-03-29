@@ -228,7 +228,7 @@ class SiteController extends Controller
     public function actionParce()
     {
 
-        $s = json_decode(file_get_contents("r1.json"));
+        $s = json_decode(file_get_contents("../data/schedule.json"));
         $r = "<table>";
         foreach ($s->subdivisions as $subdiv_hash => $subdiv) {
             foreach ($subdiv->workplaces as $workplace_hash => $workplace) {
