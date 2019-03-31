@@ -2,13 +2,16 @@
 
 namespace app\controllers;
 
+use app\helpers\Extra;
 use app\models\Pages;
 use app\models\Persons;
 use app\models\TimelineDays;
 use app\models\TimeLines;
 use app\models\Workplaces;
 use Yii;
+use yii\db\Query;
 use yii\filters\AccessControl;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
@@ -115,6 +118,10 @@ class SiteController extends Controller
         ]);
     }
 
+    public function actionTest()
+    {
+//        Extra::socketAsyncCall(["/site/parse"]);
+    }
 
     public function actionCkeditor_image_upload()
     {
@@ -171,6 +178,59 @@ class SiteController extends Controller
         return json_encode($f);
     }
 
+    public function actionLoadPrice()
+    {
+        $file_path = "gz_tmp.gz";
+        $time_file = "load_price_time.txt";
+        $status = 0;
+        $last_load_time = intval(file_get_contents($time_file));
+        if ((time() - $last_load_time) > (60 * 60 * 24)) {
+            echo "Пытаюсь грузить<br>";
+            $c = curl_init();
+            curl_setopt($c, CURLOPT_URL, 'https://selenda24.ru/npcud/api.php?cmd=get_services_all&key=f611d62ad56645d4bf4a897a799ef7f6');
+            curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($c, CURLOPT_HEADER, true);
+            curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
+            // curl_setopt($c, CURLOPT_SSLVERSION, 3);
+            $result = curl_exec($c);
+            $status = curl_getinfo($c, CURLINFO_HTTP_CODE);
+            $headerSize = curl_getinfo($c, CURLINFO_HEADER_SIZE);
+            curl_close($c);
+        } else {
+            echo "Не время еще";
+            exit;
+        }
+        if ($status == 200) {
+            $content_gz = substr($result, $headerSize);
+            $f = fopen($file_path, 'w');
+            fwrite($f, $content_gz);
+            fclose($f);
+            file_put_contents($time_file, time());
+        } else {
+            echo "Ошибка чет " . $status;
+            exit;
+        }
+        echo "Все вроде ок";
+        exit;
+    }
+
+    public function actionParsePrice()
+    {
+        $zp = gzopen("gz_tmp.gz", "r");
+        $data_links = gzread($zp, 10000000);
+        gzclose($zp);
+        $arr = json_decode($data_links, true);
+        for ($i = 0; $i < count($arr); $i++) {
+            $groups = "";
+            echo $arr[$i]["name"]."<br>";
+            for ($i1 = 0; $i1 < count($arr[$i]["group"]); $i1++) {
+                $groups .= $arr[$i]["group"][$i1] . "; ";
+            }
+        }
+        exit;
+    }
+
+
     public function actionLoadSchedule($code)
     {
         function writeLog($text, $fName = "error_log.txt")
@@ -216,19 +276,33 @@ class SiteController extends Controller
             return 'FALSE';
         }
 
-        if (file_exists("../data/schedule.json")) {
-            rename("../data/schedule.json", "../data/schedule_" . date("Y-m-d-H-j-s") . ".json");
+        $fName = "schedule_" . date("Y-m-d-H-j-s") . ".json";
+        $fn_suffix = 1;
+        while (file_exists("../data/" . $fName)) {
+            $fName = "schedule" . $fn_suffix . "_" . date("Y-m-d-H-j-s") . ".json";
+            $fn_suffix++;
         }
-        file_put_contents("../data/schedule.json", $postData['json']);
+
+        file_put_contents("../data/" . $fName, $postData['json']);
+        Yii::$app->db->createCommand("INSERT INTO sd_loaded_schedules SET fileName=\"" . $fName . "\"")->execute();
 
         //Обрабока данных
-        return 'TRUE ';
+        return 'TRUE';
     }
 
-    public function actionParce()
+    public function actionScheduleParse()
     {
+        $t = microtime(TRUE);
+        $files = (new Query())->select("fileName")
+            ->from("sd_loaded_schedules")
+            ->where(["parsed" => 0])
+            ->all();
+        if (count($files) === 0) return "Парсить нечего";
 
-        $s = json_decode(file_get_contents("../data/schedule.json"));
+        $fName = $files[0]["fileName"];
+
+        if (!file_exists("../data/" . $fName)) return "Ошибка файла";
+        $s = json_decode(file_get_contents("../data/" . $fName));
         $r = "<table>";
         foreach ($s->subdivisions as $subdiv_hash => $subdiv) {
             foreach ($subdiv->workplaces as $workplace_hash => $workplace) {
@@ -286,6 +360,7 @@ EOT;
             }
         }
         $r .= "</table>";
+        $r .= "<br>Time: " . (microtime(true) - $t);
         return $r;
     }
 

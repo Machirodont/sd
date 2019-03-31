@@ -102,7 +102,7 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
                 'label' => 'Услуги',
                 'items' => $pagesItems
             ],
-            ['label' => 'Сотрудники', 'url' => ['/persons/index', "cid" => Yii::$app->session->get("cid")]],
+            ['label' => 'Специалисты', 'url' => ['/persons/index', "cid" => Yii::$app->session->get("cid")]],
             ['label' => 'Клиники', 'url' => ['/clinic/index', "cid" => Yii::$app->session->get("cid")]],
             ['label' => 'Контакты', 'url' => ['/clinic/contacts', "cid" => Yii::$app->session->get("cid")]],
             ['label' => 'Юридическая информация', 'url' => ['/clinic/company', "cid" => Yii::$app->session->get("cid")]],

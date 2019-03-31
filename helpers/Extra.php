@@ -3,6 +3,8 @@
 
 namespace app\helpers;
 
+use yii\helpers\Url;
+
 
 class Extra
 {
@@ -54,6 +56,24 @@ class Extra
             return $a[$field] > $b[$field];
         });
         return $sorted;
+    }
+
+    /**
+     * @param $route array
+     */
+    public static function socketAsyncCall($route)
+    {
+        $parts = parse_url(Url::toRoute($route, true));
+
+        if (!$fp = fsockopen($parts['host'], isset($parts['port']) ? $parts['port'] : 80)) {
+            return false;
+        }
+
+        fwrite($fp, "GET " . (!empty($parts['path']) ? $parts['path'] : '/') . " HTTP/1.1\r\n");
+        fwrite($fp, "Host: " . $parts['host'] . "\r\n");
+        fwrite($fp, "Connection: Close\r\n\r\n");
+        fclose($fp);
+        return true;
     }
 
 }

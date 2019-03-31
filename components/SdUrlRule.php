@@ -72,7 +72,7 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
             $url .= "doctors/";
             return $url;
         }
-        return $url;
+        return false;
     }
 
     /**
@@ -102,6 +102,7 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
 
         $params = [];
         $route = Yii::$app->defaultRoute;
+        $route="";
         if (preg_match_all('/([^\\/]+)/', $pathInfo, $matches)) {
             foreach ($matches[1] as $part) {
                 $tag = UrlTags::findOne(["tag" => $part]);
