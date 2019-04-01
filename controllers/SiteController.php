@@ -5,6 +5,8 @@ namespace app\controllers;
 use app\helpers\Extra;
 use app\models\Pages;
 use app\models\Persons;
+use app\models\PriceGroup;
+use app\models\PriceItems;
 use app\models\TimelineDays;
 use app\models\TimeLines;
 use app\models\Workplaces;
@@ -216,22 +218,15 @@ class SiteController extends Controller
 
     public function actionParsePrice()
     {
-        $zp = gzopen("gz_tmp.gz", "r");
-        $data_links = gzread($zp, 10000000);
-        gzclose($zp);
-        $arr = json_decode($data_links, true);
-        for ($i = 0; $i < count($arr); $i++) {
-            $groups = "";
-            echo $arr[$i]["name"]."<br>";
-            for ($i1 = 0; $i1 < count($arr[$i]["group"]); $i1++) {
-                $groups .= $arr[$i]["group"][$i1] . "; ";
-            }
-        }
+        echo "start";
+        shell_exec("php ../yii parse/price");
+        echo "end";
         exit;
     }
 
 
-    public function actionLoadSchedule($code)
+    public
+    function actionLoadSchedule($code)
     {
         function writeLog($text, $fName = "error_log.txt")
         {
@@ -290,7 +285,8 @@ class SiteController extends Controller
         return 'TRUE';
     }
 
-    public function actionScheduleParse()
+    public
+    function actionScheduleParse()
     {
         $t = microtime(TRUE);
         $files = (new Query())->select("fileName")

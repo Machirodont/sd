@@ -67,9 +67,20 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
             return $url;
         }
 
+        if ($route === 'services/index') {
+            $url.="services/";
+            if (array_key_exists("id", $params)){
+                $url.=$params["id"]."-service/";
+            }
+            return $url;
+        }
 
         if ($route === 'persons/index') {
             $url .= "doctors/";
+            return $url;
+        }
+
+        if($url!=="/"){
             return $url;
         }
         return false;
@@ -115,10 +126,17 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
                     $params["cid"] = $matches[1];
                 }
 
+                if($route = "services/index"){
+                    if (preg_match('/^([0-9]+)/', $part, $matches)) {
+                        $params["id"] = $matches[1];
+                    }
+                }
+
                 if ($part === "clinics") $route = "clinic/index";
                 if ($part === "contacts") $route = "clinic/contacts";
                 if ($part === "company") $route = "clinic/company";
                 if ($part === "doctors") $route = "persons/index";
+                if ($part === "services") $route = "services/index";
                 if (preg_match('/doctor_([0-9]+)/', $part, $matches)) {
                     $route = "persons/view";
                     $params["id"] = $matches[1];
