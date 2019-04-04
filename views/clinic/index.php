@@ -12,7 +12,11 @@ $this->title = "Клиники";
 <?php
 foreach ($clinics as $clinic){
    /* @var $clinic \app\models\Clinic */
-    echo "<li>".Html::a($clinic->city, ["/clinic/contacts", "cid"=>$clinic->id])."</li>";
+
+    echo "<li><h3>Медицинский центр ".$clinic->in."</h3><ul>";
+    echo "<li>".Html::a("Контактная информация", ["/clinic/contacts", "cid"=>$clinic->id])."</li>";
+    echo "<li>".Html::a("Юридическая информация", ["/clinic/company", "cid"=>$clinic->id])."</li>";
+    echo "</ul></li>";
 }
 ?>
 </ul>

@@ -72,18 +72,18 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
             <hr>
             <?php
             //Календарь приема
-            if ($model->timeLine) {
+            if ($model->activeDays) {
                 echo $this->render('_calendar', [
                     "startDay" => date("Y-m-d"),
                     "period" => 7 * 3,
-                    "activeDays" => $model->timeLine->activeDays
+                    "activeDays" => $model->activeDays
                 ]);
             }
             ?>
 
             <?php
-            if (false && $model->timeLine && is_array($model->timeLine->days)) {
-                foreach ($model->timeLine->days as $day) {
+            if (false && $model->activeDays && is_array($model->activeDays)) {
+                foreach ($model->activeDays as $day) {
                     /**@var $day \app\models\TimelineDays */
                     ?>
                     <tr class="<?= $day->is_active ? "success" : "" ?>">

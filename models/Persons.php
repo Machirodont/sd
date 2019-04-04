@@ -15,7 +15,8 @@ use yii\db\Query;
  * @property string $portraitUrl url адрес фотографии
  * @property Clinic[] $clinics Клиники
  * @property Clinic $currentClinic Выбранная клиника
- * @property TimeLines $timeLine Таймлайн выбранной клиники
+ * @property TimeLines[] $timeLines Таймлайны выбранной клиники
+ * @property TimelineDays[] $activeDays Дни работы в выбранной клинике (для всех Workplaces)
  * @property string $sheduleHash Хэш-ID расписания для выбранной клиники
  * @property array $htmlBlocks
  * @property string $htmlDescription
@@ -51,12 +52,12 @@ class Persons extends PersonsGenerated
     }
 
     /**
-     * @return TimeLines
+     * @return TimeLines[]
      */
-    public function getTimeLine()
+    public function getTimeLines()
     {
         if (!$this->currentClinic instanceof Clinic) return null;
-        $res = TimeLines::find()
+        return TimeLines::find()
             ->select("tl.*")
             ->from(["tl" => "sd_timelines"])
             ->leftJoin(["w" => "sd_workplaces"], "tl.workplace_hash = w.workplace_hash")
@@ -65,8 +66,19 @@ class Persons extends PersonsGenerated
                 "tl.person_id" => $this->person_id
             ])
             ->all();
-        if (count($res) === 1) return $res[0];
-        return null;
+        //У одного человека может быть несколько Workplace в одном подразделении
+    }
+
+
+    public function getActiveDays()
+    {
+        if (!$this->currentClinic instanceof Clinic) return null;
+        $timelines = $this->timeLines;
+        $days=[];
+        foreach ($timelines as $timeline) {
+            $days=array_merge($days,$timeline->activeDays);
+        }
+        return $days;
     }
 
     /**
@@ -132,7 +144,7 @@ class Persons extends PersonsGenerated
                         ? $trait->institution->shortname . " (" . $trait->institution->name . ")"
                         : $trait->institution->name;
                 }
-                $exp[]=$expirienceDescription;
+                $exp[] = $expirienceDescription;
             }
         }
         return $exp;

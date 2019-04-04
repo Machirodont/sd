@@ -9,9 +9,15 @@
 namespace app\commands;
 
 
+use app\models\Clinic;
 use yii\console\Controller;
 use app\models\PriceGroup;
 use app\models\PriceItems;
+use yii\db\Query;
+use app\models\Workplaces;
+use app\models\Persons;
+use app\models\TimeLines;
+use app\models\TimelineDays;
 
 class ParseController extends Controller
 {
@@ -100,8 +106,111 @@ class ParseController extends Controller
 
     public function actionIndexGroups()
     {
-        $groups=PriceGroup::find()->all();
-        
+        $groups = PriceGroup::find()->all();
+
+    }
+
+    public function actionScheduleList()
+    {
+        $files = glob("../data/schedule_*.json");
+        foreach ($files as $file) {
+            echo basename($file) . "  >  " . date("Y-m-d H-i-s", filemtime($file));
+            echo "\n";
+            //Yii::$app->db->createCommand("INSERT INTO sd_loaded_schedules SET fileName=\"" . basename($file) . "\",  loadTime=\"" . date("Y-m-d H-i-s", filemtime($file)) . "\" ")->execute();
+        }
+
+    }
+
+    public function actionSchedules()
+    {
+        $files = (new Query())->select("fileName")
+            ->from("sd_loaded_schedules")
+            ->where(["parsed" => 0])
+            ->orderBy(["loadTime" => SORT_ASC])
+            ->all();
+        if (count($files) === 0) return "Парсить нечего";
+
+        foreach ($files as $f) {
+            $fName = $f["fileName"];
+
+            echo $fName . "\n";
+            if (!file_exists("../data/" . $fName)) return "Ошибка файла";
+            $s = json_decode(file_get_contents("../data/" . $fName));
+
+            foreach ($s->subdivisions as $subdiv_hash => $subdiv) {
+
+                $clinic = Clinic::findOne(["hash_id" => $subdiv_hash]);
+                if (!$clinic) echo "Неизвестная клиника " . $subdiv->name . " " . $subdiv_hash . "\n";
+
+                foreach ($subdiv->workplaces as $workplace_hash => $workplace) {
+
+                    //Добавляем в sd_workplaces новый Workplace, если его там еще нет
+                    if (!Workplaces::findByHash($workplace_hash)) {
+                        $w = new Workplaces([
+                            "workplace_hash" => $workplace_hash,
+                            "clinic_hash" => $subdiv_hash
+                        ]);
+                        $w->save();
+                        echo "new Workplace " . $workplace->name . "\n";
+                        //ToDo - проверка и реакция, если сохранение не прошло
+                    }
+
+                    foreach ($workplace->schedules as $schedule_hash => $schedule) {
+                        $person = Persons::findBySheduleHash($schedule_hash);
+
+                        if (!$person) { //Сопоставление персон из базы и из выгрузки по ФИО. (основное сопоставление идет по sd_shedule_assign)
+                            $match = [];
+                            $personName = $schedule->name;
+                            if (preg_match("|(\S+?)\s|", $personName, $match) !== false) {
+                                if (mb_strlen($personName) > mb_strlen($match[0]) + 2) {
+                                    $firstNameStart = mb_substr($personName, mb_strlen($match[0]), 1);
+                                    $patronymStart = mb_substr($personName, mb_strlen($match[0]) + 2, 1);
+                                    $r = Persons::find()->where(["and",
+                                        ["lastname" => $match[1]],
+                                        ["like", "firstname", $firstNameStart],
+                                        ["like", "patronymic", $patronymStart],
+                                    ])->all();
+                                    if (count($r) === 1) $person = $r[0];
+                                    if ($person) {
+                                        echo $schedule->name . " -> " . $person->fullname . "\n";
+                                        \Yii::$app->db->createCommand("INSERT INTO sd_shedule_assign SET personId=" . $person->person_id . ", shedule_hash=\"" . $schedule_hash . "\" ")->execute();
+                                        $person = Persons::findBySheduleHash($schedule_hash);
+                                    }
+                                }
+                            }
+                        }
+
+                        if ($person) {
+                            $person_id = $person->person_id;
+
+                            //Добавляем в sd_timelines новый Timeline, если его там еще нет
+                            $tl = TimeLines::findOne(["workplace_hash" => $workplace_hash, "person_id" => $person_id]);
+                            if (!$tl) {
+                                $tl = new TimeLines(["workplace_hash" => $workplace_hash, "person_id" => $person_id]);
+                                $tl->save();
+                                echo "new Timeline " . $workplace->name . " / " . $person_id . "\n";
+                                //ToDo - проверка и реакция, если сохранение не прошло
+                            }
+
+                            foreach ($schedule->days_active as $date => $day_is_active) {
+                                $d = TimelineDays::findOne(["timelineId" => $tl->id, "day" => $date]);
+                                if (!$d) {
+                                    $d = new TimelineDays(["timelineId" => $tl->id, "day" => $date]);
+                                }
+                                $d->is_active = intval($day_is_active);
+                                $d->save();
+                                echo "day " . $date . " - " . ($day_is_active ? "+" : " ") . " - " . $schedule->name . " / " . $subdiv->name . ";\n";
+                                //ToDo - проверка и реакция, если сохранение не прошло
+                            }
+                        } else {
+                            echo "Отсутствует соответствие: " . $schedule->name . " / " . $schedule_hash . " (" . $subdiv->name . ")\n";
+                        }
+                    }
+                }
+            }
+            \Yii::$app->db->createCommand("UPDATE sd_loaded_schedules SET  parsed=1 WHERE fileName=\"" . $fName . "\";")->execute();
+        }
+        echo "END\n";
     }
 
 }

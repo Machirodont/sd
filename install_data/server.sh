@@ -38,3 +38,5 @@ EXIT;
 
 iptables -A INPUT -p tcp --dport 3306 -j ACCEPT
 
+#Для включения ssl в apache
+a2enmod ssl 

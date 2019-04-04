@@ -62,15 +62,15 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
             if ($tag = UrlTags::findOne(["route" => $route, "param" => "id", "value" => $params['id']])) {
                 $url .= $tag->tag . "/";
             } else {
-                $url .= "page_".$params["id"]. "/";
+                $url .= "page_" . $params["id"] . "/";
             }
             return $url;
         }
 
         if ($route === 'services/index') {
-            $url.="services/";
-            if (array_key_exists("id", $params)){
-                $url.=$params["id"]."-service/";
+            $url .= "services/";
+            if (array_key_exists("id", $params)) {
+                $url .= $params["id"] . "-service/";
             }
             return $url;
         }
@@ -80,7 +80,7 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
             return $url;
         }
 
-        if($url!=="/"){
+        if ($url !== "/") {
             return $url;
         }
         return false;
@@ -113,7 +113,11 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
 
         $params = [];
         $route = Yii::$app->defaultRoute;
-        $route="";
+        $route = "";
+
+        if ($pathInfo === "/" || $pathInfo === "") {
+            return ["/site/main-page", []];
+        }
         if (preg_match_all('/([^\\/]+)/', $pathInfo, $matches)) {
             foreach ($matches[1] as $part) {
                 $tag = UrlTags::findOne(["tag" => $part]);
@@ -126,7 +130,7 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
                     $params["cid"] = $matches[1];
                 }
 
-                if($route = "services/index"){
+                if ($route === "services/index") {
                     if (preg_match('/^([0-9]+)/', $part, $matches)) {
                         $params["id"] = $matches[1];
                     }
@@ -146,7 +150,6 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
                     $params["id"] = $matches[1];
                 }
                 if ($part === "parce") $route = "site/parce";
-
             }
             if (array_key_exists("cid", $params)) {
                 if ($params["cid"]) {
@@ -161,6 +164,7 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
                 return [$route, $params];
             }
         }
+
         return false;  // данное правило не применимо
     }
 

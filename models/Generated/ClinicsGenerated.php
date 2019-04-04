@@ -9,6 +9,7 @@ use Yii;
  *
  * @property int $id
  * @property string $city город
+ * @property string $in "в городе"
  * @property string $region район
  * @property string $address адрес клиники
  * @property string $phone телефон клиники
@@ -31,7 +32,7 @@ class ClinicsGenerated extends \yii\db\ActiveRecord
     {
         return [
             [['city'], 'required'],
-            [['city', 'region', 'address', 'phone', 'hash_id'], 'string'],
+            [['city', 'region', 'in', 'address', 'phone', 'hash_id'], 'string'],
         ];
     }
 

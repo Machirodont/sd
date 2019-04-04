@@ -9,6 +9,7 @@ html,
 body {
     height: 100%;
     color: rgb(150, 150, 150);
+    font-size: 16px;
 }
 
 .wrap {
@@ -29,10 +30,11 @@ header {
 
 header img {
     max-height: 100px;
-    padding-right:10px;
+    padding-right: 10px;
 }
-.bordered{
-    border:solid 1px red;
+
+.bordered {
+    border: solid 1px red;
 }
 
 .header-logo {
@@ -43,10 +45,9 @@ header img {
     padding-bottom: 4px;
 }
 
-
 @media (max-width: 1000px) {
     .header-logo {
-        
+
         font-size: 20px;
     }
 
@@ -54,6 +55,7 @@ header img {
         max-height: 55px;
     }
 }
+
 @media (max-width: 580px) {
     .header-logo {
         font-size: 16px;
@@ -74,9 +76,10 @@ header img {
     }
 }
 
-.header-info{
-    padding:3px;
+.header-info {
+    padding: 3px;
 }
+
 .header-logo a {
     display: flex;
     color: white;
@@ -227,7 +230,6 @@ a.desc:after {
 }
 
 .person_card:hover {
-
     box-shadow: 3px 3px 5px 1px #ace1ff;
 }
 
@@ -257,20 +259,101 @@ a.desc:after {
     }
 }
 
+/* Карточка врача в \views\persons\_card_ext.php*/
+.ext_person_card {
+    width: 100%;
+    padding: 4px;
+}
+
+.ext_person_card img {
+    height: 100px;
+    padding: 4px;
+}
+
+.ext_person_card .person_card_content {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
+
+@media (max-width: 992px) {
+    section.person_row .ext_person_card:nth-child(3){
+        display: none;
+    }
+}
+@media (max-width: 650px) {
+    section.person_row .ext_person_card:nth-child(3){
+        display: block;
+    }
+    section.person_row {
+        flex-direction: column;
+    }
+}
+
+
+/* Главная страница */
+div.mainpage {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    width: 100%;
+}
+
+.mainpage section {
+    margin: 10px;
+    padding: 5px 15px;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-shadow: 3px 3px 5px 3px #E0F7FF;
+    width: 100%;
+}
+
+section.person_row {
+    display: flex;
+    justify-content: center;
+    flex: 1; /* Равная ширина блоков*/
+}
+
+.mainpage .first {
+    box-shadow: none;
+}
+
+@media (max-width: 768px) {
+    div.mainpage {
+        flex-direction: column;
+    }
+
+    .mainpage section {
+        width: 100%;
+    }
+}
+
+
+
+
 /* DEV элементы (удалить в продакшне)*/
 
-.header-a{
+.header-a {
     opacity: .2;
 }
-.header-a img{
+
+.header-a img {
     opacity: .5;
 }
+
 h1 {
     opacity: .05;
 }
-img{
-    opacity: .05;
+
+img {
+    opacity: .5;
 }
-a h4{
+
+a h4 {
+    opacity: .3;
+}
+
+section {
     opacity: .3;
 }

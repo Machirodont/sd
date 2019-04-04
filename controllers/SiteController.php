@@ -122,7 +122,36 @@ class SiteController extends Controller
 
     public function actionTest()
     {
-//        Extra::socketAsyncCall(["/site/parse"]);
+        Extra::socketAsyncCall(["/site/schedule-parse"]);
+    }
+
+    public function actionMainPage()
+    {
+        $allPersons = Persons::find()->
+        select("p.*")->distinct()
+            ->from(["p" => "sd_persons"])
+            ->leftJoin(["t" => "sd_traits"], "p.person_id = t.person_id")
+            ->where(["and",
+                ["not", ["p.education" => null]],
+                ["t.title" => "Основное место работы"]
+
+            ])->all();
+        $persons = [];
+        if (count($allPersons) <= 3) {
+            $persons = $allPersons;
+        } else {
+            $loopGuard = 0;
+            while (count($persons) < 3 && $loopGuard < 1000) {
+                $addedPerson = $allPersons[mt_rand(0, count($allPersons) - 1)];
+                if (!in_array($addedPerson, $persons)) {
+                    $persons[] = $addedPerson;
+                }
+                $loopGuard++;
+            }
+        }
+        return $this->render('main-page', [
+            "persons" => $persons,
+        ]);
     }
 
     public function actionCkeditor_image_upload()
@@ -216,6 +245,7 @@ class SiteController extends Controller
         exit;
     }
 
+
     public function actionParsePrice()
     {
         echo "start";
@@ -225,8 +255,7 @@ class SiteController extends Controller
     }
 
 
-    public
-    function actionLoadSchedule($code)
+    public function actionLoadSchedule($code)
     {
         function writeLog($text, $fName = "error_log.txt")
         {
@@ -279,85 +308,22 @@ class SiteController extends Controller
         }
 
         file_put_contents("../data/" . $fName, $postData['json']);
-        Yii::$app->db->createCommand("INSERT INTO sd_loaded_schedules SET fileName=\"" . $fName . "\"")->execute();
+        Yii::$app->db->createCommand("INSERT INTO sd_loaded_schedules SET fileName=\"" . $fName . "\",  loadTime=\"" . date("Y-m-d-H-j-s") . "\"")->execute();
 
-        //Обрабока данных
+        //Обрабока данных - дергаем через сокет скрипт, который дергает команду Yii (потому что скрипт сдохнет через 30 секунд, а команда отработает сколько надо)
+        Extra::socketAsyncCall(["/site/schedule-parse"]);
+
         return 'TRUE';
     }
 
-    public
-    function actionScheduleParse()
+
+
+    public function actionScheduleParse()
     {
-        $t = microtime(TRUE);
-        $files = (new Query())->select("fileName")
-            ->from("sd_loaded_schedules")
-            ->where(["parsed" => 0])
-            ->all();
-        if (count($files) === 0) return "Парсить нечего";
-
-        $fName = $files[0]["fileName"];
-
-        if (!file_exists("../data/" . $fName)) return "Ошибка файла";
-        $s = json_decode(file_get_contents("../data/" . $fName));
-        $r = "<table>";
-        foreach ($s->subdivisions as $subdiv_hash => $subdiv) {
-            foreach ($subdiv->workplaces as $workplace_hash => $workplace) {
-
-                //Добавляем в sd_workplaces новый Workplace, если его там еще нет
-                if (!Workplaces::findByHash($workplace_hash)) {
-                    $w = new Workplaces([
-                        "workplace_hash" => $workplace_hash,
-                        "clinic_hash" => $subdiv_hash
-                    ]);
-                    $w->save();
-                    //ToDo - проверка и реакция, если сохранение не прошло
-                }
-
-                foreach ($workplace->schedules as $schedule_hash => $schedule) {
-                    $person = Persons::findBySheduleHash($schedule_hash);
-                    $days = "";
-                    if ($person) {
-                        $person_id = $person->person_id;
-
-                        //Добавляем в sd_timelines новый Timeline, если его там еще нет
-                        $tl = TimeLines::findOne(["workplace_hash" => $workplace_hash, "person_id" => $person_id]);
-                        if (!$tl) {
-                            $tl = new TimeLines(["workplace_hash" => $workplace_hash, "person_id" => $person_id]);
-                            $tl->save();
-                            //ToDo - проверка и реакция, если сохранение не прошло
-                        }
-
-                        foreach ($schedule->days_active as $date => $day_is_active) {
-                            $days .= $date . " : " . $day_is_active . "<br>";
-                            $d = TimelineDays::findOne(["timelineId" => $tl->id, "day" => $date]);
-                            if (!$d) {
-                                $d = new TimelineDays(["timelineId" => $tl->id, "day" => $date]);
-                            }
-                            $d->is_active = intval($day_is_active);
-                            $d->save();
-                            //ToDo - проверка и реакция, если сохранение не прошло
-                        }
-                    }
-
-                    $color = $person ? "palegreen" : "#ffd1c6";
-
-                    $r .= <<<EOT
-<tr>
-<td> $subdiv_hash </td>
-<td> $subdiv->name </td>
-<td> $workplace_hash </td>
-<td> $workplace->name </td>
-<td style="background-color: $color;"> $schedule_hash </td>
-<td> $schedule->name </td>
-<td>$days </td>
-</tr>
-EOT;
-                }
-            }
-        }
-        $r .= "</table>";
-        $r .= "<br>Time: " . (microtime(true) - $t);
-        return $r;
+        echo "start<br>";
+        shell_exec("php ../yii parse/schedules");
+        echo "end<br>";
+        exit;
     }
 
 
