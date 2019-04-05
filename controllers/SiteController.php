@@ -300,15 +300,15 @@ class SiteController extends Controller
             return 'FALSE';
         }
 
-        $fName = "schedule_" . date("Y-m-d-H-j-s") . ".json";
+        $fName = "schedule_" . date("Y-m-d-H-i-s") . ".json";
         $fn_suffix = 1;
         while (file_exists("../data/" . $fName)) {
-            $fName = "schedule" . $fn_suffix . "_" . date("Y-m-d-H-j-s") . ".json";
+            $fName = "schedule" . $fn_suffix . "_" . date("Y-m-d-H-i-s") . ".json";
             $fn_suffix++;
         }
 
         file_put_contents("../data/" . $fName, $postData['json']);
-        Yii::$app->db->createCommand("INSERT INTO sd_loaded_schedules SET fileName=\"" . $fName . "\",  loadTime=\"" . date("Y-m-d-H-j-s") . "\"")->execute();
+        Yii::$app->db->createCommand("INSERT INTO sd_loaded_schedules SET fileName=\"" . $fName . "\",  loadTime=\"" . date("Y-m-d H:i:s") . "\"")->execute();
 
         //Обрабока данных - дергаем через сокет скрипт, который дергает команду Yii (потому что скрипт сдохнет через 30 секунд, а команда отработает сколько надо)
         Extra::socketAsyncCall(["/site/schedule-parse"]);

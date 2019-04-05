@@ -9,6 +9,7 @@
 namespace app\commands;
 
 
+use app\helpers\Extra;
 use app\models\Clinic;
 use yii\console\Controller;
 use app\models\PriceGroup;
@@ -112,11 +113,12 @@ class ParseController extends Controller
 
     public function actionScheduleList()
     {
-        $files = glob("../data/schedule_*.json");
+        $files = glob("./data/schedule_*.json");
+        echo count($files);
         foreach ($files as $file) {
             echo basename($file) . "  >  " . date("Y-m-d H-i-s", filemtime($file));
             echo "\n";
-            //Yii::$app->db->createCommand("INSERT INTO sd_loaded_schedules SET fileName=\"" . basename($file) . "\",  loadTime=\"" . date("Y-m-d H-i-s", filemtime($file)) . "\" ")->execute();
+            \Yii::$app->db->createCommand("INSERT INTO sd_loaded_schedules SET fileName=\"" . basename($file) . "\",  loadTime=\"" . date("Y-m-d H-i-s", filemtime($file)) . "\" ")->execute();
         }
 
     }
@@ -134,7 +136,11 @@ class ParseController extends Controller
             $fName = $f["fileName"];
 
             echo $fName . "\n";
-            if (!file_exists("../data/" . $fName)) return "Ошибка файла";
+            Extra::writeLog("Парсим файл ".$fName);
+            if (!file_exists("../data/" . $fName)){
+                Extra::writeLog("Не найден файл ".$fName);
+                return "Ошибка файла";
+            }
             $s = json_decode(file_get_contents("../data/" . $fName));
 
             foreach ($s->subdivisions as $subdiv_hash => $subdiv) {
@@ -173,7 +179,7 @@ class ParseController extends Controller
                                     if (count($r) === 1) $person = $r[0];
                                     if ($person) {
                                         echo $schedule->name . " -> " . $person->fullname . "\n";
-                                        \Yii::$app->db->createCommand("INSERT INTO sd_shedule_assign SET personId=" . $person->person_id . ", shedule_hash=\"" . $schedule_hash . "\" ")->execute();
+                                        \Yii::$app->db->createCommand("INSERT INTO sd_shedule_assign SET personId=" . $person->person_id . ", shedule_hash=\"" . $schedule_hash . "\" , schedule_fio=\"" . $personName . "\" ")->execute();
                                         $person = Persons::findBySheduleHash($schedule_hash);
                                     }
                                 }

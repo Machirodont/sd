@@ -76,4 +76,11 @@ class Extra
         return true;
     }
 
+    public static function writeLog($text, $fName = "error_log.txt")
+    {
+        $f = fopen($fName, 'a');
+        $s = date("Y-m-d H:i:s " . $_SERVER["REMOTE_ADDR"]) . " " . $text . "\n";
+        fwrite($f, $s);
+    }
+
 }

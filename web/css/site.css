@@ -260,9 +260,17 @@ a.desc:after {
 }
 
 /* Карточка врача в \views\persons\_card_ext.php*/
+.ext_person_card h4{
+    width: 100%;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+}
+
 .ext_person_card {
+    min-width: 300px;
     width: 100%;
     padding: 4px;
+    display: block;
 }
 
 .ext_person_card img {
@@ -299,7 +307,7 @@ div.mainpage {
     width: 100%;
 }
 
-.mainpage section {
+.mainpage section, .mainpage a {
     margin: 10px;
     padding: 5px 15px;
     display: block;
@@ -309,7 +317,21 @@ div.mainpage {
     width: 100%;
 }
 
+.mainpage a.spec_button{
+    text-align: center;
+    cursor: pointer;
+    background-color: rgb(51, 122, 183);
+    color:white;
+}
+
+.mainpage a.spec_button:hover{
+    background-color:#1F4C73;
+}
+
 section.person_row {
+    margin:0;
+    padding: 0;
+    box-shadow: none;
     display: flex;
     justify-content: center;
     flex: 1; /* Равная ширина блоков*/
@@ -328,11 +350,16 @@ section.person_row {
         width: 100%;
     }
 }
+img.partner_bar{
+    width: 100%;
+    max-width: 400px;
+}
+.partner_bar figure{
+    text-align: center;
+}
 
 
-
-
-/* DEV элементы (удалить в продакшне)*/
+    /* DEV элементы (удалить в продакшне)*/
 
 .header-a {
     opacity: .2;

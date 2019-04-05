@@ -52,6 +52,11 @@ $this->registerMetaTag(["name"=>"keywords", "content"=>"Сеть медицин�
     </section>
 </div>
 <div class="mainpage">
+    <a class="person_row spec_button">
+        ВСЕ СПЕЦИАЛИСТЫ
+    </a>
+</div>
+<div class="mainpage">
     <section class="mainpage">
         <h3>Оборудование экспертного класса</h3>
         <p>Для работы мы выбираем самое современное оборудование экспертного уровня.</p>
@@ -72,23 +77,18 @@ $this->registerMetaTag(["name"=>"keywords", "content"=>"Сеть медицин�
 
     <section class="mainpage">
         <h3>Анализы последнего поколения</h3>
-        <!--
-        <div>
-            <figure><img src="/uploads/2014/03/хеликс-тест-системы-1024x732.jpg" alt=""
-                         srcset="http://sd-med.ru/wp-content/uploads/2014/03/хеликс-тест-системы-1024x732.jpg 1024w, http://sd-med.ru/wp-content/uploads/2014/03/хеликс-тест-системы-300x214.jpg 300w, http://sd-med.ru/wp-content/uploads/2014/03/хеликс-тест-системы.jpg 1109w"
-                         sizes="(max-width: 1024px) 100vw, 1024px"></figure>
+        <div class="partner_bar">
+            <figure>
+                <img  class="partner_bar" src="/images/helix_bar.jpg" alt="Партнер Столичной Диагностики - Лабораторная служба Хеликс">
+            </figure>
+            <figure>
+                <img  class="partner_bar"  src="/images/dialab_bar.jpg" alt="Партнер Столичной Диагностики - лаборатория Диалаб">
+            </figure>
+            <figure>
+                <img  class="partner_bar"  src="/images/medgenomix_bar.jpg" alt="Партнер Столичной Диагностики - Медикал Геномикс">
+            </figure>
         </div>
 
 
-        <div>
-            <figure><img src="/uploads/2018/10/dialab2.jpg" alt=""
-                         srcset="http://sd-med.ru/wp-content/uploads/2018/10/dialab2.jpg 713w, http://sd-med.ru/wp-content/uploads/2018/10/dialab2-300x64.jpg 300w"
-                         sizes="(max-width: 713px) 100vw, 713px"></figure>
-
-
-            <figure><img src="/wp-content/uploads/2018/07/mg.png" alt=""
-                         srcset="http://sd-med.ru/wp-content/uploads/2018/07/mg.png 604w, http://sd-med.ru/wp-content/uploads/2018/07/mg-300x83.png 300w"
-                         sizes="(max-width: 465px) 100vw, 465px" width="465" height="129"></figure>
-        </div>-->
     </section>
 </div>
