@@ -75,9 +75,21 @@ class Persons extends PersonsGenerated
     {
         if (!$this->currentClinic instanceof Clinic) return null;
         $timelines = $this->timeLines;
-        $days=[];
+        $days = [];
         foreach ($timelines as $timeline) {
-            $days=array_merge($days,$timeline->activeDays);
+            $days = array_merge($days, $timeline->activeDays);
+        }
+        return $days;
+    }
+
+
+    public function searchActiveDays(\DateTime $from, \DateTime $to)
+    {
+        if (!$this->currentClinic instanceof Clinic) return null;
+        $timelines = $this->timeLines;
+        $days = [];
+        foreach ($timelines as $timeline) {
+            $days = array_merge($days, $timeline->searchActiveDays($from, $to));
         }
         return $days;
     }

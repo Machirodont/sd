@@ -217,6 +217,19 @@ a.desc:after {
     outline: none;
 }
 
+/**/
+.clinic_select{
+    padding:4px 10px;
+    margin: 0 5px;
+    border-radius: 3px;
+    border:solid 1px #337ab7;
+}
+
+.clinic_select.current{
+    background-color: #337ab7;
+    color:white;
+}
+
 /* Карточка врача в \views\persons\_card.php*/
 .person_card {
     margin: 10px;
@@ -317,7 +330,7 @@ div.mainpage {
     width: 100%;
 }
 
-.mainpage a.spec_button{
+a.spec_button{
     text-align: center;
     cursor: pointer;
     background-color: rgb(51, 122, 183);
@@ -325,11 +338,11 @@ div.mainpage {
 }
 
 
-.mainpage a.spec_button.current{
+a.spec_button.current{
     background-color:#1F4C73;
 }
 
-.mainpage a.spec_button:hover{
+a.spec_button:hover{
     background-color:#1F4C73;
 }
 
@@ -365,22 +378,25 @@ img.partner_bar{
 
 
     /* DEV элементы (удалить в продакшне)*/
-/*
-.header-a {
-    opacity: .2;
+
+img {
+    opacity: .05;
 }
+.header-a {
+    opacity: .02;
+}
+h1, h2 {
+    opacity: .05;
+}
+/*
+
 
 .header-a img {
     opacity: .5;
 }
 
-h1 {
-    opacity: .05;
-}
 
-img {
-    opacity: .5;
-}
+
 
 a h4 {
     opacity: .3;

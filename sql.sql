@@ -1,13 +1,13 @@
--- MySQL dump 10.13  Distrib 5.6.38, for Win32 (AMD64)
+-- MySQL dump 10.13  Distrib 8.0.12, for Win64 (x86_64)
 --
 -- Host: localhost    Database: yii
 -- ------------------------------------------------------
--- Server version	5.6.38
+-- Server version	8.0.12
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+ SET NAMES utf8mb4 ;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -21,7 +21,7 @@
 
 DROP TABLE IF EXISTS `sd_clinics`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_clinics` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `city` text NOT NULL COMMENT 'город',
@@ -52,7 +52,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_html_block`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_html_block` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `itemKey` int(11) NOT NULL,
@@ -79,7 +79,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_institutions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_institutions` (
   `institution_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` text COMMENT 'название заведения',
@@ -104,7 +104,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_loaded_schedules`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_loaded_schedules` (
   `fileName` tinytext NOT NULL,
   `parsed` tinyint(4) NOT NULL DEFAULT '0',
@@ -130,7 +130,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_pages`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_pages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` text,
@@ -146,7 +146,7 @@ CREATE TABLE `sd_pages` (
 
 LOCK TABLES `sd_pages` WRITE;
 /*!40000 ALTER TABLE `sd_pages` DISABLE KEYS */;
-INSERT INTO `sd_pages` (`id`, `title`, `description`, `keywords`) VALUES (1,'Главная страница','Главная страница','Главная страница'),(2,'Медицинский центр в Тучково. Столичная диагностика.','Медицинский центр в Тучково. Столичная диагностика. Юридическая информация о клинике.','медицинский центр, Тучково, столичная диагностика, клиника, юридическая информация, реквизиты, адрес, телефон'),(3,'Медицинский центр в Рузе. Столичная диагностика.','Медицинский центр в Рузе. Столичная диагностика. Юридическая информация о клинике.','медицинский центр, Руза, столичная диагностика, клиника, юридическая информация, реквизиты, адрес, телефон'),(4,'Медицинский центр в Гагарине. Столичная диагностика.','Медицинский центр в Гагарине. Столичная диагностика. Юридическая информация о клинике.','медицинский центр, Гагарин, столичная диагностика, клиника, юридическая информация, реквизиты, адрес, телефон'),(5,'Резус-конфликт. Профилактика возможна.','Резус-конфликт. Профилактика возможна.','Резус-конфликт. Профилактика возможна.'),(6,'Тест на отцовство','Тест на отцовство','Тест на отцовство'),(7,'Prenatest - пренатальное тестирование на хромосомные нарушения','Prenatest - пренатальное тестирование на хромосомные нарушения','Prenatest - пренатальное тестирование на хромосомные нарушения'),(8,'Определение пола ребенка по анализу крови матери','Определение пола ребенка по анализу крови матери','Определение пола ребенка по анализу крови матери'),(9,'Лазерная медицина. ВЛОК.','Лазерная медицина. ВЛОК.','Лазерная медицина. ВЛОК.'),(10,'Пренатальный генетический тест','Пренатальный генетический тест','Пренатальный генетический тест'),(11,'Холтер. ЭКГ. ЭЭГ.','Холтер. ЭКГ. ЭЭГ.','Холтер. ЭКГ. ЭЭГ.'),(12,'Электрокардиограмма (ЭКГ)','Электрокардиограмма (ЭКГ)','Электрокардиограмма (ЭКГ)'),(13,'Подготовка к УЗИ','Подготовка к УЗИ','Подготовка к УЗИ'),(14,'Подготовка к анализам','Подготовка к анализам','Подготовка к анализам'),(15,'Гинекология','Гинекология','Гинекология'),(16,'Эндокринология','Эндокринология','Эндокринология'),(17,'Неврология','Неврология','Неврология'),(18,'Отоларингология, ЛОР','Отоларингология, ЛОР','Отоларингология, ЛОР'),(19,'Урология','Урология','Урология'),(20,'УЗИ при беременности','УЗИ при беременности','УЗИ при беременности'),(21,'Нейросонография (УЗИ новорожденных)','Нейросонография (УЗИ новорожденных)','Нейросонография (УЗИ новорожденных)'),(22,'Эхокардиография (ЭхоКГ)','Эхокардиография (ЭхоКГ)','Эхокардиография (ЭхоКГ)'),(23,'Удаление новообразований (бородавок) - онкодерматология','Удаление новообразований (бородавок) - онкодерматология','Удаление новообразований (бородавок) - онкодерматология');
+INSERT INTO `sd_pages` (`id`, `title`, `description`, `keywords`) VALUES (1,'Главная страница','Главная страница','Главная страница'),(2,'Медицинский центр в Тучково. Столичная диагностика.','Медицинский центр в Тучково. Столичная диагностика. Юридическая информация о клинике.','медицинский центр, Тучково, столичная диагностика, клиника, юридическая информация, реквизиты, адрес, телефон'),(3,'Медицинский центр в Рузе. Столичная диагностика.','Медицинский центр в Рузе. Столичная диагностика. Юридическая информация о клинике.','медицинский центр, Руза, столичная диагностика, клиника, юридическая информация, реквизиты, адрес, телефон'),(4,'Медицинский центр в Гагарине. Столичная диагностика.','Медицинский центр в Гагарине. Столичная диагностика. Юридическая информация о клинике.','медицинский центр, Гагарин, столичная диагностика, клиника, юридическая информация, реквизиты, адрес, телефон'),(5,'Резус-конфликт: профилактика при беременности','Резус-конфликт: профилактика при беременности. Анализ на резус-фактор для предотвращения анемии плода.','Резус-конфликт, резус-фактор, беременность, профилактика, плод, эмбрион, анализ'),(6,'Тест на отцовство. Анализ на исключение и вероятность отцовства.','Тест на отцовство. Анализ на исключение и вероятность отцовства.','Тест на отцовство, анализ, вероятность'),(7,'Prenatest - исследование хромосомного здоровья плода.','Prenatest - исследование хромосомного здоровья плода. Пренатальное тестирование на хромосомные нарушения. Синдром Дауна, определение пола плода.','Prenatest, хромосомные нарушения, беременность, анализ, тестирование, здоровье плода,  Синдром Дауна, определение пола плода.'),(8,'Определение пола ребенка по анализу крови матери','Определение пола ребенка по анализу крови матери. Мальчик или девочка?','беременность, пол ребенка, анализ крови матери, пол эмбриона, определение пола плода, мальчик или девочка, анализ, тест'),(9,'Лазерная терапия. ВЛОК.','Лазерная медицина. Терапия ВЛОК - внутривенное лазерное освечивание крови.','Лазерная медицина, лазерная терапия, ВЛОК, внутривенное лазерное освечивание крови.'),(10,'Генетический тест плода при беременности','Пренатальный генетический тест плода при беременности. Безопасное выявление хромосомных нарушений - синдром Дауна, синдром Эдвардса, синдром Патау, синдром Тернера - трисомия/моносомия хромосом. Анализ неинвазивный, по крови матери.','генетический тест, хромосомные нарушения, беременность, плод, эмбрион, анализ крови матери, синдром Дауна , синдром Эдвардса, синдром Патау, синдром Тернера, трисомия, моносомия, хромосомы'),(11,'Холтер. ЭКГ (электрокардиограмма). ЭЭГ (электроэнцефалограмма).','Холтер. ЭЭГ (электроэнцефалограмма). Электроэнцефалография. Диагностика эпилепсии, вегето-сосудистой дистонии, сосудов головного мозга, опухолей мозга, бессонницы, головных болей.','Холтер, ЭЭГ, электроэнцефалограмма, ЭКГ, электроэнцефалография, диагностика, повышенное давление, диабет, инфаркт, нисульт, эпилепсия, вегето-сосудистой дистония, опухоли мозга, бессонница, головные боли'),(12,'Электрокардиограмма (ЭКГ)','Электрокардиограмма (ЭКГ)','Электрокардиограмма (ЭКГ)'),(13,'Подготовка к УЗИ','Подготовка к УЗИ','Подготовка к УЗИ'),(14,'Подготовка к анализам','Подготовка к анализам','Подготовка к анализам'),(15,'Гинекология','Гинекология','Гинекология'),(16,'Эндокринология','Эндокринология','Эндокринология'),(17,'Неврология','Неврология','Неврология'),(18,'Отоларингология, ЛОР','Отоларингология, ЛОР','Отоларингология, ЛОР'),(19,'Урология','Урология','Урология'),(20,'УЗИ при беременности','УЗИ при беременности','УЗИ при беременности'),(21,'Нейросонография (УЗИ новорожденных)','Нейросонография (УЗИ новорожденных)','Нейросонография (УЗИ новорожденных)'),(22,'Эхокардиография (ЭхоКГ)','Эхокардиография (ЭхоКГ)','Эхокардиография (ЭхоКГ)'),(23,'Удаление новообразований (бородавок) - онкодерматология','Удаление новообразований (бородавок) - онкодерматология','Удаление новообразований (бородавок) - онкодерматология');
 /*!40000 ALTER TABLE `sd_pages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -156,7 +156,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_persons`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_persons` (
   `person_id` int(11) NOT NULL AUTO_INCREMENT,
   `firstname` text NOT NULL COMMENT 'Имя',
@@ -187,7 +187,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_price_group`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_price_group` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `groupName` text,
@@ -216,7 +216,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_price_group_index`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_price_group_index` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `groupId` int(11) NOT NULL DEFAULT '0',
@@ -244,7 +244,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_price_items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_price_items` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `code` tinytext NOT NULL,
@@ -276,7 +276,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_price_local`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_price_local` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `itemId` int(11) NOT NULL,
@@ -304,7 +304,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_redirect`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_redirect` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `from` text,
@@ -330,7 +330,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_shedule_assign`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_shedule_assign` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `personId` int(11) DEFAULT NULL,
@@ -356,7 +356,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_timeline_days`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_timeline_days` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `timelineId` int(11) NOT NULL DEFAULT '0',
@@ -385,7 +385,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_timelines`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_timelines` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `workplace_hash` tinytext NOT NULL,
@@ -413,7 +413,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_traits`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_traits` (
   `trait_id` int(11) NOT NULL AUTO_INCREMENT,
   `person_id` int(11) NOT NULL DEFAULT '0' COMMENT 'врач',
@@ -445,7 +445,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_url_tags`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_url_tags` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `tag` text NOT NULL,
@@ -473,7 +473,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_workplaces`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_workplaces` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `workplace_hash` text NOT NULL,
@@ -499,7 +499,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `z_schedule`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `z_schedule` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `hash` text NOT NULL,
@@ -529,7 +529,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `z_schedule_parsing`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `z_schedule_parsing` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `hash` text NOT NULL,
@@ -561,4 +561,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-04-08  9:20:17
+-- Dump completed on 2019-04-08 18:08:24

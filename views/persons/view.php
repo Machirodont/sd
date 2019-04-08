@@ -21,8 +21,8 @@ if (count($personClinics) > 1) $where = "медцентры " . $where;
 
 $this->title = $primarySpec . " " . $model->fullname . " " . $model->secondarySpecs . " - " . $where . " \"Столичная Диагностика\"";
 $this->registerMetaTag(["name" => "description", "content" => $this->title]);
-$keywords=$primarySpec.($model->secondarySpecs ? ", ".$model->secondarySpecs : "").", ".Extra::implodeField($personClinics, "city", ", ").", медицинский центр столичная диагностика";
-$this->registerMetaTag(["name" => "keywords", "content" =>$keywords]);
+$keywords = $primarySpec . ($model->secondarySpecs ? ", " . $model->secondarySpecs : "") . ", " . Extra::implodeField($personClinics, "city", ", ") . ", медицинский центр столичная диагностика";
+$this->registerMetaTag(["name" => "keywords", "content" => $keywords]);
 
 if ($model->currentClinic) $this->params['breadcrumbs'][] = ['label' => $model->currentClinic->city, 'url' => ['/clinic/contacts', "cid" => $model->currentClinic->id]];
 $this->params['breadcrumbs'][] = ['label' => 'Доктора', 'url' => ['index', "cid" => Yii::$app->session->get("cid")]];
@@ -65,30 +65,33 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                 </p>
             <?php endif; ?>
             <?php
-            if (count($model->clinics) > 0 && !$model->currentClinic) {
-                /*
-                echo "Ведет прием в отделениях: ";
+            if (count($model->clinics) > 0) {
+                echo "<br>Смотреть расписание специалиста: ";
                 for ($i = 0; $i < count($model->clinics); $i++) {
-                    if ($i > 0) echo ", ";
-                    echo Html::a($model->clinics[$i]->city, ["clinic/contacts", "cid" => $model->clinics[$i]->id]);
-                } */
-                echo "<br>Смотреть расписание отделении: ";
-                for ($i = 0; $i < count($model->clinics); $i++) {
-                    if ($i > 0) echo ", ";
-                    echo Html::a($model->clinics[$i]->city, ["persons/view", "id" => $model->person_id, "cid" => $model->clinics[$i]->id]);
+                    $isCurrentClinc = $model->currentClinic && $model->clinics[$i]->id === $model->currentClinic->id;
+                    echo Html::a($model->clinics[$i]->in, ["persons/view", "id" => $model->person_id, "cid" => $model->clinics[$i]->id], ["class" => 'clinic_select' . ($isCurrentClinc ? " current" : "")]);
+                }
+                echo "<br>";
+                //Календарь приема
+                $today=new DateTime();
+                $after2weeks=(new DateTime())->add(new DateInterval("P14D"));
+                if( $model->currentClinic) {
+                    if ($model->searchActiveDays($today, $after2weeks)) {
+                        echo $this->render('_calendar', [
+                            "startDay" => date("Y-m-d"),
+                            "period" => 7 * 2,
+                            "activeDays" => $model->searchActiveDays($today, $after2weeks)
+                        ]);
+                    }
+                    else{
+                        echo "Индивидуальная запись. Звоните ".$model->currentClinic->phone;
+                    }
                 }
             }
-            ?>
-            <hr>
-            <?php
-            //Календарь приема
-            if ($model->activeDays && $model->currentClinic) {
-                echo "<h4>График приема " . $model->currentClinic->in . "</h4>";
-                echo $this->render('_calendar', [
-                    "startDay" => date("Y-m-d"),
-                    "period" => 7 * 3,
-                    "activeDays" => $model->activeDays
-                ]);
+            else{
+                if ($model->currentClinic) {
+                    echo "Индивидуальная запись. Звоните " . $model->currentClinic->phone;
+                }
             }
             ?>
 

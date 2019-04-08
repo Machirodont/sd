@@ -34,4 +34,18 @@ class TimeLines extends TimeLinesGenerated
         return $days;
     }
 
+    public function searchActiveDays(\DateTime $from, \DateTime $to)
+    {
+        $days = TimelineDays::find()
+            ->where(["and",
+                ["timelineId" => $this->id, "is_active" => 1],
+                [">", "day", $from->format("Y-m-d")],
+                ["<", "day", $to->format("Y-m-d")],
+            ])
+            ->indexBy("day")
+            ->all();
+        if (!is_array($days)) return [];
+        return $days;
+    }
+
 }
