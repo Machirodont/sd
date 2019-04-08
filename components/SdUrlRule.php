@@ -67,6 +67,10 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
             return $url;
         }
 
+        if ($route === 'site/main-page') {
+            return $url;
+        }
+
         if ($route === 'services/index') {
             $url .= "services/";
             if (array_key_exists("id", $params)) {
@@ -95,6 +99,21 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
     public function parseRequest($manager, $request)
     {
         $pathInfo = $request->getPathInfo();
+
+        $domainRedirects = [
+            "http://gagarin.sd-med.ru" => "/gagarin",
+            "http://ruza.sd-med.ru" => "/ruza",
+        ];
+
+        if (Yii::$app->request->hostInfo !== Yii::$app->params["mainHost"]) {
+            $urlWithMainHost = Yii::$app->params["mainHost"] . Yii::$app->request->url;
+            if (array_key_exists(Yii::$app->request->hostInfo, $domainRedirects)) {
+                $urlWithMainHost = Yii::$app->params["mainHost"] . $domainRedirects[Yii::$app->request->hostInfo] . Yii::$app->request->url;
+            }
+            Yii::$app->response->redirect($urlWithMainHost, 301)->send();
+            exit;
+        }
+
 
         //---- 301 редиректы
         $redirects = (new Query())
@@ -127,6 +146,7 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
                 }
 
                 if (preg_match('/clinic_([0-9]+)/', $part, $matches)) {
+                    $route="/site/main-page";
                     $params["cid"] = $matches[1];
                 }
 

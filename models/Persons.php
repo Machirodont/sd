@@ -21,6 +21,7 @@ use yii\db\Query;
  * @property array $htmlBlocks
  * @property string $htmlDescription
  * @property string $primarySpec
+ * @property string $secondarySpecs
  *
  */
 class Persons extends PersonsGenerated

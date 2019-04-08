@@ -83,7 +83,7 @@ class PersonsController extends Controller
             'allModels' => $persons,
 
         ]);
-        $dataProvider->pagination->pageSize=count($persons);
+        $dataProvider->pagination->pageSize = count($persons);
 
 
         return $this->render('index', [
@@ -105,6 +105,7 @@ class PersonsController extends Controller
 
         return $this->render('view', [
             'model' => $person,
+            'cid' => Yii::$app->session->get("cid"),
         ]);
     }
 

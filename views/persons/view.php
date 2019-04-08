@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
 use yii\data\ArrayDataProvider;
+use \app\helpers\Extra;
 
 
 /* @var $this yii\web\View */
@@ -12,16 +13,24 @@ use yii\data\ArrayDataProvider;
 
 $this->registerLinkTag(['rel' => 'canonical', 'href' => \yii\helpers\Url::to(["view", "id" => $model->person_id], true),]);
 
-$this->title = $model->fullname;
+$primarySpec = mb_substr($model->primarySpec, 0, 1) . mb_strtolower(mb_substr($model->primarySpec, 1));
+$personClinics = $model->clinics;
+$where = Extra::implodeField($personClinics, "in", ", ");
+if (count($personClinics) == 1) $where = "медцентр " . $where;
+if (count($personClinics) > 1) $where = "медцентры " . $where;
+
+$this->title = $primarySpec . " " . $model->fullname . " " . $model->secondarySpecs . " - " . $where . " \"Столичная Диагностика\"";
+$this->registerMetaTag(["name" => "description", "content" => $this->title]);
+$keywords=$primarySpec.($model->secondarySpecs ? ", ".$model->secondarySpecs : "").", ".Extra::implodeField($personClinics, "city", ", ").", медицинский центр столичная диагностика";
+$this->registerMetaTag(["name" => "keywords", "content" =>$keywords]);
+
 if ($model->currentClinic) $this->params['breadcrumbs'][] = ['label' => $model->currentClinic->city, 'url' => ['/clinic/contacts', "cid" => $model->currentClinic->id]];
 $this->params['breadcrumbs'][] = ['label' => 'Доктора', 'url' => ['index', "cid" => Yii::$app->session->get("cid")]];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = $model->fullname . ", " . $primarySpec;;
 
 $mainSpecialization = isset($model->traits["специальность"]) && isset($model->traits["специальность"][0])
     ? mb_convert_case($model->traits["специальность"][0]->description, MB_CASE_TITLE)
     : "";
-
-
 ?>
 <div class="persons-view row">
 
@@ -44,9 +53,9 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
             <?php endif; ?>
 
             <p>
-            <?php
-            echo implode("<br>", $model->workExperiences);
-            ?>
+                <?php
+                echo implode("<br>", $model->workExperiences);
+                ?>
             </p>
 
 
@@ -56,12 +65,13 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                 </p>
             <?php endif; ?>
             <?php
-            if (count($model->clinics) > 0) {
+            if (count($model->clinics) > 0 && !$model->currentClinic) {
+                /*
                 echo "Ведет прием в отделениях: ";
                 for ($i = 0; $i < count($model->clinics); $i++) {
                     if ($i > 0) echo ", ";
                     echo Html::a($model->clinics[$i]->city, ["clinic/contacts", "cid" => $model->clinics[$i]->id]);
-                }
+                } */
                 echo "<br>Смотреть расписание отделении: ";
                 for ($i = 0; $i < count($model->clinics); $i++) {
                     if ($i > 0) echo ", ";
@@ -72,7 +82,8 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
             <hr>
             <?php
             //Календарь приема
-            if ($model->activeDays) {
+            if ($model->activeDays && $model->currentClinic) {
+                echo "<h4>График приема " . $model->currentClinic->in . "</h4>";
                 echo $this->render('_calendar', [
                     "startDay" => date("Y-m-d"),
                     "period" => 7 * 3,

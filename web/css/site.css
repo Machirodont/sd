@@ -324,6 +324,11 @@ div.mainpage {
     color:white;
 }
 
+
+.mainpage a.spec_button.current{
+    background-color:#1F4C73;
+}
+
 .mainpage a.spec_button:hover{
     background-color:#1F4C73;
 }
@@ -360,7 +365,7 @@ img.partner_bar{
 
 
     /* DEV элементы (удалить в продакшне)*/
-
+/*
 .header-a {
     opacity: .2;
 }

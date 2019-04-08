@@ -25,7 +25,7 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
     <meta charset="<?= Yii::$app->charset ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="yandex-verification" content="10f48b318206f633" />
+    <meta name="yandex-verification" content="10f48b318206f633"/>
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
@@ -90,10 +90,10 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
             'class' => 'navbar navbar-default',
         ],
     ]);
-    $pages=\app\models\Pages::find()->where("id > 4")->orderBy("title")->all();
-    $pagesItems=[];
-    foreach ($pages as $page){
-        $pagesItems[]=["label"=>$page->title, "url"=>  ['/site/page', "id" => $page->id]];
+    $pages = \app\models\Pages::find()->where("id > 4")->orderBy("title")->all();
+    $pagesItems = [];
+    foreach ($pages as $page) {
+        $pagesItems[] = ["label" => $page->title, "url" => ['/site/page', "id" => $page->id]];
     }
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
@@ -113,6 +113,10 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
 
     <div class="container breadcrumb-container">
         <?= Breadcrumbs::widget([
+            'homeLink' => [
+              'label' => 'Главная',
+              'url' => \yii\helpers\Url::toRoute(["/site/main-page"]),
+            ],
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
     </div>
@@ -127,7 +131,7 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
 <footer class="footer text-center">
     <div class="container">
         «СТОЛИЧНАЯ ДИАГНОСТИКА» - сеть медицинских центров. &copy; <?= date("Y") ?>
-       </div>
+    </div>
 </footer>
 
 <?php $this->endBody() ?>
