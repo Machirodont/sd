@@ -1,9 +1,9 @@
 <h1>Тест на отцовство</h1>
-<p><a href=/uploads/2017/03/Paternity-test-iStock_000000182291XSmall.jpg"><img
-                src="http://sd-med.ru/wp-content/uploads/2017/03/Paternity-test-iStock_000000182291XSmall.jpg"
+<p><a href="/uploads/2017/03/Paternity-test-iStock_000000182291XSmall.jpg"><img
+                src="/uploads/2017/03/Paternity-test-iStock_000000182291XSmall.jpg"
                 alt="Тест на отцовство"
-                srcset="http://sd-med.ru/wp-content/uploads/2017/03/Paternity-test-iStock_000000182291XSmall.jpg 421w, http://sd-med.ru/wp-content/uploads/2017/03/Paternity-test-iStock_000000182291XSmall-300x203.jpg 300w"
-                sizes="(max-width: 421px) 100vw, 421px"></a></p>
+                srcset="/uploads/2017/03/Paternity-test-iStock_000000182291XSmall.jpg 421w, /uploads/2017/03/Paternity-test-iStock_000000182291XSmall-300x203.jpg 300w"
+                sizes="(max-width: 421px) 100vw, 421px" style="float:right; padding:10px;"></a></p>
 <p>ДНК тест на отцовство позволяет установить, может ли мужчина являться биологическим отцом конкретного
     ребенка или нет.
 </p>

@@ -229,6 +229,12 @@ a.desc:after {
     background-color: #337ab7;
     color:white;
 }
+.shadow_box{
+    box-shadow: 1px 1px 5px 3px #E0F7FF;
+    padding: 5px;
+    margin: 10px 3px;
+
+}
 
 /* Карточка врача в \views\persons\_card.php*/
 .person_card {
@@ -239,11 +245,11 @@ a.desc:after {
     overflow: hidden;
     text-overflow: ellipsis;
     text-align: center;
-    box-shadow: 3px 3px 5px 1px #E0F7FF;
+    box-shadow: 3px 3px 5px 3px #E0F7FF;
 }
 
 .person_card:hover {
-    box-shadow: 3px 3px 5px 1px #ace1ff;
+    box-shadow: 3px 3px 5px 3px #ace1ff;
 }
 
 .person_card div {
@@ -378,7 +384,7 @@ img.partner_bar{
 
 
     /* DEV элементы (удалить в продакшне)*/
-
+/*
 img {
     opacity: .05;
 }
@@ -388,7 +394,7 @@ img {
 h1, h2 {
     opacity: .05;
 }
-/*
+
 
 
 .header-a img {

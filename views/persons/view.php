@@ -64,36 +64,32 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                     Имеет <?= $model->yearsWorkString ?> опыта.
                 </p>
             <?php endif; ?>
+
             <?php
-            if (count($model->clinics) > 0) {
-                echo "<br>Смотреть расписание специалиста: ";
-                for ($i = 0; $i < count($model->clinics); $i++) {
-                    $isCurrentClinc = $model->currentClinic && $model->clinics[$i]->id === $model->currentClinic->id;
-                    echo Html::a($model->clinics[$i]->in, ["persons/view", "id" => $model->person_id, "cid" => $model->clinics[$i]->id], ["class" => 'clinic_select' . ($isCurrentClinc ? " current" : "")]);
-                }
-                echo "<br>";
-                //Календарь приема
-                $today=new DateTime();
-                $after2weeks=(new DateTime())->add(new DateInterval("P14D"));
-                if( $model->currentClinic) {
-                    if ($model->searchActiveDays($today, $after2weeks)) {
-                        echo $this->render('_calendar', [
-                            "startDay" => date("Y-m-d"),
-                            "period" => 7 * 2,
-                            "activeDays" => $model->searchActiveDays($today, $after2weeks)
-                        ]);
+                if (count($model->clinics) > 0) {
+                    echo "<br>Смотреть расписание специалиста: ";
+                    for ($i = 0; $i < count($model->clinics); $i++) {
+                        $isCurrentClinc = $model->currentClinic && $model->clinics[$i]->id === $model->currentClinic->id;
+                        echo Html::a($model->clinics[$i]->in, ["persons/view", "id" => $model->person_id, "cid" => $model->clinics[$i]->id], ["class" => 'clinic_select' . ($isCurrentClinc ? " current" : "")]);
                     }
-                    else{
-                        echo "Индивидуальная запись. Звоните ".$model->currentClinic->phone;
+                    echo "<div class='shadow_box'>";
+                    //Календарь приема
+                    $today = new DateTime();
+                    $after2weeks = (new DateTime())->add(new DateInterval("P14D"));
+                    if ($model->currentClinic) {
+                        if ($model->searchActiveDays($today, $after2weeks)) {
+                            echo $this->render('_calendar', [
+                                "startDay" => date("Y-m-d"),
+                                "period" => 7 * 2,
+                                "activeDays" => $model->searchActiveDays($today, $after2weeks)
+                            ]);
+                        } else {
+                            echo "Индивидуальная запись. Звоните " . $model->currentClinic->phone;
+                        }
                     }
+                    echo "</div>";
                 }
-            }
-            else{
-                if ($model->currentClinic) {
-                    echo "Индивидуальная запись. Звоните " . $model->currentClinic->phone;
-                }
-            }
-            ?>
+                ?>
 
             <?php
             if (false && $model->activeDays && is_array($model->activeDays)) {

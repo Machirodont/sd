@@ -105,7 +105,7 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
             "http://ruza.sd-med.ru" => "/ruza",
         ];
 
-        if (Yii::$app->request->hostInfo !== Yii::$app->params["mainHost"]) {
+        if (Yii::$app->request->hostInfo !== Yii::$app->params["mainHost"] && Yii::$app->request->hostInfo!=="http://tech.sd-med.ru" ) {
             $urlWithMainHost = Yii::$app->params["mainHost"] . Yii::$app->request->url;
             if (array_key_exists(Yii::$app->request->hostInfo, $domainRedirects)) {
                 $urlWithMainHost = Yii::$app->params["mainHost"] . $domainRedirects[Yii::$app->request->hostInfo] . Yii::$app->request->url;
