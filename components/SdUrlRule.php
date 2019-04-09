@@ -52,7 +52,7 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
             if ($tag = UrlTags::findOne(["route" => $route, "param" => "id", "value" => $params['id']])) {
                 $url .= $tag->tag . "/";
             } else {
-                $url .= "doctor_" . $params['id'] . '/';
+                $url .= "specialist_" . $params['id'] . '/';
             }
             return $url;
         }
@@ -80,7 +80,7 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
         }
 
         if ($route === 'persons/index') {
-            $url .= "doctors/";
+            $url .= "specialisty/";
             return $url;
         }
 
@@ -159,9 +159,9 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
                 if ($part === "clinics") $route = "clinic/index";
                 if ($part === "contacts") $route = "clinic/contacts";
                 if ($part === "company") $route = "clinic/company";
-                if ($part === "doctors") $route = "persons/index";
+                if ($part === "specialisty") $route = "persons/index";
                 if ($part === "services") $route = "services/index";
-                if (preg_match('/doctor_([0-9]+)/', $part, $matches)) {
+                if (preg_match('/specialist_([0-9]+)/', $part, $matches)) {
                     $route = "persons/view";
                     $params["id"] = $matches[1];
                 }
