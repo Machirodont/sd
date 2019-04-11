@@ -1,13 +1,13 @@
--- MySQL dump 10.13  Distrib 5.6.38, for Win32 (AMD64)
+-- MySQL dump 10.13  Distrib 8.0.12, for Win64 (x86_64)
 --
 -- Host: localhost    Database: yii
 -- ------------------------------------------------------
--- Server version	5.6.38
+-- Server version	8.0.12
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+ SET NAMES utf8mb4 ;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -21,7 +21,7 @@
 
 DROP TABLE IF EXISTS `sd_clinics`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_clinics` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `city` text NOT NULL COMMENT 'город',
@@ -52,7 +52,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_html_block`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_html_block` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `itemKey` int(11) NOT NULL,
@@ -79,7 +79,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_institutions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_institutions` (
   `institution_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` text COMMENT 'название заведения',
@@ -104,7 +104,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_loaded_schedules`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_loaded_schedules` (
   `fileName` tinytext NOT NULL,
   `parsed` tinyint(4) NOT NULL DEFAULT '0',
@@ -130,7 +130,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_pages`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_pages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` text,
@@ -156,7 +156,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_persons`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_persons` (
   `person_id` int(11) NOT NULL AUTO_INCREMENT,
   `firstname` text NOT NULL COMMENT 'Имя',
@@ -187,7 +187,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_price_group`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_price_group` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `groupName` text,
@@ -216,7 +216,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_price_group_index`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_price_group_index` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `groupId` int(11) NOT NULL DEFAULT '0',
@@ -244,7 +244,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_price_items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_price_items` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `code` tinytext NOT NULL,
@@ -276,7 +276,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_price_local`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_price_local` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `itemId` int(11) NOT NULL,
@@ -304,14 +304,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_redirect`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_redirect` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `from` text,
   `to` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `from` (`from`(64))
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -320,7 +320,7 @@ CREATE TABLE `sd_redirect` (
 
 LOCK TABLES `sd_redirect` WRITE;
 /*!40000 ALTER TABLE `sd_redirect` DISABLE KEYS */;
-INSERT INTO `sd_redirect` (`id`, `from`, `to`) VALUES (1,'pediatr-tuchkovo/','tuchkovo/pediatr-maksimova/'),(2,'detskiy-hirurg-urolog-androlog/','detskii-urolog-androlog-zunnunov/'),(3,'specialisty/udalenie-novoobrazovanij-lazerom-onkodermatolog/','dermatolog-popov/'),(4,'specialisty/uzi-sosudov/','uzi-sosudov-sherbanina/'),(5,'vedenie-novorozhdennyx-pediatriya/','pediatr-fomin/'),(6,'centr-v-tuchkovo/','tuchkovo/contacts/'),(7,'specialisty/endokrinolog/','endokrinolog-vanyan/'),(8,'specialisty/gematolog/','gematolog-gadaev/'),(9,'specialisty/otorinolaringologiya-lor/','otolaringolog-jakovlev/'),(10,'specialisty/urologiya/','androlog-usikov/'),(11,'specialisty/pediatriya/','neirosonografia/'),(12,'specialisty/dermatologiya/','kosmetolog-leonenko/'),(13,'specialisty/mammolog/','mammolog-lebedev/'),(14,'specialisty/nevrolog/','nevrolog-elizarova/'),(15,'centr-v-ruze/','ruza/contacts/'),(16,'centr-v-gagarine/','gagarin/contacts/'),(17,'yuridicheskaya-informaciya/','ruza/company/'),(18,'rezus-konflikt-profilaktika-vozmozhna/','rezus-konflikt-profilaktika/'),(19,'test-na-otcovstvomaterinstvo/','test-na-otcovstvo/'),(20,'neinvazivnoe-prenatalnoe-testirovanie-na-xromosomnye-narusheniya/','prenatest-prenatalny-skrining/'),(22,'specialisty/lazernaya-medicina-vlok/','vlok/'),(23,'specialisty/neinvazivnyj-prenatalnyj-geneticheskij-test/','prenatalnyi-geneticheskiy-test/'),(24,'specialisty/xolter/','holter/'),(25,'specialisty/elektrokardiogramma-ekg/','ekg-elektrokardiogramma/'),(26,'glavnaya/podgotovka-k-uzi/','podgotovka-k-uzi/'),(27,'glavnaya/podgotovka-k-sdache-analizov/\r\n','podgotovka-k-analizam/'),(28,'specialisty/ginekologiya/','ginekologiya/'),(29,'uzi-pri-beremennosti/','uzi-beremennost/'),(30,'exokardiografiya/','echokardiografia/'),(32,'analizy/','podgotovka-k-analizam/'),(33,'ceny/','services/'),(34,'kak-dobratsya/','contacts/'),(35,'7915-480-03-03/','ruza/contacts/'),(36,'glavnaya/podgotovka-k-sdache-analizov/','podgotovka-k-analizam/'),(37,'gagarin/dnk-test-na-otcovstvo/','gagarin/test-na-otcovstvo/'),(38,'7-915-480-03-03/','ruza/contacts/'),(39,'gagarin/prenatest-tochnee-skrininga-1-semestra/','gagarin/prenatest-prenatalny-skrining/');
+INSERT INTO `sd_redirect` (`id`, `from`, `to`) VALUES (1,'pediatr-tuchkovo/','tuchkovo/pediatr-maksimova/'),(2,'detskiy-hirurg-urolog-androlog/','detskii-urolog-androlog-zunnunov/'),(3,'specialisty/udalenie-novoobrazovanij-lazerom-onkodermatolog/','dermatolog-popov/'),(4,'specialisty/uzi-sosudov/','uzi-sosudov-sherbanina/'),(5,'vedenie-novorozhdennyx-pediatriya/','pediatr-fomin/'),(6,'centr-v-tuchkovo/','tuchkovo/contacts/'),(7,'specialisty/endokrinolog/','endokrinolog-vanyan/'),(8,'specialisty/gematolog/','gematolog-gadaev/'),(9,'specialisty/otorinolaringologiya-lor/','otolaringolog-jakovlev/'),(10,'specialisty/urologiya/','androlog-usikov/'),(11,'specialisty/pediatriya/','uzi-detyam-bognat/'),(12,'specialisty/dermatologiya/','kosmetolog-leonenko/'),(13,'specialisty/mammolog/','mammolog-lebedev/'),(14,'specialisty/nevrolog/','nevrolog-elizarova/'),(15,'centr-v-ruze/','ruza/contacts/'),(16,'centr-v-gagarine/','gagarin/contacts/'),(17,'yuridicheskaya-informaciya/','ruza/company/'),(18,'rezus-konflikt-profilaktika-vozmozhna/','rezus-konflikt-profilaktika/'),(19,'test-na-otcovstvomaterinstvo/','test-na-otcovstvo/'),(20,'neinvazivnoe-prenatalnoe-testirovanie-na-xromosomnye-narusheniya/','prenatest-prenatalny-skrining/'),(22,'specialisty/lazernaya-medicina-vlok/','vlok/'),(23,'specialisty/neinvazivnyj-prenatalnyj-geneticheskij-test/','prenatalnyi-geneticheskiy-test/'),(24,'specialisty/xolter/','holter/'),(25,'specialisty/elektrokardiogramma-ekg/','ekg-elektrokardiogramma/'),(26,'glavnaya/podgotovka-k-uzi/','podgotovka-k-uzi/'),(27,'glavnaya/podgotovka-k-sdache-analizov/\r\n','podgotovka-k-analizam/'),(28,'specialisty/ginekologiya/','ginekologiya/'),(29,'uzi-pri-beremennosti/','uzi-beremennost/'),(30,'exokardiografiya/','echokardiografia/');
 /*!40000 ALTER TABLE `sd_redirect` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -330,7 +330,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_shedule_assign`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_shedule_assign` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `personId` int(11) DEFAULT NULL,
@@ -356,7 +356,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_timeline_days`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_timeline_days` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `timelineId` int(11) NOT NULL DEFAULT '0',
@@ -385,7 +385,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_timelines`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_timelines` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `workplace_hash` tinytext NOT NULL,
@@ -413,7 +413,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_traits`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_traits` (
   `trait_id` int(11) NOT NULL AUTO_INCREMENT,
   `person_id` int(11) NOT NULL DEFAULT '0' COMMENT 'врач',
@@ -445,7 +445,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_url_tags`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_url_tags` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `tag` text NOT NULL,
@@ -473,7 +473,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `sd_workplaces`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `sd_workplaces` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `workplace_hash` text NOT NULL,
@@ -499,7 +499,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `z_schedule`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `z_schedule` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `hash` text NOT NULL,
@@ -529,7 +529,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `z_schedule_parsing`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+ SET character_set_client = utf8mb4 ;
 CREATE TABLE `z_schedule_parsing` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `hash` text NOT NULL,
@@ -561,4 +561,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-04-09  7:56:23
+-- Dump completed on 2019-04-11 16:53:06

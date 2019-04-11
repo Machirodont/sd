@@ -218,18 +218,21 @@ a.desc:after {
 }
 
 /**/
-.clinic_select{
-    padding:4px 10px;
+.head-phone-number {
+    padding: 4px 10px;
     margin: 0 5px;
-    border-radius: 3px;
-    border:solid 1px #337ab7;
 }
 
-.clinic_select.current{
-    background-color: #337ab7;
-    color:white;
+.head-phone-number a {
+    color: white;
 }
-.shadow_box{
+
+.clinic_select.current {
+    background-color: #337ab7;
+    color: white;
+}
+
+.shadow_box {
     box-shadow: 1px 1px 5px 3px #E0F7FF;
     padding: 5px;
     margin: 10px 3px;
@@ -279,7 +282,7 @@ a.desc:after {
 }
 
 /* Карточка врача в \views\persons\_card_ext.php*/
-.ext_person_card h4{
+.ext_person_card h4 {
     width: 100%;
     overflow-x: hidden;
     text-overflow: ellipsis;
@@ -304,19 +307,20 @@ a.desc:after {
 }
 
 @media (max-width: 992px) {
-    section.person_row .ext_person_card:nth-child(3){
+    section.person_row .ext_person_card:nth-child(3) {
         display: none;
     }
 }
+
 @media (max-width: 650px) {
-    section.person_row .ext_person_card:nth-child(3){
+    section.person_row .ext_person_card:nth-child(3) {
         display: block;
     }
+
     section.person_row {
         flex-direction: column;
     }
 }
-
 
 /* Главная страница */
 div.mainpage {
@@ -336,24 +340,23 @@ div.mainpage {
     width: 100%;
 }
 
-a.spec_button{
+a.spec_button {
     text-align: center;
     cursor: pointer;
     background-color: rgb(51, 122, 183);
-    color:white;
+    color: white;
 }
 
-
-a.spec_button.current{
-    background-color:#1F4C73;
+a.spec_button.current {
+    background-color: #1F4C73;
 }
 
-a.spec_button:hover{
-    background-color:#1F4C73;
+a.spec_button:hover {
+    background-color: #1F4C73;
 }
 
 section.person_row {
-    margin:0;
+    margin: 0;
     padding: 0;
     box-shadow: none;
     display: flex;
@@ -374,16 +377,17 @@ section.person_row {
         width: 100%;
     }
 }
-img.partner_bar{
+
+img.partner_bar {
     width: 100%;
     max-width: 400px;
 }
-.partner_bar figure{
+
+.partner_bar figure {
     text-align: center;
 }
 
-
-    /* DEV элементы (удалить в продакшне)*/
+/* DEV элементы (удалить в продакшне)*/
 /*
 img {
     opacity: .05;

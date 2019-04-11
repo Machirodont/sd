@@ -103,6 +103,7 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
         $domainRedirects = [
             "http://gagarin.sd-med.ru" => "/gagarin",
             "http://ruza.sd-med.ru" => "/ruza",
+            "http://ruza-uzi.ru" => "/ruza",
         ];
 
         if (Yii::$app->request->hostInfo !== Yii::$app->params["mainHost"] && Yii::$app->request->hostInfo!=="http://tech.sd-med.ru" ) {
@@ -116,6 +117,14 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
 
 
         //---- 301 редиректы
+        if($pathInfo==="price_sdmed.php"){
+            if(Yii::$app->request->get("filial")==1) Yii::$app->response->redirect("ruza/contacts/", 301)->send();
+            if(Yii::$app->request->get("filial")==2) Yii::$app->response->redirect("tuchkovo/contacts/", 301)->send();
+            if(Yii::$app->request->get("filial")==3) Yii::$app->response->redirect("gagarin/contacts/", 301)->send();
+            Yii::$app->response->redirect("contacts/", 301)->send();
+            exit;
+        };
+
         $redirects = (new Query())
             ->select("*")
             ->from("sd_redirect")

@@ -70,7 +70,7 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                     echo "<br>Смотреть расписание специалиста: ";
                     for ($i = 0; $i < count($model->clinics); $i++) {
                         $isCurrentClinc = $model->currentClinic && $model->clinics[$i]->id === $model->currentClinic->id;
-                        echo Html::a($model->clinics[$i]->in, ["persons/view", "id" => $model->person_id, "cid" => $model->clinics[$i]->id], ["class" => 'clinic_select' . ($isCurrentClinc ? " current" : "")]);
+                        echo Html::a("<nobr>".$model->clinics[$i]->in."</nobr>", ["persons/view", "id" => $model->person_id, "cid" => $model->clinics[$i]->id], ["class" => 'clinic_select' . ($isCurrentClinc ? " current" : "")]);
                     }
                     echo "<div class='shadow_box'>";
                     //Календарь приема
@@ -84,7 +84,7 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                                 "activeDays" => $model->searchActiveDays($today, $after2weeks)
                             ]);
                         } else {
-                            echo "Индивидуальная запись. Звоните " . $model->currentClinic->phone;
+                            echo "Индивидуальная запись. Звоните <a href=\"tel:".$model->currentClinic->phone."\">" . $model->currentClinic->phone."</a>";
                         }
                     }
                     echo "</div>";
