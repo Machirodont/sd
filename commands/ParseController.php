@@ -58,8 +58,9 @@ class ParseController extends Controller
         \Yii::$app->db->createCommand("DELETE FROM sd_price_local")->execute();
         \Yii::$app->db->createCommand("ALTER TABLE `sd_price_local` 	AUTO_INCREMENT=0;")->execute();
         $sqlStackCount = 0;
+        $sql = "";
         for ($i = 0; $i < count($arr); $i++) {
-            echo round(100 * ($i + 1) / $arrCount) . "% (" . ($i + 1) . ")              \r";
+           // echo round(100 * ($i + 1) / $arrCount) . "% (" . ($i + 1) . ")              \r";
             $parentId = null;
             for ($i1 = 0; $i1 < count($arr[$i]["group"]); $i1++) {
                 $grName = $arr[$i]["group"][$i1];
@@ -90,16 +91,17 @@ class ParseController extends Controller
             $priceItem->save();
 
             $itemId = $priceItem->id;
-            $sql = "";
+            echo $arr[$i]["code"]."\n";
             foreach ($arr[$i]["price_list"] as $clinicName => $price) {
                 if (array_key_exists($clinicName, $clinicId) && ((float)$price) > 0) {
-                    $sql .= "INSERT INTO sd_price_local SET itemId=" . $itemId . ", clinicId=" . $clinicId[$clinicName] . ", price=\"" . ((float)$price) . "\";";
+                     $sql .= "INSERT INTO sd_price_local SET itemId=" . $itemId . ", clinicId=" . $clinicId[$clinicName] . ", price=\"" . ((float)$price) . "\";";
                     $sqlStackCount++;
                 }
             }
             if ($sqlStackCount > 20) {
                 \Yii::$app->db->createCommand($sql)->execute();
                 $sqlStackCount = 0;
+                $sql = "";
             }
         }
         exit;

@@ -2,10 +2,12 @@
 /* @var $this yii\web\View
  * @var $groups array
  * @var $items array
+ * @var $group \app\models\PriceGroup
  */
 
 use yii\helpers\Html;
 ?>
+<h1><?= $group ? $group->groupName : "Прайс-лист - цены на услуги" ?></h1>
 <ul>
 <?php
 foreach ($groups as $group){
@@ -20,7 +22,7 @@ foreach ($groups as $group){
     foreach ($items as $item){
         /**@var $item \app\models\PriceItems */
         if($item->price) {
-            echo "<li>" . $item->name . " - " . $item->price . "</li>";
+            echo "<li>" . $item->name . " - " . $item->price . " руб.</li>";
         }
     }
     ?>
