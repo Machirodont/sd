@@ -36,5 +36,6 @@ web/assets
 web/uploads
 web/images/sources
 config/db.php
+config/params.php
 data/*
 

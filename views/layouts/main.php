@@ -32,6 +32,18 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
 </head>
 <body>
 <?php $this->beginBody() ?>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript"> (function (m, e, t, r, i, k, a) {
+        m[i] = m[i] || function () {
+            (m[i].a = m[i].a || []).push(arguments)
+        };
+        m[i].l = 1 * new Date();
+        k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a)
+    })(window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+    ym(51184940, "init", {clickmap: true, trackLinks: true, accurateTrackBounce: true, webvisor: true}); </script>
+<noscript>
+    <div><img src="https://mc.yandex.ru/watch/51184940" style="position:absolute; left:-9999px;" alt=""/></div>
+</noscript> <!-- /Yandex.Metrika counter -->
 <header class="header-a">
     <div class="container">
         <div class="row">
@@ -46,7 +58,8 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
                 </a>
             </div>
             <div class="col-sm-4 flex flex-column header-info">
-                <div class="head-phone-number"><?= $clinic ? $clinic->phone : "+7(915) 480-03-03" ?></div>
+                <?php $phone = $clinic ? $clinic->phone : "+7(915) 480-03-03"; ?>
+                <div class="head-phone-number"><a href="tel:<?= $phone ?>"><?= $phone ?></a></div>
                 <div class="">
                     <?php
 
@@ -114,8 +127,8 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
     <div class="container breadcrumb-container">
         <?= Breadcrumbs::widget([
             'homeLink' => [
-              'label' => 'Главная',
-              'url' => \yii\helpers\Url::toRoute(["/site/main-page"]),
+                'label' => 'Главная',
+                'url' => \yii\helpers\Url::toRoute(["/site/main-page"]),
             ],
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
@@ -128,9 +141,21 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
 
 </div>
 
-<footer class="footer text-center">
-    <div class="container">
+<footer class="footer">
+    <div class="container text-center">
         «СТОЛИЧНАЯ ДИАГНОСТИКА» - сеть медицинских центров. &copy; <?= date("Y") ?>
+    </div>
+    <div>
+    <!--LiveInternet counter--><script type="text/javascript">
+        document.write("<a href='//www.liveinternet.ru/click' "+
+            "target=_blank><img src='//counter.yadro.ru/hit?t44.10;r"+
+            escape(document.referrer)+((typeof(screen)=="undefined")?"":
+                ";s"+screen.width+"*"+screen.height+"*"+(screen.colorDepth?
+                screen.colorDepth:screen.pixelDepth))+";u"+escape(document.URL)+
+            ";h"+escape(document.title.substring(0,150))+";"+Math.random()+
+            "' alt='' title='LiveInternet' "+
+            "border='0' width='31' height='31'><\/a>")
+    </script><!--/LiveInternet-->
     </div>
 </footer>
 
