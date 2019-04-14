@@ -56,7 +56,7 @@ class PersonsController extends Controller
     public function actionIndex()
     {
         $clinic = Clinic::findOne(Yii::$app->session->get("cid"));
-        $query = Persons::find();
+        $query = Persons::find()->where(["removed" => null]);
         if ($clinic) {
             $query
                 ->from([
@@ -70,7 +70,8 @@ class PersonsController extends Controller
                     "c.hash_id = w.clinic_hash",
                     "c.hash_id = w.clinic_hash",
                     "w.workplace_hash = t.workplace_hash",
-                    "t.person_id=p.person_id"
+                    "t.person_id=p.person_id",
+                    "p.removed IS NULL"
                 ]);
         }
 
