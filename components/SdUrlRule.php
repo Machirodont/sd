@@ -102,6 +102,7 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
 
         $domainRedirects = [
             "http://gagarin.sd-med.ru" => ["urlTag" => "/gagarin", "cid" => 5],
+            "http://gagarin-med.ru" => ["urlTag" => "/gagarin", "cid" => 5],
             "http://ruza.sd-med.ru" => ["urlTag" =>"/ruza", "cid" => 2],
             "http://ruza-uzi.ru" => ["urlTag" =>"/ruza", "cid" => 2],
         ];

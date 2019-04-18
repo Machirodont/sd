@@ -35,26 +35,28 @@ git pull <remote> <branch>
 
 cp /var/www/sdmed/config/params.php /var/www/gittest/config
 cp /var/www/sdmed/config/db.php /var/www/gittest/config
+cp -R /var/www/sdmed/vendor /var/www/gittest
 cp -R /var/www/sdmed/data /var/www/gittest
-chown -R www-data /var/www/gittest/data
 cp -R /var/www/sdmed/web/assets /var/www/gittest/web
+chown -R www-data /var/www/gittest/data
 chown -R www-data /var/www/gittest/web/assets
+chown -R www-data /var/www/gittest/runtime
 
 php ./yii dump/load
 
 прайсы:
 Проверить наличие свежего файла /data/gz_tmp.gz
 При необходимости загрузить его с локала или запустить site/load-price/
-Запустить /site/parse-price/ (или yii parse/price )
+Запустить /site/parse-price/ (или php ./yii parse/price )
 
 расписания:
 
 Запустить php ./yii parse/reset-schedule	
-	Очистить sd_loaded_schedules
-	Очистить sd_timeline_days (можно также sd_timelines, sd_workplaces)
+	очищает sd_loaded_schedules
+	очищает sd_timeline_days (можно также sd_timelines, sd_workplaces)
 
 Запустить php ./yii parse/schedule-list
-	Загрузить файлы расписаний из папки /data/ в очередь в таблице sd_loaded_schedules (она должна быть предварительно очищена)
+	Загружает файлы расписаний из папки /data/ в очередь в таблице sd_loaded_schedules (она должна быть предварительно очищена)
 
 Запустить php ./yii parse/schedules
 	парсит очередь json-файлов расписания
