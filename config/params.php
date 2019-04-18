@@ -2,5 +2,5 @@
 
 return [
     'adminEmail' => 'admin@example.com',
-    'mainHost'=>"http://sd"
+    'mainHost'=>"http://yii"
 ];
