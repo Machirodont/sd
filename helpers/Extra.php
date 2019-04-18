@@ -79,7 +79,7 @@ class Extra
     public static function writeLog($text, $fName = "error_log.txt")
     {
         $f = fopen($fName, 'a');
-        $s = date("Y-m-d H:i:s " . $_SERVER["REMOTE_ADDR"]) . " " . $text . "\n";
+        $s = date("Y-m-d H:i:s " . (array_key_exists("REMOTE_ADDR",$_SERVER) ? $_SERVER["REMOTE_ADDR"] : "local")) . " " . $text . "\n";
         fwrite($f, $s);
     }
 

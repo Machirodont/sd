@@ -1,0 +1,60 @@
+/site/load-price/
+Загрузка файла прайса (в /web/gz_tmp.gz)
+Обработку файла не запускает
+
+
+/site/parse-price/
+Вызывает yii parse/price, который:
+	- чистит sd_price_local
+	- помечает removed все sd_price_items и sd_price_group (потом по мере обработки убирает метку removed)
+	- Запускает обработку файла прайса из /data/gz_tmp.gz
+
+	
+/site/load-schedule/
+/799855594adc0f2bd7302c69d3234b5a/
+Сюда обращается API Селенды, чтобы загрузить данные расписания
+Пишет данные в формате JSON в файл "schedule_ДАТА-ВРЕМЯ.json"
+Добавляет файл в таблицу очереди на обработку sd_loaded_schedules
+Асинхронно вызывает site/schedule-parse, который:
+	Вызывает yii parse/schedules, который:
+		- парсит json-файлы, не помеченные обработанными в таблице очереди sd_loaded_schedules
+		
+		
+
+yii parse/schedule-list
+Добавляет все файлы /data/schedule_*.json в таблицу sd_loaded_schedules
+		
+ДЕПЛОЙ:
+Запустить php ./yii parse/clear-old-schedules
+	удаляет все файлы /data/schedule_*.json старее 1(?) суток (считая с даты последнего загруженного файла) из /data/ и из sd_loaded_schedules
+	удаляет все дни расписания старее 4 суток (на момент запуска скрипта) из sd_timeline_days
+
+git init
+git remote add <alias> <remote>
+git pull <remote> <branch>
+
+cp /var/www/sdmed/config/params.php /var/www/gittest/config
+cp /var/www/sdmed/config/db.php /var/www/gittest/config
+cp -R /var/www/sdmed/data /var/www/gittest
+chown -R www-data /var/www/gittest/data
+cp -R /var/www/sdmed/web/assets /var/www/gittest/web
+chown -R www-data /var/www/gittest/web/assets
+
+php ./yii dump/load
+
+прайсы:
+Проверить наличие свежего файла /data/gz_tmp.gz
+При необходимости загрузить его с локала или запустить site/load-price/
+Запустить /site/parse-price/ (или yii parse/price )
+
+расписания:
+
+Запустить php ./yii parse/reset-schedule	
+	Очистить sd_loaded_schedules
+	Очистить sd_timeline_days (можно также sd_timelines, sd_workplaces)
+
+Запустить php ./yii parse/schedule-list
+	Загрузить файлы расписаний из папки /data/ в очередь в таблице sd_loaded_schedules (она должна быть предварительно очищена)
+
+Запустить php ./yii parse/schedules
+	парсит очередь json-файлов расписания

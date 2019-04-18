@@ -101,15 +101,17 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
         $pathInfo = $request->getPathInfo();
 
         $domainRedirects = [
-            "http://gagarin.sd-med.ru" => "/gagarin",
-            "http://ruza.sd-med.ru" => "/ruza",
-            "http://ruza-uzi.ru" => "/ruza",
+            "http://gagarin.sd-med.ru" => ["urlTag" => "/gagarin", "cid" => 5],
+            "http://ruza.sd-med.ru" => ["urlTag" =>"/ruza", "cid" => 2],
+            "http://ruza-uzi.ru" => ["urlTag" =>"/ruza", "cid" => 2],
         ];
 
         if (Yii::$app->request->hostInfo !== Yii::$app->params["mainHost"] && Yii::$app->request->hostInfo!=="http://tech.sd-med.ru" ) {
             $urlWithMainHost = Yii::$app->params["mainHost"] . Yii::$app->request->url;
             if (array_key_exists(Yii::$app->request->hostInfo, $domainRedirects)) {
-                $urlWithMainHost = Yii::$app->params["mainHost"] . $domainRedirects[Yii::$app->request->hostInfo] . Yii::$app->request->url;
+                $urlWithMainHost = Yii::$app->params["mainHost"] . $domainRedirects[Yii::$app->request->hostInfo]["urlTag"] . Yii::$app->request->url;
+                Yii::$app->session->open();
+                Yii::$app->session["cid"] = $domainRedirects[Yii::$app->request->hostInfo]["cid"];
             }
             Yii::$app->response->redirect($urlWithMainHost, 301)->send();
             exit;

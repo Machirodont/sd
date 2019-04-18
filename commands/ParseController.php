@@ -60,7 +60,7 @@ class ParseController extends Controller
         $sqlStackCount = 0;
         $sql = "";
         for ($i = 0; $i < count($arr); $i++) {
-           // echo round(100 * ($i + 1) / $arrCount) . "% (" . ($i + 1) . ")              \r";
+            // echo round(100 * ($i + 1) / $arrCount) . "% (" . ($i + 1) . ")              \r";
             $parentId = null;
             for ($i1 = 0; $i1 < count($arr[$i]["group"]); $i1++) {
                 $grName = $arr[$i]["group"][$i1];
@@ -91,10 +91,10 @@ class ParseController extends Controller
             $priceItem->save();
 
             $itemId = $priceItem->id;
-            echo $arr[$i]["code"]."\n";
+            echo $arr[$i]["code"] . "\n";
             foreach ($arr[$i]["price_list"] as $clinicName => $price) {
                 if (array_key_exists($clinicName, $clinicId) && ((float)$price) > 0) {
-                     $sql .= "INSERT INTO sd_price_local SET itemId=" . $itemId . ", clinicId=" . $clinicId[$clinicName] . ", price=\"" . ((float)$price) . "\";";
+                    $sql .= "INSERT INTO sd_price_local SET itemId=" . $itemId . ", clinicId=" . $clinicId[$clinicName] . ", price=\"" . ((float)$price) . "\";";
                     $sqlStackCount++;
                 }
             }
@@ -109,20 +109,60 @@ class ParseController extends Controller
 
     public function actionIndexGroups()
     {
-        $groups = PriceGroup::find()->all();
+
+    }
+
+    public function actionClearOldSchedules()
+    {
+        $lastLoadedFile = (new Query())->select("*")
+            ->from("sd_loaded_schedules")
+            ->orderBy(["loadTime" => SORT_DESC])
+            ->limit(1)
+            ->all();
+        if (count($lastLoadedFile) !== 1) return 0;
+        $lastLoadingTime = $lastLoadedFile[0]["loadTime"];
+
+        $files = (new Query())->select("*")
+            ->from("sd_loaded_schedules")
+            ->where("loadTime < DATE_SUB(\"" . $lastLoadingTime . "\", INTERVAL 1 DAY)")
+            ->orderBy(["loadTime" => SORT_ASC])
+            ->all();
+        echo count($files) . "\n";
+        foreach ($files as $f) {
+            $fName = __DIR__ . "/../data/" . $f["fileName"];
+            \Yii::$app->db->createCommand("DELETE FROM sd_loaded_schedules WHERE fileName=\"" . $f["fileName"] . "\" ")->execute();
+            if (file_exists($fName)) unlink($fName);
+            echo $f["fileName"] . "\n";
+        }
+
+        \Yii::$app->db->createCommand("DELETE FROM sd_timeline_days WHERE day< DATE_SUB(\"" . date("Y-m-d") . "\", INTERVAL 4 DAY)")->execute();
+        return 0;
+    }
+
+    public function actionResetSchedule()
+    {
+        \Yii::$app->db->createCommand("DELETE FROM sd_loaded_schedules")->execute();
+        \Yii::$app->db->createCommand("ALTER TABLE `sd_loaded_schedules` AUTO_INCREMENT=0;")->execute();
+        \Yii::$app->db->createCommand("DELETE FROM sd_timeline_days")->execute();
+        \Yii::$app->db->createCommand("ALTER TABLE `sd_timeline_days` AUTO_INCREMENT=0;")->execute();
+        /*
+        \Yii::$app->db->createCommand("DELETE FROM sd_timelines")->execute();
+        \Yii::$app->db->createCommand("ALTER TABLE `sd_timelines` AUTO_INCREMENT=0;")->execute();
+        \Yii::$app->db->createCommand("DELETE FROM sd_workplaces")->execute();
+        \Yii::$app->db->createCommand("ALTER TABLE `sd_workplaces` AUTO_INCREMENT=0;")->execute();
+        */
 
     }
 
     public function actionScheduleList()
     {
-        $files = glob("./data/schedule_*.json");
+        $files = glob(__DIR__."/../data/schedule_*.json");
         echo count($files);
         foreach ($files as $file) {
-            echo basename($file) . "  >  " . date("Y-m-d H-i-s", filemtime($file));
+            echo basename($file) . "  >  " . date("Y-m-d H:i:s", filemtime($file));
             echo "\n";
-            \Yii::$app->db->createCommand("INSERT INTO sd_loaded_schedules SET fileName=\"" . basename($file) . "\",  loadTime=\"" . date("Y-m-d H-i-s", filemtime($file)) . "\" ")->execute();
+            \Yii::$app->db->createCommand("INSERT INTO sd_loaded_schedules SET fileName=\"" . basename($file) . "\",  loadTime=\"" . date("Y-m-d H:i:s", filemtime($file)) . "\" ")->execute();
         }
-
     }
 
     public function actionSchedules()
@@ -132,18 +172,22 @@ class ParseController extends Controller
             ->where(["parsed" => 0])
             ->orderBy(["loadTime" => SORT_ASC])
             ->all();
-        if (count($files) === 0) return "Парсить нечего";
+        if (count($files) === 0) {
+            echo "Парсить нечего";
+            return 0;
+        }
 
         foreach ($files as $f) {
             $fName = $f["fileName"];
 
             echo $fName . "\n";
-            Extra::writeLog("Парсим файл ".$fName);
-            if (!file_exists("../data/" . $fName)){
-                Extra::writeLog("Не найден файл ".$fName);
-                return "Ошибка файла";
+            Extra::writeLog("Парсим файл " . $fName);
+            if (!file_exists(__DIR__."/../data/" . $fName)) {
+                Extra::writeLog("Не найден файл " . $fName);
+                echo "Ошибка файла";
+                return 0;
             }
-            $s = json_decode(file_get_contents("../data/" . $fName));
+            $s = json_decode(file_get_contents(__DIR__."/../data/" . $fName));
 
             foreach ($s->subdivisions as $subdiv_hash => $subdiv) {
 

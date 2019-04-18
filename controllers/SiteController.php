@@ -211,7 +211,7 @@ class SiteController extends Controller
 
     public function actionLoadPrice()
     {
-        $file_path = "gz_tmp.gz";
+        $file_path = __DIR__ . "/../data/gz_tmp.gz";
         $time_file = "load_price_time.txt";
         $status = 0;
         $last_load_time = intval(file_get_contents($time_file));
