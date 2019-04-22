@@ -11,6 +11,7 @@ namespace app\commands;
 
 use app\helpers\Extra;
 use app\models\Clinic;
+use app\models\TimelineCells;
 use yii\console\Controller;
 use app\models\PriceGroup;
 use app\models\PriceItems;
@@ -145,6 +146,8 @@ class ParseController extends Controller
         \Yii::$app->db->createCommand("ALTER TABLE `sd_loaded_schedules` AUTO_INCREMENT=0;")->execute();
         \Yii::$app->db->createCommand("DELETE FROM sd_timeline_days")->execute();
         \Yii::$app->db->createCommand("ALTER TABLE `sd_timeline_days` AUTO_INCREMENT=0;")->execute();
+        \Yii::$app->db->createCommand("DELETE FROM sd_timeline_cells")->execute();
+        \Yii::$app->db->createCommand("ALTER TABLE `sd_timeline_cells` AUTO_INCREMENT=0;")->execute();
         /*
         \Yii::$app->db->createCommand("DELETE FROM sd_timelines")->execute();
         \Yii::$app->db->createCommand("ALTER TABLE `sd_timelines` AUTO_INCREMENT=0;")->execute();
@@ -156,7 +159,7 @@ class ParseController extends Controller
 
     public function actionScheduleList()
     {
-        $files = glob(__DIR__."/../data/schedule_*.json");
+        $files = glob(__DIR__ . "/../data/schedule_*.json");
         echo count($files);
         foreach ($files as $file) {
             echo basename($file) . "  >  " . date("Y-m-d H:i:s", filemtime($file));
@@ -182,12 +185,12 @@ class ParseController extends Controller
 
             echo $fName . "\n";
             Extra::writeLog("Парсим файл " . $fName);
-            if (!file_exists(__DIR__."/../data/" . $fName)) {
+            if (!file_exists(__DIR__ . "/../data/" . $fName)) {
                 Extra::writeLog("Не найден файл " . $fName);
                 echo "Ошибка файла";
                 return 0;
             }
-            $s = json_decode(file_get_contents(__DIR__."/../data/" . $fName));
+            $s = json_decode(file_get_contents(__DIR__ . "/../data/" . $fName));
 
             foreach ($s->subdivisions as $subdiv_hash => $subdiv) {
 
@@ -246,13 +249,42 @@ class ParseController extends Controller
 
                             foreach ($schedule->days_active as $date => $day_is_active) {
                                 $d = TimelineDays::findOne(["timelineId" => $tl->id, "day" => $date]);
-                                if (!$d) {
+                                if (!$d && $day_is_active) {
                                     $d = new TimelineDays(["timelineId" => $tl->id, "day" => $date]);
                                 }
-                                $d->is_active = intval($day_is_active);
-                                $d->save();
-                                echo "day " . $date . " - " . ($day_is_active ? "+" : " ") . " - " . $schedule->name . " / " . $subdiv->name . ";\n";
-                                //ToDo - проверка и реакция, если сохранение не прошло
+                                if ($d) {
+                                    if ($d->is_active !== intval($day_is_active)) {
+                                        echo $d->isNewRecord ? "NEW\n" : "REFRESH\n";
+                                    }
+                                    $d->is_active = intval($day_is_active);
+                                    $d->save();
+                                    //ToDo - проверка и реакция, если сохранение не прошло
+                                    echo "day " . $date . " - " . ($day_is_active ? "+" : " ") . " - " . $schedule->name . " / " . $subdiv->name . ";\n";
+                                }
+                            }
+                            foreach ($schedule->cells as $cell) {
+                                $startText = $cell->date . " " . $cell->time_start . ":00";
+                                $endText = $cell->date . " " . $cell->time_end . ":00";
+                                $tCell = TimelineCells::findOne(["timelineId" => $tl->id, "start" => $startText, "end" => $endText]);
+                                $newRecord = false;
+                                if (!$tCell) {
+                                    $newRecord = true;
+                                    $tCell = new TimelineCells(["timelineId" => $tl->id, "start" => $startText, "end" => $endText]);
+                                }
+
+                                if (!$newRecord) {
+                                    if (intval($cell->free) !== intval($tCell->free)) {
+                                        echo "ПЕРЕЗАПИСЬ\n";
+                                        $tCell->free = intval($cell->free);
+                                        $tCell->source = $fName;
+                                        $tCell->save();
+                                    }
+                                }
+                                if ($newRecord) {
+                                    $tCell->free = intval($cell->free);
+                                    $tCell->source = $fName;
+                                    $tCell->save();
+                                }
                             }
                         } else {
                             echo "Отсутствует соответствие: " . $schedule->name . " / " . $schedule_hash . " (" . $subdiv->name . ")\n";

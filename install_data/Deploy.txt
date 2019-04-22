@@ -53,7 +53,7 @@ php ./yii dump/load
 
 Запустить php ./yii parse/reset-schedule	
 	очищает sd_loaded_schedules
-	очищает sd_timeline_days (можно также sd_timelines, sd_workplaces)
+	очищает sd_timeline_days, sd_timeline_cells (можно также sd_timelines, sd_workplaces)
 
 Запустить php ./yii parse/schedule-list
 	Загружает файлы расписаний из папки /data/ в очередь в таблице sd_loaded_schedules (она должна быть предварительно очищена)
