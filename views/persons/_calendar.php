@@ -18,7 +18,7 @@ use app\models\Persons;
     for ($i = 0; $i < $period; $i++) {
         if ($yesterdayMonth !== $dateCounter->format("m")) {
             echo $dateCounter->format("F");
-            echo "<table class=\"table\">";
+            echo "<table class=\"table\"><tr>";
             if ($dateCounter->format("N") !== "1") {
                 echo "<td style='border:none;' colspan='" . (intval($dateCounter->format("N")) - 1) . "'> </td>";
             }
@@ -32,4 +32,5 @@ use app\models\Persons;
         $yesterdayMonth = $dateCounter->format("m");
         $dateCounter->add($interval);
     }
+    echo "</table>";
 ?>

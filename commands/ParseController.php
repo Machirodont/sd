@@ -142,12 +142,15 @@ class ParseController extends Controller
 
     public function actionResetSchedule()
     {
+
         \Yii::$app->db->createCommand("DELETE FROM sd_loaded_schedules")->execute();
         \Yii::$app->db->createCommand("ALTER TABLE `sd_loaded_schedules` AUTO_INCREMENT=0;")->execute();
         \Yii::$app->db->createCommand("DELETE FROM sd_timeline_days")->execute();
         \Yii::$app->db->createCommand("ALTER TABLE `sd_timeline_days` AUTO_INCREMENT=0;")->execute();
         \Yii::$app->db->createCommand("DELETE FROM sd_timeline_cells")->execute();
         \Yii::$app->db->createCommand("ALTER TABLE `sd_timeline_cells` AUTO_INCREMENT=0;")->execute();
+        \Yii::$app->db->createCommand("DELETE FROM sd_timeline_changelog")->execute();
+        \Yii::$app->db->createCommand("ALTER TABLE `sd_timeline_changelog` AUTO_INCREMENT=0;")->execute();
         /*
         \Yii::$app->db->createCommand("DELETE FROM sd_timelines")->execute();
         \Yii::$app->db->createCommand("ALTER TABLE `sd_timelines` AUTO_INCREMENT=0;")->execute();
@@ -161,15 +164,38 @@ class ParseController extends Controller
     {
         $files = glob(__DIR__ . "/../data/schedule_*.json");
         echo count($files);
+        $t = microtime(true);
+        $inserts = [];
         foreach ($files as $file) {
             echo basename($file) . "  >  " . date("Y-m-d H:i:s", filemtime($file));
             echo "\n";
-            \Yii::$app->db->createCommand("INSERT INTO sd_loaded_schedules SET fileName=\"" . basename($file) . "\",  loadTime=\"" . date("Y-m-d H:i:s", filemtime($file)) . "\" ")->execute();
+            $inserts[] = [basename($file), date("Y-m-d H:i:s", filemtime($file))];
+            if (count($inserts) > 30) {
+                \Yii::$app->db->createCommand()->batchInsert('sd_loaded_schedules', ["fileName", "loadTime"], $inserts)->execute();
+                $inserts = [];
+            }
+
         }
+        \Yii::$app->db->createCommand()->batchInsert('sd_loaded_schedules', ["fileName", "loadTime"], $inserts)->execute();
+        echo microtime(true) - $t;
     }
 
+    /** 252 сек
+     *
+     * @return int
+     * @throws \yii\db\Exception
+     */
     public function actionSchedules()
     {
+        /*
+SELECT tch.*, tc.start, tl.person_id, p.lastname, lsh.loadTime, cl.city FROM sd_timeline_changelog AS tch
+LEFT JOIN sd_timeline_cells AS tc ON tch.cellId=tc.id
+LEFT JOIN sd_timelines AS tl ON tc.timelineId=tl.id
+LEFT JOIN sd_persons AS p ON tl.person_id=p.person_id
+LEFT JOIN sd_loaded_schedules AS lsh ON lsh.fileName=tc.source
+LEFT JOIN sd_workplaces AS wp ON tl.workplace_hash=wp.workplace_hash
+LEFT JOIN sd_clinics AS cl ON wp.clinic_hash=cl.hash_id
+         */
         $files = (new Query())->select("fileName")
             ->from("sd_loaded_schedules")
             ->where(["parsed" => 0])
@@ -180,6 +206,8 @@ class ParseController extends Controller
             return 0;
         }
 
+        $log = "";
+        $t = microtime(true);
         foreach ($files as $f) {
             $fName = $f["fileName"];
 
@@ -254,7 +282,7 @@ class ParseController extends Controller
                                 }
                                 if ($d) {
                                     if ($d->is_active !== intval($day_is_active)) {
-                                        echo $d->isNewRecord ? "NEW\n" : "REFRESH\n";
+                                        echo $d->isNewRecord ? "NEW DAY\n" : "REFRESH DAY\n";
                                     }
                                     $d->is_active = intval($day_is_active);
                                     $d->save();
@@ -262,30 +290,79 @@ class ParseController extends Controller
                                     echo "day " . $date . " - " . ($day_is_active ? "+" : " ") . " - " . $schedule->name . " / " . $subdiv->name . ";\n";
                                 }
                             }
+
+                            $inserts = [];
                             foreach ($schedule->cells as $cell) {
+
                                 $startText = $cell->date . " " . $cell->time_start . ":00";
                                 $endText = $cell->date . " " . $cell->time_end . ":00";
                                 $tCell = TimelineCells::findOne(["timelineId" => $tl->id, "start" => $startText, "end" => $endText]);
-                                $newRecord = false;
+
                                 if (!$tCell) {
-                                    $newRecord = true;
-                                    $tCell = new TimelineCells(["timelineId" => $tl->id, "start" => $startText, "end" => $endText]);
+                                    if ($tl->id == 31) $log .= "\nINCOMING: " . $cell->date . "  " . $cell->time_start . "  " . $cell->time_end . " " . $cell->free . " \n";
+                                    $intersectCondition = ["and",
+                                        ["timelineId" => $tl->id],
+                                        ["not",
+                                            ["or",
+                                                ["and",
+                                                    [">=", "start", $startText],
+                                                    [">=", "start", $endText]
+                                                ],
+                                                ["and",
+                                                    ["<=", "end", $startText],
+                                                    ["<=", "end", $endText]
+                                                ]
+                                            ]
+                                        ]
+                                    ];
+
+                                    $intersectedTCells = TimelineCells::find()->where($intersectCondition)->all();
+                                    if ($intersectedTCells) {
+                                        if ($tl->id == 31) $log .= "INTERSECT\n";
+                                        echo "ПЕРЕСЕЧЕНИЕ " . $tl->id . " " . $startText . " " . $endText . " " . count($intersectedTCells) . "\n";
+                                        $newCell = new TimelineCells([
+                                            "timelineId" => $tl->id,
+                                            "start" => $startText,
+                                            "end" => $endText,
+                                            "free" => intval($cell->free),
+                                            "source" => $fName,
+                                        ]);
+                                        //Вычисление и обработка пересечений
+                                        $oldCellsLog="[";
+                                        $newCellsLog="[";
+                                        foreach ($intersectedTCells as $oldCell) {
+                                            /**@var $oldCell \app\models\TimelineCells */
+                                            $oldCellsLog.=date("H:i", $oldCell->startT) . " - " . date("H:i", $oldCell->endT) . ";";
+                                            if ($oldCell->startT < $newCell->startT) {
+                                                $inserts[] = [$tl->id, $oldCell->start, $newCell->start, $oldCell->free, $fName];
+                                                $newCellsLog.=$oldCell->start . " - " . $newCell->start . ";";
+                                            }
+                                            if ($oldCell->endT > $newCell->endT) {
+                                                $inserts[] = [$tl->id, $newCell->end, $oldCell->end, $oldCell->free, $fName];
+                                                $newCellsLog.=$newCell->end . " - " . $oldCell->end. ";";
+                                            }
+                                        }
+                                        $newCellsLog.="]\n";
+                                        $oldCellsLog.="]\n";
+                                        if ($tl->id == 31) $log .= $oldCellsLog.$newCellsLog;
+
+                                        TimelineCells::deleteAll($intersectCondition);
+                                    } else {
+                                        if ($tl->id == 31) $log .= "NEW\n";
+                                    }
+                                    $inserts[] = [$tl->id, $startText, $endText, intval($cell->free), $fName];
                                 }
 
-                                if (!$newRecord) {
-                                    if (intval($cell->free) !== intval($tCell->free)) {
-                                        echo "ПЕРЕЗАПИСЬ\n";
-                                        $tCell->free = intval($cell->free);
-                                        $tCell->source = $fName;
-                                        $tCell->save();
-                                    }
-                                }
-                                if ($newRecord) {
+                                if ($tCell && intval($cell->free) !== intval($tCell->free)) {
+                                    if ($tl->id == 31) $log .= "\nINCOMING: " . $cell->date . "  " . $cell->time_start . "  " . $cell->time_end . " " . $cell->free . " \n";
+                                    if ($tl->id == 31) $log .= "UPDATE\n";
+                                    echo "ПЕРЕЗАПИСЬ\n";
                                     $tCell->free = intval($cell->free);
                                     $tCell->source = $fName;
                                     $tCell->save();
                                 }
                             }
+                            \Yii::$app->db->createCommand()->batchInsert('sd_timeline_cells', ["timelineId", "start", "end", "free", "source"], $inserts)->execute();
                         } else {
                             echo "Отсутствует соответствие: " . $schedule->name . " / " . $schedule_hash . " (" . $subdiv->name . ")\n";
                         }
@@ -294,7 +371,9 @@ class ParseController extends Controller
             }
             \Yii::$app->db->createCommand("UPDATE sd_loaded_schedules SET  parsed=1 WHERE fileName=\"" . $fName . "\";")->execute();
         }
-        echo "END\n";
+        echo microtime(true) - $t . "\n";
+        echo "END\n\n";
+        echo $log;
     }
 
 }

@@ -109,8 +109,7 @@ CREATE TABLE `sd_loaded_schedules` (
   `fileName` tinytext NOT NULL,
   `parsed` tinyint(4) NOT NULL DEFAULT '0',
   `loadTime` datetime DEFAULT NULL,
-  PRIMARY KEY (`fileName`(63)),
-  UNIQUE KEY `fileName` (`fileName`(64))
+  PRIMARY KEY (`fileName`(63))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -381,6 +380,33 @@ LOCK TABLES `sd_timeline_cells` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `sd_timeline_changelog`
+--
+
+DROP TABLE IF EXISTS `sd_timeline_changelog`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `sd_timeline_changelog` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `timelineId` int(11) NOT NULL DEFAULT '0',
+  `cellsDate` date DEFAULT NULL,
+  `oldCells` text NOT NULL,
+  `newCells` text NOT NULL,
+  `change_source` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sd_timeline_changelog`
+--
+
+LOCK TABLES `sd_timeline_changelog` WRITE;
+/*!40000 ALTER TABLE `sd_timeline_changelog` DISABLE KEYS */;
+/*!40000 ALTER TABLE `sd_timeline_changelog` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `sd_timeline_days`
 --
 
@@ -590,4 +616,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-04-22 17:37:08
+-- Dump completed on 2019-04-24 18:09:19

@@ -22,6 +22,7 @@ use yii\db\Query;
  * @property string $htmlDescription
  * @property string $primarySpec
  * @property string $secondarySpecs
+ * @property TimelineCells[] $timeCells
  *
  */
 class Persons extends PersonsGenerated
@@ -68,6 +69,22 @@ class Persons extends PersonsGenerated
             ])
             ->all();
         //У одного человека может быть несколько Workplace в одном подразделении
+    }
+
+    public function getTimeCells()
+    {
+        if (!$this->currentClinic instanceof Clinic) return null;
+        return TimelineCells::find()
+            ->select("tc.*")
+            ->from(["tc" => "sd_timeline_cells"])
+            ->leftJoin(["tl" => "sd_timelines"], "tc.timelineId = tl.id")
+            ->leftJoin(["w" => "sd_workplaces"], "tl.workplace_hash = w.workplace_hash")
+            ->where([
+                "w.clinic_hash" => $this->currentClinic->hash_id,
+                "tl.person_id" => $this->person_id
+            ])
+            ->orderBy("tc.start")
+            ->all();
     }
 
 

@@ -66,30 +66,44 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
             <?php endif; ?>
 
             <?php
-                if (count($model->clinics) > 0) {
-                    echo "<br>Смотреть расписание специалиста: ";
-                    for ($i = 0; $i < count($model->clinics); $i++) {
-                        $isCurrentClinc = $model->currentClinic && $model->clinics[$i]->id === $model->currentClinic->id;
-                        echo Html::a("<nobr>".$model->clinics[$i]->in."</nobr>", ["persons/view", "id" => $model->person_id, "cid" => $model->clinics[$i]->id], ["class" => 'clinic_select' . ($isCurrentClinc ? " current" : "")]);
-                    }
-                    echo "<div class='shadow_box'>";
-                    //Календарь приема
-                    $today = new DateTime();
-                    $after2weeks = (new DateTime())->add(new DateInterval("P14D"));
-                    if ($model->currentClinic) {
-                        if ($model->searchActiveDays($today, $after2weeks)) {
-                            echo $this->render('_calendar', [
-                                "startDay" => date("Y-m-d"),
-                                "period" => 7 * 2,
-                                "activeDays" => $model->searchActiveDays($today, $after2weeks)
-                            ]);
-                        } else {
-                            echo "Индивидуальная запись. Звоните <a href=\"tel:".$model->currentClinic->phone."\">" . $model->currentClinic->phone."</a>";
-                        }
-                    }
-                    echo "</div>";
+            if (count($model->clinics) > 0) {
+                echo "<br>Смотреть расписание специалиста: ";
+                for ($i = 0; $i < count($model->clinics); $i++) {
+                    $isCurrentClinc = $model->currentClinic && $model->clinics[$i]->id === $model->currentClinic->id;
+                    echo Html::a("<nobr>" . $model->clinics[$i]->in . "</nobr>", ["persons/view", "id" => $model->person_id, "cid" => $model->clinics[$i]->id], ["class" => 'clinic_select' . ($isCurrentClinc ? " current" : "")]);
                 }
-                ?>
+                echo "<div class='shadow_box'>";
+                //Календарь приема
+                $today = new DateTime();
+                $after2weeks = (new DateTime())->add(new DateInterval("P14D"));
+                if ($model->currentClinic) {
+                    if ($model->searchActiveDays($today, $after2weeks)) {
+                        echo $this->render('_calendar', [
+                            "startDay" => date("Y-m-d"),
+                            "period" => 7 * 2,
+                            "activeDays" => $model->searchActiveDays($today, $after2weeks)
+                        ]);
+                    } else {
+                        echo "Индивидуальная запись. Звоните <a href=\"tel:" . $model->currentClinic->phone . "\">" . $model->currentClinic->phone . "</a>";
+                    }
+                }
+                echo "</div>";
+            }
+
+            if ($model->timeCells) {
+                echo "<hr><table class='table small'>";
+                $prevTc = $model->timeCells[0];
+                foreach ($model->timeCells as $tc) {
+                    $style = "";
+                    if ($tc->start !== $prevTc->end) $style = "color:red; ";
+                    if ($tc->free) $style .= "background-color:#EEE;";
+                    $prevTc = $tc;
+                    echo "<tr style='$style'><td>" . $tc->timelineId . "</td><td>" . $tc->start . "</td><td>" . $tc->end . "</td><td>" . $tc->source . "</td></tr>";
+                }
+                echo "</table>";
+            }
+
+            ?>
 
             <?php
             if (false && $model->activeDays && is_array($model->activeDays)) {
@@ -104,7 +118,7 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                 }
             }
             ?>
-            </table>
+
         </div>
     </div>
 
