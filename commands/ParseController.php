@@ -293,13 +293,13 @@ LEFT JOIN sd_clinics AS cl ON wp.clinic_hash=cl.hash_id
 
                             $inserts = [];
                             foreach ($schedule->cells as $cell) {
-
                                 $startText = $cell->date . " " . $cell->time_start . ":00";
                                 $endText = $cell->date . " " . $cell->time_end . ":00";
                                 $tCell = TimelineCells::findOne(["timelineId" => $tl->id, "start" => $startText, "end" => $endText]);
+                                $loggedTimeline = 12;
 
                                 if (!$tCell) {
-                                    if ($tl->id == 31) $log .= "\nINCOMING: " . $cell->date . "  " . $cell->time_start . "  " . $cell->time_end . " " . $cell->free . " \n";
+                                    if ($tl->id == $loggedTimeline) $log .= "\nINCOMING: " . $cell->date . "  " . $cell->time_start . "  " . $cell->time_end . " " . $cell->free . " \n";
                                     $intersectCondition = ["and",
                                         ["timelineId" => $tl->id],
                                         ["not",
@@ -318,7 +318,7 @@ LEFT JOIN sd_clinics AS cl ON wp.clinic_hash=cl.hash_id
 
                                     $intersectedTCells = TimelineCells::find()->where($intersectCondition)->all();
                                     if ($intersectedTCells) {
-                                        if ($tl->id == 31) $log .= "INTERSECT\n";
+                                        if ($tl->id == $loggedTimeline) $log .= "INTERSECT\n";
                                         echo "ПЕРЕСЕЧЕНИЕ " . $tl->id . " " . $startText . " " . $endText . " " . count($intersectedTCells) . "\n";
                                         $newCell = new TimelineCells([
                                             "timelineId" => $tl->id,
@@ -328,41 +328,63 @@ LEFT JOIN sd_clinics AS cl ON wp.clinic_hash=cl.hash_id
                                             "source" => $fName,
                                         ]);
                                         //Вычисление и обработка пересечений
-                                        $oldCellsLog="[";
-                                        $newCellsLog="[";
+                                        $oldCellsLog = "";
+                                        $newCellsLog = "";
                                         foreach ($intersectedTCells as $oldCell) {
                                             /**@var $oldCell \app\models\TimelineCells */
-                                            $oldCellsLog.=date("H:i", $oldCell->startT) . " - " . date("H:i", $oldCell->endT) . ";";
+                                            $oldCellsLog .= "[" . date("H:i", $oldCell->startT) . "-" . date("H:i", $oldCell->endT) . " " . intval($oldCell->free) . "]";
                                             if ($oldCell->startT < $newCell->startT) {
                                                 $inserts[] = [$tl->id, $oldCell->start, $newCell->start, $oldCell->free, $fName];
-                                                $newCellsLog.=$oldCell->start . " - " . $newCell->start . ";";
+                                                $newCellsLog .= "[" . date("H:i", $oldCell->startT) . "-" . date("H:i", $newCell->startT) . " " . intval($oldCell->free) . "]";
                                             }
                                             if ($oldCell->endT > $newCell->endT) {
                                                 $inserts[] = [$tl->id, $newCell->end, $oldCell->end, $oldCell->free, $fName];
-                                                $newCellsLog.=$newCell->end . " - " . $oldCell->end. ";";
+                                                $newCellsLog .= "[" . date("H:i", $newCell->endT) . "-" . date("H:i", $oldCell->endT) . " " . intval($oldCell->free) . "]";
                                             }
                                         }
-                                        $newCellsLog.="]\n";
-                                        $oldCellsLog.="]\n";
-                                        if ($tl->id == 31) $log .= $oldCellsLog.$newCellsLog;
+                                        if ($tl->id == $loggedTimeline) $log .= $oldCellsLog . "\n" . $newCellsLog . "\n";
 
                                         TimelineCells::deleteAll($intersectCondition);
+                                        \Yii::$app->db->createCommand()->batchInsert('sd_timeline_cells', ["timelineId", "start", "end", "free", "source"], $inserts)->execute();
+                                        $inserts = [];
+
+                                        \Yii::$app->db->createCommand()->insert("sd_timeline_changelog", [
+                                            "timelineId" => $tl->id,
+                                            "cellsDate" => date("Y-m-d", $newCell->startT),
+                                            "incomCell" => "[" . date("H:i", $newCell->startT) . "-" . date("H:i", $newCell->endT) . " " . intval($newCell->free) . "]",
+                                            "oldCells" => $oldCellsLog,
+                                            "newCells" => $newCellsLog,
+                                            "change_source" => $fName,
+                                            "change_time" => $s->time,
+                                        ])->execute();
+
+
                                     } else {
-                                        if ($tl->id == 31) $log .= "NEW\n";
+                                        if ($tl->id == $loggedTimeline) $log .= "NEW\n";
                                     }
                                     $inserts[] = [$tl->id, $startText, $endText, intval($cell->free), $fName];
                                 }
 
                                 if ($tCell && intval($cell->free) !== intval($tCell->free)) {
-                                    if ($tl->id == 31) $log .= "\nINCOMING: " . $cell->date . "  " . $cell->time_start . "  " . $cell->time_end . " " . $cell->free . " \n";
-                                    if ($tl->id == 31) $log .= "UPDATE\n";
+                                    if ($tl->id == $loggedTimeline) $log .= "\nINCOMING: " . $cell->date . "  " . $cell->time_start . "  " . $cell->time_end . " " . $cell->free . " \n";
+                                    if ($tl->id == $loggedTimeline) $log .= "UPDATE\n";
                                     echo "ПЕРЕЗАПИСЬ\n";
                                     $tCell->free = intval($cell->free);
                                     $tCell->source = $fName;
                                     $tCell->save();
+
+                                    \Yii::$app->db->createCommand()->insert("sd_timeline_changelog", [
+                                        "timelineId" => $tl->id,
+                                        "cellsDate" => date("Y-m-d", $tCell->startT),
+                                        "incomCell" => "[" . date("H:i", $tCell->startT) . "-" . date("H:i", $tCell->endT) . " " . intval($tCell->free) . "]",
+                                        "oldCells" => "[" . date("H:i", $tCell->startT) . "-" . date("H:i", $tCell->endT) . " " . intval(!$tCell->free) . "]",
+                                        "newCells" => "",
+                                        "change_source" => $fName,
+                                        "change_time" => $s->time,
+                                    ])->execute();
                                 }
                             }
-                            \Yii::$app->db->createCommand()->batchInsert('sd_timeline_cells', ["timelineId", "start", "end", "free", "source"], $inserts)->execute();
+                            if ($inserts) \Yii::$app->db->createCommand()->batchInsert('sd_timeline_cells', ["timelineId", "start", "end", "free", "source"], $inserts)->execute();
                         } else {
                             echo "Отсутствует соответствие: " . $schedule->name . " / " . $schedule_hash . " (" . $subdiv->name . ")\n";
                         }
@@ -374,6 +396,47 @@ LEFT JOIN sd_clinics AS cl ON wp.clinic_hash=cl.hash_id
         echo microtime(true) - $t . "\n";
         echo "END\n\n";
         echo $log;
+    }
+
+    public function actionSchCheck()
+    {
+        $files = (new Query())->select("fileName")
+            ->from("sd_loaded_schedules")
+            ->orderBy(["loadTime" => SORT_ASC])
+            ->all();
+        if (count($files) === 0) {
+            echo "Парсить нечего";
+            return 0;
+        }
+
+        $t = microtime(true);
+        foreach ($files as $f) {
+            $fName = $f["fileName"];
+
+            if (!file_exists(__DIR__ . "/../data/" . $fName)) {
+                echo "Ошибка файла";
+                return 0;
+            }
+            $s = json_decode(file_get_contents(__DIR__ . "/../data/" . $fName));
+
+            foreach ($s->subdivisions as $subdiv_hash => $subdiv) {
+                foreach ($subdiv->workplaces as $workplace_hash => $workplace) {
+                    foreach ($workplace->schedules as $schedule_hash => $schedule) {
+                        $cells = $schedule->cells;
+                        for ($i = 0; $i < count($cells); $i++) {
+                            if ($i > 0) {
+                                if ($cells[$i]->date === $cells[$i - 1]->date && $cells[$i]->time_start < $cells[$i - 1]->time_end) {
+                                    echo $s->time . " > " . $subdiv->name . " > " . $schedule->name . " > " . $cells[$i]->date . " > [" . $cells[$i - 1]->time_start . "-" . $cells[$i - 1]->time_end . " " . intval($cells[$i - 1]->free) . "  " . $cells[$i]->time_start . "-" . $cells[$i]->time_end . " " . intval($cells[$i]->free) . "]\n";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+        echo microtime(true) - $t . "\n";
+        echo "END\n\n";
     }
 
 }
