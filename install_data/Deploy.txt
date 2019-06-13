@@ -41,6 +41,7 @@ cp -R /var/www/sdmed/web/assets /var/www/gittest/web
 chown -R www-data /var/www/gittest/data
 chown -R www-data /var/www/gittest/web/assets
 chown -R www-data /var/www/gittest/runtime
+chown -R www-data /var/www/gittest/web/load_price_time.txt
 
 php ./yii dump/load
 

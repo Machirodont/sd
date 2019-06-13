@@ -204,8 +204,6 @@ class SiteController extends Controller
                 "thumb" => $folder . basename($filename),
             ];
         }
-
-
         return json_encode($f);
     }
 
@@ -317,7 +315,6 @@ class SiteController extends Controller
     }
 
 
-
     public function actionScheduleParse()
     {
         echo "start<br>";
@@ -326,5 +323,10 @@ class SiteController extends Controller
         exit;
     }
 
-
+    public function actionCounter()
+    {
+        if (Yii::$app->request->post("cid")) {
+            Yii::$app->db->createCommand("INSERT INTO sd_hit_counter SET cid=\"" . intval(Yii::$app->session["cid"]) . "\", hit=\"tel\", hitTime=\"" . date("Y-m-d H:i:s") . "\", ip=\"" . Yii::$app->request->remoteIP . "\"")->execute();
+        }
+    }
 }

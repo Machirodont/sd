@@ -167,9 +167,11 @@ class ParseController extends Controller
         $t = microtime(true);
         $inserts = [];
         foreach ($files as $file) {
-            echo basename($file) . "  >  " . date("Y-m-d H:i:s", filemtime($file));
-            echo "\n";
-            $inserts[] = [basename($file), date("Y-m-d H:i:s", filemtime($file))];
+            echo basename($file);
+            $s = json_decode(file_get_contents($file));
+            $fileLoadDateTime=$s->time;
+            echo " > ".$fileLoadDateTime."\n";
+            $inserts[] = [basename($file), $fileLoadDateTime];
             if (count($inserts) > 30) {
                 \Yii::$app->db->createCommand()->batchInsert('sd_loaded_schedules', ["fileName", "loadTime"], $inserts)->execute();
                 $inserts = [];
@@ -328,23 +330,23 @@ LEFT JOIN sd_clinics AS cl ON wp.clinic_hash=cl.hash_id
                                             "source" => $fName,
                                         ]);
                                         //Вычисление и обработка пересечений
-                                        $oldCellsLog="[";
-                                        $newCellsLog="[";
+                                        $oldCellsLog = "[";
+                                        $newCellsLog = "[";
                                         foreach ($intersectedTCells as $oldCell) {
                                             /**@var $oldCell \app\models\TimelineCells */
-                                            $oldCellsLog.=date("H:i", $oldCell->startT) . " - " . date("H:i", $oldCell->endT) . ";";
+                                            $oldCellsLog .= date("H:i", $oldCell->startT) . " - " . date("H:i", $oldCell->endT) . ";";
                                             if ($oldCell->startT < $newCell->startT) {
                                                 $inserts[] = [$tl->id, $oldCell->start, $newCell->start, $oldCell->free, $fName];
-                                                $newCellsLog.=$oldCell->start . " - " . $newCell->start . ";";
+                                                $newCellsLog .= $oldCell->start . " - " . $newCell->start . ";";
                                             }
                                             if ($oldCell->endT > $newCell->endT) {
                                                 $inserts[] = [$tl->id, $newCell->end, $oldCell->end, $oldCell->free, $fName];
-                                                $newCellsLog.=$newCell->end . " - " . $oldCell->end. ";";
+                                                $newCellsLog .= $newCell->end . " - " . $oldCell->end . ";";
                                             }
                                         }
-                                        $newCellsLog.="]\n";
-                                        $oldCellsLog.="]\n";
-                                        if ($tl->id == 31) $log .= $oldCellsLog.$newCellsLog;
+                                        $newCellsLog .= "]\n";
+                                        $oldCellsLog .= "]\n";
+                                        if ($tl->id == 31) $log .= $oldCellsLog . $newCellsLog;
 
                                         TimelineCells::deleteAll($intersectCondition);
                                     } else {
