@@ -59,7 +59,7 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
             </div>
             <div class="col-sm-4 flex flex-column header-info">
                 <?php $phone = $clinic ? $clinic->phone : "+7(915) 480-03-03"; ?>
-                <div class="head-phone-number" data-cid="<?= $clinic->id ? $clinic->id : 0 ?>">
+                <div class="head-phone-number" data-cid="<?= ($clinic && $clinic->id) ? $clinic->id : 0 ?>">
                     <a href="tel:<?= $phone ?>"><?= $phone ?></a>
                 </div>
                 <div class="">
