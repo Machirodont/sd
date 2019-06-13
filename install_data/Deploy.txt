@@ -1,4 +1,4 @@
-/site/load-price/
+﻿/site/load-price/
 Загрузка файла прайса (в /web/gz_tmp.gz)
 Обработку файла не запускает
 
@@ -61,3 +61,14 @@ php ./yii dump/load
 
 Запустить php ./yii parse/schedules
 	парсит очередь json-файлов расписания
+
+
+SELECT tch.cellsDate, tch.incomCell, tch.oldCells, tch.change_time, p.lastName, cl.city FROM sd_timeline_changelog AS tch
+LEFT JOIN sd_timelines AS tl ON tl.id=tch.timelineId
+LEFT JOIN sd_persons AS p ON tl.person_id=p.person_id
+LEFT JOIN sd_workplaces AS wp ON tl.workplace_hash=wp.workplace_hash
+LEFT JOIN sd_clinics AS cl ON cl.hash_id=wp.clinic_hash
+WHERE 
+	incomCell LIKE "% 0]"
+	AND
+	NOT oldCells LIKE "% 0]%"
