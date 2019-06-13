@@ -325,8 +325,16 @@ class SiteController extends Controller
 
     public function actionCounter()
     {
-        if (Yii::$app->request->post("cid")) {
-            Yii::$app->db->createCommand("INSERT INTO sd_hit_counter SET cid=\"" . intval(Yii::$app->session["cid"]) . "\", hit=\"tel\", hitTime=\"" . date("Y-m-d H:i:s") . "\", ip=\"" . Yii::$app->request->remoteIP . "\"")->execute();
+        if (!is_null(Yii::$app->request->post("cid"))) {
+            $q = Yii::$app->db->createCommand()->insert('sd_hit_counter', [
+                "cid" => intval(Yii::$app->session["cid"]),
+                "hit" => "tel",
+                "hitTime" => date("Y-m-d H:i:s"),
+                "ip" => Yii::$app->request->remoteIP,
+                "useragent" => Yii::$app->request->userAgent,
+                "screen" => Yii::$app->request->post("scrData"),
+            ]);
+            $q->execute();
         }
     }
 }
