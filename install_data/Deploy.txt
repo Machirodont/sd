@@ -42,6 +42,7 @@ chown -R www-data /var/www/gittest/data
 chown -R www-data /var/www/gittest/web/assets
 chown -R www-data /var/www/gittest/runtime
 chown -R www-data /var/www/gittest/web/load_price_time.txt
+chown -R www-data /var/www/gittest/web/error_log.txt
 
 php ./yii dump/load
 
@@ -72,3 +73,14 @@ WHERE
 	incomCell LIKE "% 0]"
 	AND
 	NOT oldCells LIKE "% 0]%"
+
+
+//Записи на прием
+SELECT DISTINCT tc.timelineId, ls.loadTime, p.lastname, p.firstname, c.city
+FROM sd_timeline_cells as tc
+LEFT JOIN sd_loaded_schedules as ls ON ls.fileName=tc.source
+LEFT JOIN sd_timelines AS tl ON tc.timelineId=tl.id
+LEFT JOIN sd_persons AS p ON p.person_id=tl.person_id
+LEFT JOIN sd_workplaces AS wp ON wp.workplace_hash=tl.workplace_hash
+LEFT JOIN sd_clinics AS c ON c.hash_id=wp.clinic_hash
+WHERE free=0

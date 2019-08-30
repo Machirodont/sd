@@ -24,7 +24,7 @@ $this->registerMetaTag(["name" => "keywords", "content" => "Сеть медиц�
         </ul>
     </section>
 </div>
-<?php if (intval(Yii::$app->session["cid"]) === 5) { ?>
+<?php /* if (intval(Yii::$app->session["cid"]) === 5) { ?>
     <div class="mainpage">
         <section  style="background-color: #ffe3e1">
             Уважаемые пациенты, ОБРАТИТЕ ВНИМАНИЕ:<br><br>
@@ -37,7 +37,7 @@ $this->registerMetaTag(["name" => "keywords", "content" => "Сеть медиц�
         </section>
 
     </div>
-<?php } ?>
+<?php } */?>
 
 <?php $cid = Yii::$app->session->get("cid"); ?>
 <div class="mainpage">

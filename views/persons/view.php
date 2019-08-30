@@ -90,6 +90,7 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                 echo "</div>";
             }
 
+            /*
             if ($model->timeCells) {
                 echo "<hr><table class='table small'>";
                 $prevTc = $model->timeCells[0];
@@ -102,6 +103,7 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                 }
                 echo "</table>";
             }
+            */
 
             ?>
 
