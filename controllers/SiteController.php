@@ -214,7 +214,6 @@ class SiteController extends Controller
     {
         $file_path = __DIR__ . "/../data/gz_tmp.gz";
         $time_file = "load_price_time.txt";
-//        $url='https://selenda24.ru/npcud/api.php?cmd=get_services_all&key=f611d62ad56645d4bf4a897a799ef7f6';
         $url = "https://smartclinic.ms/506732/api.php?cmd=get_services_all&key=wj9et6piuKQ12itogh98ai4ax76Rex0p";
         $status = 0;
         $last_load_time = intval(file_get_contents($time_file));
