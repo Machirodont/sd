@@ -161,7 +161,6 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
         </script><!--/LiveInternet-->
     </div>
 </footer>
-
 <?php $this->endBody() ?>
 </body>
 </html>

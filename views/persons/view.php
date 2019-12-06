@@ -74,7 +74,7 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                 }
                 echo "<div class='shadow_box'>";
                 //Календарь приема
-                $today = new DateTime();
+                $today = (new DateTime())->sub(new DateInterval("P1D"));
                 $after2weeks = (new DateTime())->add(new DateInterval("P14D"));
                 if ($model->currentClinic) {
                     if ($model->searchActiveDays($today, $after2weeks)) {

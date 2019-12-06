@@ -45,7 +45,10 @@ if ((time() - 60 * 60 * 12) > filemtime($file_path)) {
     curl_close($c);
 
     if ($status != 200) {
-        echo "Error: $status </br>";
+        ?>
+		К сожалению, в настоящий момент информация недоступна (error: <?= $status ?>) </br>
+		Попробуйте обновить страницу через минуту.
+		<?php
         exit;
     } else {
         $content_gz = substr($result, $headerSize);
