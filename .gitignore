@@ -35,6 +35,7 @@ tests/_support/_generated
 web/assets
 web/uploads
 web/images/sources
+web/images/promo
 config/db.php
 config/params.php
 data/*

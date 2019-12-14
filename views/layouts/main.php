@@ -15,8 +15,6 @@ use app\models\Clinic;
 
 AppAsset::register($this);
 $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
-
-
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -121,6 +119,28 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
             ['label' => 'Клиники', 'url' => ['/clinic/index', "cid" => Yii::$app->session->get("cid")]],
             ['label' => 'Контакты', 'url' => ['/clinic/contacts', "cid" => Yii::$app->session->get("cid")]],
             ['label' => 'Юридическая информация', 'url' => ['/clinic/company', "cid" => Yii::$app->session->get("cid")]],
+            [
+                'label' => 'admin',
+                'visible' => !Yii::$app->user->isGuest,
+                'items' => [
+                    [
+                        'label' => 'Промо',
+                        'url' => ['promo/index'],
+                        'visible' => !Yii::$app->user->isGuest,
+                    ],
+                    [
+                        'label' => 'Выход',
+                        'url' => ['site/logout'],
+                        'visible' => !Yii::$app->user->isGuest,
+                        'linkOptions' => [
+                            'data' => [
+                                'method' => 'post'
+                            ]
+                        ]
+                    ],
+                ]
+            ],
+
         ],
     ]);
     NavBar::end();
@@ -152,7 +172,7 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
         <script type="text/javascript">
             document.write("<a href='//www.liveinternet.ru/click' " +
                 "target=_blank><img src='//counter.yadro.ru/hit?t44.10;r" +
-                escape(document.referrer) + ((typeof(screen) == "undefined") ? "" :
+                escape(document.referrer) + ((typeof (screen) == "undefined") ? "" :
                     ";s" + screen.width + "*" + screen.height + "*" + (screen.colorDepth ?
                     screen.colorDepth : screen.pixelDepth)) + ";u" + escape(document.URL) +
                 ";h" + escape(document.title.substring(0, 150)) + ";" + Math.random() +

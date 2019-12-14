@@ -217,15 +217,16 @@ a.desc:after {
     outline: none;
 }
 
-.head-phone-number a{
-    color:white;
+.head-phone-number a {
+    color: white;
 }
+
 /**/
-.clinic_select{
-    padding:4px 10px;
+.clinic_select {
+    padding: 4px 10px;
     margin: 0 5px;
     border-radius: 3px;
-    border:solid 1px #337ab7;
+    border: solid 1px #337ab7;
 }
 
 .clinic_select.current {
@@ -388,32 +389,113 @@ img.partner_bar {
     text-align: center;
 }
 
+.carousel {
+    width: 100%;
+}
+
+.carousel-inner img {
+    min-width: 350px;
+    max-height: 300px;
+}
+
+.carousel_wrapper {
+    max-width: 50%;
+    height: 300px;
+}
+
+.carousel_wrapper.single_picture .carousel-indicators {
+    display: none;
+}
+
+.carousel_wrapper.single_picture .carousel-control {
+    display: none;
+}
+
+.top_wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 740px) {
+    .top_wrapper {
+        flex-wrap: wrap;
+    }
+}
+
+.promo_dates {
+    background-color: #ebfeff;
+    margin-bottom: 10px;
+}
+
+.promo_picture {
+    width: 300px;
+    max-height: 300px;
+    float: right;
+    border-radius: 5px;
+}
+
+@media (max-width: 600px) {
+    .promo_picture {
+        float: none;
+    }
+
+    .promopic_wrapper {
+        text-align: center;
+    }
+
+}
+
+/* views\promo\_form.php*/
+#promo-cliniclist {
+    display: flex;
+    flex-direction: column;
+}
+
+#promo-cliniclist label {
+    display: block;
+}
+
+.promo-form {
+    display: flex;
+}
+
+.promo_info {
+    padding-left: 10px;
+}
+
 /* DEV элементы (удалить в продакшне)*/
 
+/*
 
-img {
-    opacity: .05;
-}
 .header-a {
+    background-color: transparent;
+}
+
+.header-a .header-logo, .head-phone-number {
     opacity: .02;
 }
+
 h1, h2 {
     opacity: .05;
 }
-
-
 
 .header-a img {
     opacity: .5;
 }
 
-
-
-
 a h4 {
     opacity: .3;
 }
 
-section {
+.mainpage {
     opacity: .3;
+}
+
+.btn-group {
+    opacity: 1;
+}
+
+.promo-view h1 {
+    opacity: 1;
 }

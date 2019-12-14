@@ -32,6 +32,21 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
             }
         }
 
+        if ($route === 'site/logout') {
+            $url .= "logout/";
+            return $url;
+        }
+
+        if ($route === 'site/login') {
+            $url .= "login/";
+            return $url;
+        }
+
+        if ($route === 'clinic/index') {
+            $url .= "clinics/";
+            return $url;
+        }
+
         if ($route === 'clinic/index') {
             $url .= "clinics/";
             return $url;
@@ -64,6 +79,12 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
             } else {
                 $url .= "page_" . $params["id"] . "/";
             }
+            return $url;
+        }
+
+        if ($route === 'promo/view') {
+            if (!array_key_exists("id", $params)) return false;
+            $url .= "promo_" . $params["id"] . "/";
             return $url;
         }
 
@@ -103,11 +124,11 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
         $domainRedirects = [
             "http://gagarin.sd-med.ru" => ["urlTag" => "/gagarin", "cid" => 5],
             "http://gagarin-med.ru" => ["urlTag" => "/gagarin", "cid" => 5],
-            "http://ruza.sd-med.ru" => ["urlTag" =>"/ruza", "cid" => 2],
-            "http://ruza-uzi.ru" => ["urlTag" =>"/ruza", "cid" => 2],
+            "http://ruza.sd-med.ru" => ["urlTag" => "/ruza", "cid" => 2],
+            "http://ruza-uzi.ru" => ["urlTag" => "/ruza", "cid" => 2],
         ];
 
-        if (Yii::$app->request->hostInfo !== Yii::$app->params["mainHost"] && Yii::$app->request->hostInfo!=="http://tech.sd-med.ru" ) {
+        if (Yii::$app->request->hostInfo !== Yii::$app->params["mainHost"] && Yii::$app->request->hostInfo !== "http://tech.sd-med.ru") {
             $urlWithMainHost = Yii::$app->params["mainHost"] . Yii::$app->request->url;
             if (array_key_exists(Yii::$app->request->hostInfo, $domainRedirects)) {
                 $urlWithMainHost = Yii::$app->params["mainHost"] . $domainRedirects[Yii::$app->request->hostInfo]["urlTag"] . Yii::$app->request->url;
@@ -120,10 +141,10 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
 
 
         //---- 301 редиректы
-        if($pathInfo==="price_sdmed.php"){
-            if(Yii::$app->request->get("filial")==1) Yii::$app->response->redirect("ruza/contacts/", 301)->send();
-            if(Yii::$app->request->get("filial")==2) Yii::$app->response->redirect("tuchkovo/contacts/", 301)->send();
-            if(Yii::$app->request->get("filial")==3) Yii::$app->response->redirect("gagarin/contacts/", 301)->send();
+        if ($pathInfo === "price_sdmed.php") {
+            if (Yii::$app->request->get("filial") == 1) Yii::$app->response->redirect("ruza/contacts/", 301)->send();
+            if (Yii::$app->request->get("filial") == 2) Yii::$app->response->redirect("tuchkovo/contacts/", 301)->send();
+            if (Yii::$app->request->get("filial") == 3) Yii::$app->response->redirect("gagarin/contacts/", 301)->send();
             Yii::$app->response->redirect("contacts/", 301)->send();
             exit;
         };
@@ -158,8 +179,13 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
                 }
 
                 if (preg_match('/clinic_([0-9]+)/', $part, $matches)) {
-                    $route="/site/main-page";
+                    $route = "/site/main-page";
                     $params["cid"] = $matches[1];
+                }
+
+                if (preg_match('/promo_([0-9]+)/', $part, $matches)) {
+                    $route = "/promo/view";
+                    $params["id"] = $matches[1];
                 }
 
                 if ($route === "services/index") {
@@ -182,6 +208,8 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
                     $params["id"] = $matches[1];
                 }
                 if ($part === "parce") $route = "site/parce";
+                if ($part === "login") $route = "site/login";
+                if ($part === "logout") $route = "site/logout";
             }
             if (array_key_exists("cid", $params)) {
                 if ($params["cid"]) {

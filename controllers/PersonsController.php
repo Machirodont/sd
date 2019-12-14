@@ -26,7 +26,7 @@ class PersonsController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'rules' => [
                     [
                         'actions' => ['create', 'update', 'delete'],
@@ -36,7 +36,7 @@ class PersonsController extends Controller
                     [
                         'actions' => ['index', 'view',],
                         'allow' => true,
-                        'roles' => ['?'],
+                        'roles' => ['@', '?'],
                     ],
                 ],
             ],

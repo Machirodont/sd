@@ -3,10 +3,12 @@
 namespace app\controllers;
 
 use app\helpers\Extra;
+use app\models\Clinic;
 use app\models\Pages;
 use app\models\Persons;
 use app\models\PriceGroup;
 use app\models\PriceItems;
+use app\models\Promo;
 use app\models\TimelineDays;
 use app\models\TimeLines;
 use app\models\Workplaces;
@@ -15,6 +17,7 @@ use GuzzleHttp\Cookie\CookieJar;
 use Yii;
 use yii\db\Query;
 use yii\filters\AccessControl;
+use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\Response;
@@ -129,6 +132,8 @@ class SiteController extends Controller
 
     public function actionMainPage()
     {
+        $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
+
         $allPersons = Persons::find()->
         select("p.*")->distinct()
             ->from(["p" => "sd_persons"])
@@ -152,8 +157,43 @@ class SiteController extends Controller
                 $loopGuard++;
             }
         }
+
+        $promos = Promo::find()->where(['and',
+            ["or",
+                ['<=', 'startDate', date("Y-m-d")],
+                ['startDate' => null],
+            ],
+            ["or",
+                ['>=', 'endDate', date("Y-m-d")],
+                ['endDate' => null],
+            ],
+        ])->all();
+        $promoList = array_values(array_filter($promos, function (Promo $promo) use ($clinic) {
+            if (!$promo->doShowWithClinic($clinic)) return false;
+            return $promo->fileName;
+        }));
+
+
+        $promoList = array_map(function (Promo $promo) {
+            $content = $promo->html
+                ? Html::a(
+                    Html::img("/images/promo/" . $promo->fileName),
+                    ["promo/view", "id" => $promo->id]
+                )
+                : Html::img("/images/promo/" . $promo->fileName);
+            return [
+                "content" => Html::a(
+                    Html::img("/images/promo/" . $promo->fileName),
+                    ["promo/view", "id" => $promo->id]
+                ),
+                "caption" => null//$promo->startDate . " - " . $promo->endDate
+            ];
+        }, $promoList);
+
+
         return $this->render('main-page', [
             "persons" => $persons,
+            "promoList" => $promoList,
         ]);
     }
 
@@ -420,7 +460,7 @@ class SiteController extends Controller
             $personNames["id" . $matches[1][$n]] = $matches[3][$n];
         }
 
-       foreach ($resp->gridEvents as $k => $v) {
+        foreach ($resp->gridEvents as $k => $v) {
             if (array_key_exists("id" . $v->id_doct_schedule, $personNames)) {
                 if ($personNames["id" . $v->id_doct_schedule] === $doctorName) {
                     if ($v->start_time === Yii::$app->request->post("start_time")) {
@@ -428,13 +468,13 @@ class SiteController extends Controller
                         $ret .= Yii::$app->request->post("record_time") . "</td><td>";
                         $ret .= Yii::$app->request->post("subdivision") . "</td><td>";
                         $ret .= $personNames["id" . $v->id_doct_schedule] . "</td><td>";
-                        $ret .= Yii::$app->request->post("date")." ".$v->start_time  . "</td><td>";
+                        $ret .= Yii::$app->request->post("date") . " " . $v->start_time . "</td><td>";
                         $ret .= $v->id_patient . "<td><td>";
                         $ret .= $v->name . "<td><td>";
-                      //  $ret .= "id_doct_schedule:".$v->id_doct_schedule. "<td><td>";
+                        //  $ret .= "id_doct_schedule:".$v->id_doct_schedule. "<td><td>";
                         $ret .= "</tr></table><br><br>";
 
-                        $pageRec=$client->get("https://smartclinic.ms/506732/index.php?AjaxRequest=load_template&name=patient_services&id_patient=".$v->id_patient);
+                        $pageRec = $client->get("https://smartclinic.ms/506732/index.php?AjaxRequest=load_template&name=patient_services&id_patient=" . $v->id_patient);
 
                         $ret .= $pageRec->getBody()->getContents();
                         $ret .= "<br><br>";
