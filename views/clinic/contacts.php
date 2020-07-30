@@ -15,5 +15,6 @@ $this->registerMetaTag(["name" => "keywords", "content" => "Медицински
 <h2>Контакты медицинского центра «Столичная диагностика» - <?= $clinic->city ?></h2>
 <?= Html::a("Специалисты", ["persons/index", "cid"=>$clinic->id], ["class"=>"clinic_select"]) ?>
 <?= Html::a("Прайс-лист", ["services/index", "cid"=>$clinic->id], ["class"=>"clinic_select"]) ?>
+<?= Html::a("Вакансии", ["site/page", "id"=>25], ["class"=>"clinic_select"]) ?>
 <br><br>
 <?= $clinic->htmlDescription ?>
