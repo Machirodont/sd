@@ -14,6 +14,7 @@ use app\models\Persons;
  * @property string $title
  * @property string $description
  * @property int $institution_id
+ * @property int $sort
  *
  * @property Institutions $institution
  * @property Persons $person
@@ -34,7 +35,7 @@ class TraitsGenerated extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['person_id', 'institution_id'], 'integer'],
+            [['person_id', 'institution_id', 'sort'], 'integer'],
             [['title', 'description'], 'required'],
             [['title', 'description'], 'string'],
             [['institution_id'], 'exist', 'skipOnError' => true, 'targetClass' => Institutions::className(), 'targetAttribute' => ['institution_id' => 'institution_id']],

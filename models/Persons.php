@@ -11,7 +11,7 @@ use yii\db\Query;
  *
  * Class Persons
  * @package app\models
- * @property string $fullname Полное имя
+ * @property string $fullName Полное имя
  * @property string $portraitUrl url адрес фотографии
  * @property Clinic[] $clinics Клиники
  * @property Clinic $currentClinic Выбранная клиника
@@ -28,6 +28,21 @@ use yii\db\Query;
 class Persons extends PersonsGenerated
 {
     public $currentClinic = null;
+
+    public $loadedTraits = [];
+
+    public function rules()
+    {
+        return [
+            [['firstname', 'lastname'], 'required'],
+            [['firstname', 'lastname', 'patronymic'], 'string'],
+            [['education', 'years_work'], 'integer'],
+            [['education', 'years_work'], 'filter', 'filter' => function ($val) {
+                return $val ? $val : null;
+            }],
+            ['loadedTraits', 'safe']
+        ];
+    }
 
     public function getFullName()
     {
@@ -202,6 +217,29 @@ class Persons extends PersonsGenerated
     {
         $word = ($this->years_work !== 11 && $this->years_work % 10 === 1) ? "года" : "лет";
         return "более " . $this->years_work . " " . $word;
+    }
 
+    public function save($runValidation = true, $attributeNames = null)
+    {
+        if (parent::save($runValidation, $attributeNames)) {
+            for ($i = 0; $i < count($this->loadedTraits["trait_id"]); $i++) {
+                if (!$trait = Traits::findOne($this->loadedTraits["trait_id"][$i])) {
+                    $trait = new Traits();
+                }
+                $trait->person_id = $this->person_id;
+                $trait->title = $this->loadedTraits["title"][$i];
+                $trait->description = $this->loadedTraits["description"][$i];
+                $trait->institution_id = $this->loadedTraits["institution_id"][$i] ? $this->loadedTraits["institution_id"][$i] : null;
+                $trait->sort = $this->loadedTraits["sort"][$i];
+                $trait->sort = $trait->sort ? $trait->sort : 10;
+                if ($trait->title !== "0" && $trait->description !== "") {
+                    if (!$trait->save()) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

@@ -20,3 +20,5 @@ foreach ($clinics as $clinic){
 }
 ?>
 </ul>
+<hr>
+<?= Html::a("Вакансии", ["site/page", "id"=>25], ["class"=>"clinic_select"]) ?>

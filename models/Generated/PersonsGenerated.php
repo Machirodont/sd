@@ -33,19 +33,6 @@ class PersonsGenerated extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
-    {
-        return [
-            [['firstname', 'lastname'], 'required'],
-            [['firstname', 'lastname', 'patronymic'], 'string'],
-            [['education', 'years_work'], 'integer'],
-            [['education'], 'exist', 'skipOnError' => true, 'targetClass' => Institutions::className(), 'targetAttribute' => ['education' => 'institution_id']],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function attributeLabels()
     {
         return [
@@ -76,6 +63,9 @@ class PersonsGenerated extends \yii\db\ActiveRecord
 
     private $_sortedTraits=null;
 
+    /**
+     * @return Traits[][]
+     */
     public function getTraits(){
         if(is_null($this->_sortedTraits)) {
             $traits = $this->allTraits;

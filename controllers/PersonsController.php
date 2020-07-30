@@ -3,11 +3,13 @@
 namespace app\controllers;
 
 use app\models\Clinic;
+use app\models\Traits;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\db\Query;
 use yii\filters\AccessControl;
 use app\models\Persons;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -27,23 +29,19 @@ class PersonsController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
+                'only' => ['edit'],
                 'rules' => [
                     [
-                        'actions' => ['create', 'update', 'delete'],
+                        'actions' => ['edit', 'list', 'remove-trait'],
                         'allow' => true,
                         'roles' => ['@'],
-                    ],
-                    [
-                        'actions' => ['index', 'view',],
-                        'allow' => true,
-                        'roles' => ['@', '?'],
                     ],
                 ],
             ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
-                    'delete' => ['POST'],
+                    'remove-trait' => ['POST'],
                 ],
             ],
         ];
@@ -108,6 +106,49 @@ class PersonsController extends Controller
             'model' => $person,
             'cid' => Yii::$app->session->get("cid"),
         ]);
+    }
+
+    public function actionList()
+    {
+        $personsDataProvider = new ActiveDataProvider([
+            "query" => Persons::find(),
+            'pagination' => [
+                'pageSize' => 100,
+            ],
+        ]);
+
+        return $this->render("list", [
+            "personsDataProvider" => $personsDataProvider
+        ]);
+
+    }
+
+    public function actionEdit($id = null)
+    {
+        if ($id) {
+            $person = $this->findModel($id);
+        } else {
+            $person = new Persons();
+        }
+
+        if ($person->load(Yii::$app->request->post())) {
+            $person->save();
+            return $this->redirect(["/persons/edit", "id" => $person->person_id]);
+        }
+
+        return $this->render('edit', [
+            'person' => $person,
+            'institutions' => array_merge([null], ArrayHelper::map(Institutions::find()->all(), "institution_id", "name")),
+            'traitTypes' => array_merge([null], ArrayHelper::map((new Query())->select(["title"])->distinct()->from("sd_traits")->all(), "title", "title"))
+        ]);
+    }
+
+    public function actionRemoveTrait($id)
+    {
+        $trait = Traits::findOne($id);
+        $person_id = $trait->person_id;
+        $trait->delete();
+        return $this->redirect(["/persons/edit", "id" => $person_id]);
     }
 
     /**

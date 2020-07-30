@@ -169,8 +169,8 @@ class ParseController extends Controller
         foreach ($files as $file) {
             echo basename($file);
             $s = json_decode(file_get_contents($file));
-            $fileLoadDateTime=$s->time;
-            echo " > ".$fileLoadDateTime."\n";
+            $fileLoadDateTime = $s->time;
+            echo " > " . $fileLoadDateTime . "\n";
             $inserts[] = [basename($file), $fileLoadDateTime];
             if (count($inserts) > 30) {
                 \Yii::$app->db->createCommand()->batchInsert('sd_loaded_schedules', ["fileName", "loadTime"], $inserts)->execute();
@@ -378,4 +378,25 @@ LEFT JOIN sd_clinics AS cl ON wp.clinic_hash=cl.hash_id
         echo $log;
     }
 
+
+    public function actionGenTags()
+    {
+        $persons = Persons::find()->where([">", "person_id", 32])->all();
+        foreach ($persons as $person) {
+            /**@var \app\models\Persons $person */
+            $tag = $person->primarySpec . " " . $person->lastname;
+            $tag = mb_strtolower($tag);
+            $tag = transliterator_transliterate('Russian-Latin/BGN', $tag);
+            $tag = str_replace(" ", "-", $tag);
+            $tag = preg_replace("|[^a-z\\-]|", "", $tag);
+            /*
+            \Yii::$app->db->createCommand()->insert("sd_url_tags", [
+                'tag' => $tag,
+                'param' => 'id',
+                'value' => $person->person_id,
+                'route' => 'persons/view'
+            ])->execute();*/
+
+        }
+    }
 }

@@ -349,11 +349,12 @@ class SiteController extends Controller
             $fn_suffix++;
         }
 
-        file_put_contents("../data/" . $fName, $postData['json']);
-        Yii::$app->db->createCommand("INSERT INTO sd_loaded_schedules SET fileName=\"" . $fName . "\",  loadTime=\"" . date("Y-m-d H:i:s") . "\"")->execute();
+        if (file_put_contents("../data/" . $fName, $postData['json'])) {
+            Yii::$app->db->createCommand("INSERT INTO sd_loaded_schedules SET fileName=\"" . $fName . "\",  loadTime=\"" . date("Y-m-d H:i:s") . "\"")->execute();
 
-        //Обрабока данных - дергаем через сокет скрипт, который дергает команду Yii (потому что скрипт сдохнет через 30 секунд, а команда отработает сколько надо)
-        Extra::socketAsyncCall(["/site/schedule-parse"]);
+            //Обрабока данных - дергаем через сокет скрипт, который дергает команду Yii (потому что скрипт сдохнет через 30 секунд, а команда отработает сколько надо)
+            Extra::socketAsyncCall(["/site/schedule-parse"]);
+        }
 
         return 'TRUE';
     }

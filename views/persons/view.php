@@ -41,6 +41,9 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                 'title' => $mainSpecialization . " " . $model->fullname
             ]) ?>
         </div>
+        <?=
+        !Yii::$app->user->isGuest ? Html::a("Редактировать", ["/persons/edit", "id" => $model->person_id]) : "";
+        ?>
         <div class="col-sm-8">
             <h1><?= $model->fullname ?></h1>
             <h2>
