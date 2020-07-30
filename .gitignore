@@ -43,3 +43,4 @@ docs/metrika
 gz_tmp.gz
 *.gz
 *.tgz
+error_log.txt
