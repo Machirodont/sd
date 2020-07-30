@@ -100,6 +100,9 @@ class PersonsController extends Controller
     public function actionView($id)
     {
         $person = $this->findModel($id);
+		if ($person->removed) {
+            return $this->redirect(["persons/index"]);
+        }
         $person->currentClinic = Clinic::findOne(Yii::$app->session->get("cid"));
 
         return $this->render('view', [

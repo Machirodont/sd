@@ -41,3 +41,5 @@ config/params.php
 data/*
 docs/metrika
 gz_tmp.gz
+*.gz
+*.tgz
