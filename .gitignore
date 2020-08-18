@@ -44,3 +44,4 @@ gz_tmp.gz
 *.gz
 *.tgz
 error_log.txt
+/stop_parsing.txt

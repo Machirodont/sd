@@ -36,7 +36,7 @@ class TraitsGenerated extends \yii\db\ActiveRecord
     {
         return [
             [['person_id', 'institution_id', 'sort'], 'integer'],
-            [['title', 'description'], 'required'],
+            [['title'], 'required'],
             [['title', 'description'], 'string'],
             [['institution_id'], 'exist', 'skipOnError' => true, 'targetClass' => Institutions::className(), 'targetAttribute' => ['institution_id' => 'institution_id']],
             [['person_id'], 'exist', 'skipOnError' => true, 'targetClass' => Persons::className(), 'targetAttribute' => ['person_id' => 'person_id']],

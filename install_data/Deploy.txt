@@ -44,7 +44,7 @@ chown -R www-data /var/www/gittest/runtime
 chown -R www-data /var/www/gittest/web/load_price_time.txt
 chown -R www-data /var/www/gittest/web/error_log.txt
 
-php ./yii dump/load
+php ./yii dump/load-static
 
 прайсы:
 Проверить наличие свежего файла /data/gz_tmp.gz
@@ -84,3 +84,9 @@ LEFT JOIN sd_persons AS p ON p.person_id=tl.person_id
 LEFT JOIN sd_workplaces AS wp ON wp.workplace_hash=tl.workplace_hash
 LEFT JOIN sd_clinics AS c ON c.hash_id=wp.clinic_hash
 WHERE free=0
+
+
+php ./yii parse/clear-old-schedules
+php ./yii parse/reset-schedule
+php ./yii parse/schedule-list
+php ./yii parse/schedules

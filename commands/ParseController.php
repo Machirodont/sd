@@ -189,6 +189,10 @@ class ParseController extends Controller
      */
     public function actionSchedules()
     {
+        if (file_get_contents("stop_parsing.txt")) {
+            echo "Уберите файл stop_parsing.txt";
+            return;
+        }
         /*
 SELECT tch.*, tc.start, tl.person_id, p.lastname, lsh.loadTime, cl.city FROM sd_timeline_changelog AS tch
 LEFT JOIN sd_timeline_cells AS tc ON tch.cellId=tc.id

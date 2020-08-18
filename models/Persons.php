@@ -232,7 +232,7 @@ class Persons extends PersonsGenerated
                 $trait->institution_id = $this->loadedTraits["institution_id"][$i] ? $this->loadedTraits["institution_id"][$i] : null;
                 $trait->sort = $this->loadedTraits["sort"][$i];
                 $trait->sort = $trait->sort ? $trait->sort : 10;
-                if ($trait->title !== "0" && $trait->description !== "") {
+                if ($trait->title !== "0") {
                     if (!$trait->save()) {
                         return false;
                     }
