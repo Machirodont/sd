@@ -25,7 +25,7 @@ use yii\grid\GridView;
                         ) ;
                     },
                 ],
-                'template' => '{changePass} {update}',
+                'template' => '{update}',
             ],
         ]
     ]); ?>

@@ -13,3 +13,4 @@ $this->registerLinkTag(["rel"=>"canonical", "href"=>Url::toRoute(["/site/page", 
 ?>
 
 <?= $page->content ?>
+

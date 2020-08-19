@@ -41,9 +41,6 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                 'title' => $mainSpecialization . " " . $model->fullname
             ]) ?>
         </div>
-        <?=
-        !Yii::$app->user->isGuest ? Html::a("Редактировать", ["/persons/edit", "id" => $model->person_id]) : "";
-        ?>
         <div class="col-sm-8">
             <h1><?= $model->fullname ?></h1>
             <h2>
@@ -67,6 +64,8 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                     Имеет <?= $model->yearsWorkString ?> опыта.
                 </p>
             <?php endif; ?>
+
+            <?= !Yii::$app->user->isGuest ? Html::a("Редактировать профиль врача", ["/persons/edit", "id" => $model->person_id], ["class"=>"btn btn-warning"]) : ""; ?>
 
             <?php
             if (count($model->clinics) > 0) {

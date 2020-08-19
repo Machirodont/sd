@@ -5,7 +5,9 @@ namespace app\models;
 
 use app\helpers\Extra;
 use app\models\Generated\PersonsGenerated;
+use Yii;
 use yii\db\Query;
+use yii\helpers\Html;
 
 /**
  *
@@ -142,9 +144,19 @@ class Persons extends PersonsGenerated
 
     public function getHtmlDescription()
     {
-        return array_reduce($this->htmlBlocks, function ($html, HtmlBlock $b) {
-            return $html . "\n<div>" . $b->content . "</div>";
-        }, "");
+        $content = array_reduce($this->htmlBlocks,
+            function ($html, HtmlBlock $b) {
+                $res = $html . "\n<div>" . $b->content . "</div>";
+                if (!Yii::$app->user->isGuest) {
+                    $res .= $html . Html::a("Редактировать блок", ["/html-block/update", "id" => $b->id], ["class" => "btn btn-warning"]);
+                }
+                return $res;
+            },
+            "");
+        if (!Yii::$app->user->isGuest) {
+            $content .= "<br><br><br>" . Html::a("Добавить блок", ["/html-block/create", "key" => $this->primaryKey, "class" => "person"], ["class" => "btn btn-success"]);
+        }
+        return $content;
     }
 
     public function traitString($traitTitle, $glue = ", ")

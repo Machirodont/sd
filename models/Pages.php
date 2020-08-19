@@ -10,6 +10,8 @@ namespace app\models;
 
 
 use app\models\Generated\PagesGenerated;
+use Yii;
+use yii\helpers\Html;
 
 /** @property string $content
  */
@@ -25,8 +27,20 @@ class Pages extends PagesGenerated
             ])
             ->orderBy("order")
             ->all();
-        return array_reduce($blocks, function ($html, HtmlBlock $b) {
-            return $html . "\n<div>" . $b->content . "</div>";
-        }, "");
+
+        $content = array_reduce($blocks,
+            function ($html, HtmlBlock $b) {
+                $res = $html . "\n<div>" . $b->content . "</div>";
+                if (!Yii::$app->user->isGuest) {
+                    $res .= $html . Html::a("Редактировать блок", ["/html-block/update", "id" => $b->id], ["class" => "btn btn-warning"]);
+                }
+                return $res;
+            },
+            "");
+
+        if (!Yii::$app->user->isGuest) {
+            $content .= "<br><br><br>".Html::a("Добавить блок", ["/html-block/create", "key" => $this->primaryKey, "class"=>"page"], ["class" => "btn btn-success"]);
+        }
+        return $content;
     }
 }

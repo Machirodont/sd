@@ -29,9 +29,9 @@ class HtmlBlockGenerated extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['itemKey', 'itemTable', 'html', 'order'], 'required'],
-            [['itemKey'], 'integer'],
-            [['itemTable', 'html', 'order'], 'string'],
+            [['itemKey', 'itemTable', 'html'], 'required'],
+            [['itemKey', 'order'], 'integer'],
+            [['itemTable', 'html'], 'string'],
         ];
     }
 

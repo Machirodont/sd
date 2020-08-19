@@ -43,7 +43,7 @@ PersonEdit::register($this);
                 <td><?= Html::input("text", "Persons[loadedTraits][description][]", $trait->description) ?></td>
                 <td><?= Html::input("text", "Persons[loadedTraits][sort][]", $trait->sort) ?></td>
                 <td><?= Html::dropDownList("Persons[loadedTraits][institution_id][]", $trait->institution_id, $institutions) ?></td>
-                <td><?= Html::a("x", ["/persons/remove-trait", 'id' => $trait->trait_id], ["data" => ["method" => "post", 'confirm'=>"Удалить параметр?"]]) ?></td>
+                <td><?= Html::a("x", ["/persons/remove-trait", 'id' => $trait->trait_id], ["data" => ["method" => "post", 'confirm' => "Удалить параметр?"]]) ?></td>
             </tr>
             <?php
         }
@@ -58,8 +58,8 @@ PersonEdit::register($this);
         </tr>
     </table>
 
-
     <?= Html::submitButton() ?>
     <?= Html::button("+", ["class" => "addTraitButton"]) ?>
     <?php ActiveForm::end(); ?>
+
 </div>
