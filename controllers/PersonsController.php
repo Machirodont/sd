@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Clinic;
 use app\models\Traits;
+use app\models\UploadForm;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\db\Query;
@@ -15,6 +16,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\models\Institutions;
 use yii\data\ActiveDataProvider;
+use yii\web\UploadedFile;
 
 /**
  * PersonsController implements the CRUD actions for Persons model.
@@ -42,6 +44,7 @@ class PersonsController extends Controller
                 'class' => VerbFilter::class,
                 'actions' => [
                     'remove-trait' => ['POST'],
+                    'delete' => ['POST'],
                 ],
             ],
         ];
@@ -100,7 +103,7 @@ class PersonsController extends Controller
     public function actionView($id)
     {
         $person = $this->findModel($id);
-		if ($person->removed) {
+        if ($person->removed) {
             return $this->redirect(["persons/index"]);
         }
         $person->currentClinic = Clinic::findOne(Yii::$app->session->get("cid"));
@@ -113,15 +116,22 @@ class PersonsController extends Controller
 
     public function actionList()
     {
+        $showRemoved = !!Yii::$app->request->get("showRemoved");
+        $query = Persons::find();
+        if (!$showRemoved) {
+            $query->where(["removed" => null]);
+        }
+
         $personsDataProvider = new ActiveDataProvider([
-            "query" => Persons::find(),
+            "query" => $query,
             'pagination' => [
-                'pageSize' => 100,
+                'pageSize' => 0,
             ],
         ]);
 
         return $this->render("list", [
-            "personsDataProvider" => $personsDataProvider
+            "personsDataProvider" => $personsDataProvider,
+            'showRemoved' => $showRemoved
         ]);
 
     }
@@ -146,6 +156,38 @@ class PersonsController extends Controller
         ]);
     }
 
+    public function actionDelete($id)
+    {
+        $person = $this->findModel($id);
+        $person->removed = date("Y-m-d H:i:s");
+        $person->save();
+        return $this->redirect(Yii::$app->request->referrer);
+    }
+
+    public function actionRestore($id)
+    {
+        $person = $this->findModel($id);
+        $person->removed = null;
+        $person->save();
+        return $this->redirect(Yii::$app->request->referrer);
+    }
+
+    public function actionLoadPhoto($id)
+    {
+        $uploadForm = new UploadForm();
+        $uploadForm->person = $this->findModel($id);
+        if (Yii::$app->request->isPost) {
+            $uploadForm->imageFile = UploadedFile::getInstance($uploadForm, 'imageFile');
+            if ($uploadForm->upload()) {
+                return $this->redirect(Yii::$app->request->referrer);
+            }
+        }
+        return $this->render('load-photo', [
+            'uploadForm' => $uploadForm,
+        ]);
+    }
+
+
     public function actionRemoveTrait($id)
     {
         $trait = Traits::findOne($id);
@@ -154,13 +196,6 @@ class PersonsController extends Controller
         return $this->redirect(["/persons/edit", "id" => $person_id]);
     }
 
-    /**
-     * Finds the Persons model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Persons the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     protected function findModel($id)
     {
         if (($model = Persons::findOne($id)) !== null) {

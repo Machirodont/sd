@@ -465,7 +465,6 @@ img.partner_bar {
 }
 
 /* DEV элементы (удалить в продакшне)*/
-
 /*
 
 .header-a {
@@ -498,4 +497,8 @@ a h4 {
 
 .promo-view h1 {
     opacity: 1;
+}
+
+.person_card img, .portrait img {
+    opacity: .3;
 }

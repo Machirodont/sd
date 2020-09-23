@@ -11,6 +11,10 @@ use yii\widgets\ActiveForm;
 /* @var string[] $traitTypes */
 
 PersonEdit::register($this);
+$this->params['breadcrumbs'][] = ['label' => 'Доктора', 'url' => ['/persons/list']];
+$this->params['breadcrumbs'][] = ['label' => $person->fullname, 'url' => ['/persons/view', "id"=>$person->person_id]];
+$this->params['breadcrumbs'][] = ['label' => "Редактирование профиля"];
+
 ?>
 <div class="persons-edit">
     <?php $form = ActiveForm::begin(); ?>

@@ -52,6 +52,9 @@ php ./yii dump/load-static
 Запустить /site/parse-price/ (или php ./yii parse/price )
 
 расписания:
+Запустить
+    php ./yii parse/clear-old-schedules
+    удаляет файлы расписания, старше 1 суток
 
 Запустить php ./yii parse/reset-schedule	
 	очищает sd_loaded_schedules

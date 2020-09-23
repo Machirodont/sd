@@ -15,6 +15,7 @@ use app\models\Traits;
  * @property string $patronymic Отчество
  * @property int $education Основное образование
  * @property int $years_work Стаж работы, лет
+ * @property string $removed Дата удаления
  *
  * @property Institutions $education0
  * @property Traits[] $allTraits

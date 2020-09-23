@@ -151,12 +151,10 @@ class ParseController extends Controller
         \Yii::$app->db->createCommand("ALTER TABLE `sd_timeline_cells` AUTO_INCREMENT=0;")->execute();
         \Yii::$app->db->createCommand("DELETE FROM sd_timeline_changelog")->execute();
         \Yii::$app->db->createCommand("ALTER TABLE `sd_timeline_changelog` AUTO_INCREMENT=0;")->execute();
-        /*
         \Yii::$app->db->createCommand("DELETE FROM sd_timelines")->execute();
         \Yii::$app->db->createCommand("ALTER TABLE `sd_timelines` AUTO_INCREMENT=0;")->execute();
         \Yii::$app->db->createCommand("DELETE FROM sd_workplaces")->execute();
         \Yii::$app->db->createCommand("ALTER TABLE `sd_workplaces` AUTO_INCREMENT=0;")->execute();
-        */
 
     }
 

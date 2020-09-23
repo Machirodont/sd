@@ -234,19 +234,21 @@ class Persons extends PersonsGenerated
     public function save($runValidation = true, $attributeNames = null)
     {
         if (parent::save($runValidation, $attributeNames)) {
-            for ($i = 0; $i < count($this->loadedTraits["trait_id"]); $i++) {
-                if (!$trait = Traits::findOne($this->loadedTraits["trait_id"][$i])) {
-                    $trait = new Traits();
-                }
-                $trait->person_id = $this->person_id;
-                $trait->title = $this->loadedTraits["title"][$i];
-                $trait->description = $this->loadedTraits["description"][$i];
-                $trait->institution_id = $this->loadedTraits["institution_id"][$i] ? $this->loadedTraits["institution_id"][$i] : null;
-                $trait->sort = $this->loadedTraits["sort"][$i];
-                $trait->sort = $trait->sort ? $trait->sort : 10;
-                if ($trait->title !== "0") {
-                    if (!$trait->save()) {
-                        return false;
+            if (count($this->loadedTraits) > 0) {
+                for ($i = 0; $i < count($this->loadedTraits["trait_id"]); $i++) {
+                    if (!$trait = Traits::findOne($this->loadedTraits["trait_id"][$i])) {
+                        $trait = new Traits();
+                    }
+                    $trait->person_id = $this->person_id;
+                    $trait->title = $this->loadedTraits["title"][$i];
+                    $trait->description = $this->loadedTraits["description"][$i];
+                    $trait->institution_id = $this->loadedTraits["institution_id"][$i] ? $this->loadedTraits["institution_id"][$i] : null;
+                    $trait->sort = $this->loadedTraits["sort"][$i];
+                    $trait->sort = $trait->sort ? $trait->sort : 10;
+                    if ($trait->title !== "0") {
+                        if (!$trait->save()) {
+                            return false;
+                        }
                     }
                 }
             }
