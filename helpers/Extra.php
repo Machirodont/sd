@@ -64,14 +64,29 @@ class Extra
     public static function socketAsyncCall($route)
     {
         $parts = parse_url(Url::toRoute($route, true));
+        $host = $parts['host'];
 
-        if (!$fp = fsockopen($parts['host'], isset($parts['port']) ? $parts['port'] : 80)) {
+        $context = stream_context_create([
+            'ssl' => [
+                'verify_peer' => false,
+                'verify_peer_name' => false
+            ]
+        ]);
+
+        $hostname = "ssl://" . $host . ":443";
+        $fp = stream_socket_client($hostname, $errno, $errstr, ini_get("default_socket_timeout"), STREAM_CLIENT_CONNECT, $context);
+
+        if (!$fp) {
+            echo $errno . ":" . $errstr;
             return false;
         }
 
-        fwrite($fp, "GET " . (!empty($parts['path']) ? $parts['path'] : '/') . " HTTP/1.1\r\n");
-        fwrite($fp, "Host: " . $parts['host'] . "\r\n");
-        fwrite($fp, "Connection: Close\r\n\r\n");
+        $send = "";
+
+        $send .= "GET " . (!empty($parts['path']) ? $parts['path'] : '/') . " HTTP/1.1\r\n";
+        $send .= "Host: " . $host . "\r\n";
+        $send .= "Connection: close\r\n\r\n";
+        fputs($fp, $send);
         fclose($fp);
         return true;
     }

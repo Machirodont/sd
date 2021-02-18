@@ -33,6 +33,13 @@ git init
 git remote add <alias> <remote>
 git pull <remote> <branch>
 
+Убрать локальные изменения
+git reset --hard HEAD
+git clean -fd
+
+Залить версию с гитхаба
+git pull origin master
+
 cp /var/www/sdmed/config/params.php /var/www/gittest/config
 cp /var/www/sdmed/config/db.php /var/www/gittest/config
 cp -R /var/www/sdmed/vendor /var/www/gittest

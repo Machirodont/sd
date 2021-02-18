@@ -187,10 +187,20 @@ class ParseController extends Controller
      */
     public function actionSchedules()
     {
-        if (file_get_contents("stop_parsing.txt")) {
+        $stopParsingFile="stop_parsing.txt";
+        if (file_exists($stopParsingFile) && file_get_contents($stopParsingFile)) {
             echo "Уберите файл stop_parsing.txt";
             return;
         }
+
+        $lockfile = "lockfile-parse-schedules.txt";
+        if (file_exists($lockfile)) exit;
+        file_put_contents($lockfile, getmypid(), LOCK_EX);
+        if (file_get_contents($lockfile) != getmypid()) {
+            echo "Уже выполняется";
+            exit;
+        }
+
         /*
 SELECT tch.*, tc.start, tl.person_id, p.lastname, lsh.loadTime, cl.city FROM sd_timeline_changelog AS tch
 LEFT JOIN sd_timeline_cells AS tc ON tch.cellId=tc.id
@@ -375,6 +385,7 @@ LEFT JOIN sd_clinics AS cl ON wp.clinic_hash=cl.hash_id
             }
             \Yii::$app->db->createCommand("UPDATE sd_loaded_schedules SET  parsed=1 WHERE fileName=\"" . $fName . "\";")->execute();
         }
+        unlink($lockfile);
         echo microtime(true) - $t . "\n";
         echo "END\n\n";
         echo $log;
@@ -400,5 +411,11 @@ LEFT JOIN sd_clinics AS cl ON wp.clinic_hash=cl.hash_id
             ])->execute();*/
 
         }
+    }
+
+    public function actionTest1(){
+        echo __DIR__;
+        exit;
+
     }
 }

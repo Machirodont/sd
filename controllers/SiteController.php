@@ -125,11 +125,6 @@ class SiteController extends Controller
         ]);
     }
 
-    public function actionTest()
-    {
-        Extra::socketAsyncCall(["/site/schedule-parse"]);
-    }
-
     public function actionMainPage()
     {
         $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
@@ -204,13 +199,13 @@ class SiteController extends Controller
         if ($_FILES['upload']) {
 
             $message = '';
-            if (($_FILES['upload'] == "none") OR (empty($_FILES['upload']['name']))) {
+            if (($_FILES['upload'] == "none") or (empty($_FILES['upload']['name']))) {
                 $message = Yii::t('app', "Please Upload an image.");
-            } else if ($_FILES['upload']["size"] == 0 OR $_FILES['upload']["size"] > 5 * 1024 * 1024) {
+            } else if ($_FILES['upload']["size"] == 0 or $_FILES['upload']["size"] > 5 * 1024 * 1024) {
                 $message = Yii::t('app', "The image should not exceed 5MB.");
             } else if (($_FILES['upload']["type"] != "image/jpg")
-                AND ($_FILES['upload']["type"] != "image/jpeg")
-                AND ($_FILES['upload']["type"] != "image/png")) {
+                and ($_FILES['upload']["type"] != "image/jpeg")
+                and ($_FILES['upload']["type"] != "image/png")) {
                 $message = Yii::t('app', "The image type should be JPG , JPEG Or PNG.");
             } else if (!is_uploaded_file($_FILES['upload']["tmp_name"])) {
 
@@ -363,10 +358,12 @@ class SiteController extends Controller
     public function actionScheduleParse()
     {
         echo "start<br>";
-        shell_exec("php ../yii parse/schedules");
+        //echo shell_exec("php ../yii parse/schedules")."<br>";
+        echo shell_exec("php ../yii parse/schedules")."<br>";
         echo "end<br>";
         exit;
     }
+
 
     public function actionCounter()
     {
