@@ -110,7 +110,6 @@ class PersonsController extends Controller
 
         return $this->render('view', [
             'model' => $person,
-            'cid' => Yii::$app->session->get("cid"),
         ]);
     }
 
@@ -133,7 +132,6 @@ class PersonsController extends Controller
             "personsDataProvider" => $personsDataProvider,
             'showRemoved' => $showRemoved
         ]);
-
     }
 
     public function actionEdit($id = null)

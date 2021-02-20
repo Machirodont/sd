@@ -45,4 +45,6 @@ gz_tmp.gz
 *.tgz
 error_log.txt
 /stop_parsing.txt
-stage/*
+stage/*.log
+stage/*.ctl
+stage/*.txt

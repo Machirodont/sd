@@ -23,15 +23,6 @@ use app\models\TimelineDays;
 
 class ParseController extends Controller
 {
-    public function actionTest()
-    {
-        echo "start\n";
-        for ($i = 0; $i < 60; $i++) {
-            sleep(1);
-            echo ($i + 1) . "\n";
-        }
-        echo "end\n";
-    }
 
     public function actionPrice()
     {
@@ -108,11 +99,6 @@ class ParseController extends Controller
         exit;
     }
 
-    public function actionIndexGroups()
-    {
-
-    }
-
     public function actionClearOldSchedules()
     {
         $lastLoadedFile = (new Query())->select("*")
@@ -142,7 +128,6 @@ class ParseController extends Controller
 
     public function actionResetSchedule()
     {
-
         \Yii::$app->db->createCommand("DELETE FROM sd_loaded_schedules")->execute();
         \Yii::$app->db->createCommand("ALTER TABLE `sd_loaded_schedules` AUTO_INCREMENT=0;")->execute();
         \Yii::$app->db->createCommand("DELETE FROM sd_timeline_days")->execute();
@@ -155,7 +140,6 @@ class ParseController extends Controller
         \Yii::$app->db->createCommand("ALTER TABLE `sd_timelines` AUTO_INCREMENT=0;")->execute();
         \Yii::$app->db->createCommand("DELETE FROM sd_workplaces")->execute();
         \Yii::$app->db->createCommand("ALTER TABLE `sd_workplaces` AUTO_INCREMENT=0;")->execute();
-
     }
 
     public function actionScheduleList()
@@ -187,13 +171,13 @@ class ParseController extends Controller
      */
     public function actionSchedules()
     {
-        $stopParsingFile="stop_parsing.txt";
+        $stopParsingFile = __DIR__ . "/../stage/" . "stop_parsing.txt";
         if (file_exists($stopParsingFile) && file_get_contents($stopParsingFile)) {
             echo "Уберите файл stop_parsing.txt";
             return;
         }
 
-        $lockfile = "lockfile-parse-schedules.txt";
+        $lockfile = __DIR__ . "/../stage/" . "lockfile-parse-schedules.txt";
         if (file_exists($lockfile)) exit;
         file_put_contents($lockfile, getmypid(), LOCK_EX);
         if (file_get_contents($lockfile) != getmypid()) {
@@ -376,6 +360,15 @@ LEFT JOIN sd_clinics AS cl ON wp.clinic_hash=cl.hash_id
                                     $tCell->save();
                                 }
                             }
+
+                            echo "-----\r\n";
+                            foreach ($inserts as $insert) {
+                                echo substr($insert[1], strpos($insert[1], " "));
+                                echo " - ";
+                                echo substr($insert[2], strpos($insert[2], " "));
+                                echo "\r\n";
+                            }
+
                             \Yii::$app->db->createCommand()->batchInsert('sd_timeline_cells', ["timelineId", "start", "end", "free", "source"], $inserts)->execute();
                         } else {
                             echo "Отсутствует соответствие: " . $schedule->name . " / " . $schedule_hash . " (" . $subdiv->name . ")\n";
@@ -411,11 +404,5 @@ LEFT JOIN sd_clinics AS cl ON wp.clinic_hash=cl.hash_id
             ])->execute();*/
 
         }
-    }
-
-    public function actionTest1(){
-        echo __DIR__;
-        exit;
-
     }
 }

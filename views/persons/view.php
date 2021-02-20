@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
 use yii\data\ArrayDataProvider;
@@ -9,9 +10,8 @@ use \app\helpers\Extra;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Persons */
-/* @var $clinic \app\models\Clinic */
 
-$this->registerLinkTag(['rel' => 'canonical', 'href' => \yii\helpers\Url::to(["view", "id" => $model->person_id], true),]);
+$this->registerLinkTag(['rel' => 'canonical', 'href' => Url::to(["view", "id" => $model->person_id], true),]);
 
 $primarySpec = mb_substr($model->primarySpec, 0, 1) . mb_strtolower(mb_substr($model->primarySpec, 1));
 $personClinics = $model->clinics;
@@ -65,7 +65,7 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                 </p>
             <?php endif; ?>
 
-            <?= !Yii::$app->user->isGuest ? Html::a("Редактировать профиль врача", ["/persons/edit", "id" => $model->person_id], ["class"=>"btn btn-warning"]) : ""; ?>
+            <?= !Yii::$app->user->isGuest ? Html::a("Редактировать профиль врача", ["/persons/edit", "id" => $model->person_id], ["class" => "btn btn-warning"]) : ""; ?>
 
             <?php
             if (count($model->clinics) > 0) {
@@ -92,20 +92,23 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                 echo "</div>";
             }
 
-            /*
-            if ($model->timeCells) {
+            //            $timeCells=$model->findTimeCells("2020-07-31");
+            $timeCells = $model->timeCells;
+
+            if ($timeCells) {
                 echo "<hr><table class='table small'>";
-                $prevTc = $model->timeCells[0];
-                foreach ($model->timeCells as $tc) {
+                $prevTc = $timeCells[0];
+                foreach ($timeCells as $tc) {
                     $style = "";
-                    if ($tc->start !== $prevTc->end) $style = "color:red; ";
+                    if ($tc->start !== $prevTc->end
+                        && substr($tc->start, 0, 10) === substr($prevTc->start, 0, 10)
+                    ) $style = "color:red; ";
                     if ($tc->free) $style .= "background-color:#EEE;";
                     $prevTc = $tc;
                     echo "<tr style='$style'><td>" . $tc->timelineId . "</td><td>" . $tc->start . "</td><td>" . $tc->end . "</td><td>" . $tc->source . "</td></tr>";
                 }
                 echo "</table>";
             }
-            */
 
             ?>
 

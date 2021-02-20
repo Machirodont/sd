@@ -20,6 +20,7 @@
         "ext-intl": "*",
         "ext-mbstring": "*",
         "ext-fileinfo": "*",
+        "ext-zlib": "*",
         "yiisoft/yii2": "~2.0.38",
         "yiisoft/yii2-bootstrap": "~2.0.0",
         "yiisoft/yii2-swiftmailer": "~2.0.0",
@@ -28,7 +29,7 @@
         "kartik-v/yii2-dropdown-x": "dev-master",
         "fabpot/goutte": "^3.2",
         "kartik-v/yii2-widget-datepicker": "@dev",
-        "2amigos/yii2-tinymce-widget": "~1.1"
+        "2amigos/yii2-tinymce-widget": "~1.1",
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

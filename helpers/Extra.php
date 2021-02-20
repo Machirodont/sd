@@ -91,20 +91,24 @@ class Extra
         return true;
     }
 
-    public static function writeLog($text, $fName = "error_log.txt")
+    public static function writeLog($text, $fName = null)
     {
+        if (is_null($fName)) $fName = __DIR__ . "/../stage/" . "error_log.txt";
         $f = false;
-        while ($f === false) {
+        $stuckGuard = 0;
+        while ($f === false && $stuckGuard < 1000) {
             try {
                 $f = fopen($fName, 'a');
             } catch (\Exception $e) {
                 $f = false;
-
             }
+            $stuckGuard++;
         }
-        $s = date("Y-m-d H:i:s " . (array_key_exists("REMOTE_ADDR", $_SERVER) ? $_SERVER["REMOTE_ADDR"] : "local")) . " " . $text . "\n";
-        fwrite($f, $s);
-        fclose($f);
+        if ($f) {
+            $s = date("Y-m-d H:i:s " . (array_key_exists("REMOTE_ADDR", $_SERVER) ? $_SERVER["REMOTE_ADDR"] : "local")) . " " . $text . "\n";
+            fwrite($f, $s);
+            fclose($f);
+        }
     }
 
 }

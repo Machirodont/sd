@@ -9,7 +9,8 @@ use Yii;
  *
  * @property int $id
  * @property string $groupName
- * @property int $itemId
+ * @property int $parentId
+ * @property string $removed
  */
 class PriceGroupGenerated extends \yii\db\ActiveRecord
 {

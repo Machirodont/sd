@@ -67,6 +67,7 @@ class Persons extends PersonsGenerated
             ->leftJoin(["w" => "sd_workplaces"], "w.clinic_hash = c.hash_id")
             ->leftJoin(["t" => "sd_timelines"], "t.workplace_hash = w.workplace_hash")
             ->where(["t.person_id" => $this->person_id])
+            ->andWhere(["not", ["c.companyPage" => null]])
             ->all();
     }
 
@@ -99,6 +100,30 @@ class Persons extends PersonsGenerated
             ->where([
                 "w.clinic_hash" => $this->currentClinic->hash_id,
                 "tl.person_id" => $this->person_id
+            ])
+            ->orderBy("tc.start")
+            ->all();
+    }
+
+    /**
+     * @param string $date
+     * @return TimelineCells[]
+     */
+    public function findTimeCells(string $date): ?array
+    {
+        if (!$this->currentClinic instanceof Clinic) return null;
+        return TimelineCells::find()
+            ->select("tc.*")
+            ->from(["tc" => "sd_timeline_cells"])
+            ->leftJoin(["tl" => "sd_timelines"], "tc.timelineId = tl.id")
+            ->leftJoin(["w" => "sd_workplaces"], "tl.workplace_hash = w.workplace_hash")
+            ->where(['and',
+                [
+                    "w.clinic_hash" => $this->currentClinic->hash_id,
+                    "tl.person_id" => $this->person_id,
+                ],
+                [">", "tc.start", $date],
+                ["<", "tc.end", $date . " 23:59:59"],
             ])
             ->orderBy("tc.start")
             ->all();

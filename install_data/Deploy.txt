@@ -50,6 +50,7 @@ chown -R www-data /var/www/gittest/web/assets
 chown -R www-data /var/www/gittest/runtime
 chown -R www-data /var/www/gittest/web/load_price_time.txt
 chown -R www-data /var/www/gittest/web/error_log.txt
+chown -R www-data /var/www/gittest/stage
 
 php ./yii dump/load-static
 
