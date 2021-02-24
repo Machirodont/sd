@@ -53,6 +53,8 @@ chown -R www-data /var/www/gittest/web/error_log.txt
 chown -R www-data /var/www/gittest/stage
 
 php ./yii dump/load-static
+php ./yii dump/clear-generated
+
 
 прайсы:
 Проверить наличие свежего файла /data/gz_tmp.gz

@@ -94,21 +94,59 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
 
             //            $timeCells=$model->findTimeCells("2020-07-31");
             $timeCells = $model->timeCells;
-
-            if ($timeCells) {
-                echo "<hr><table class='table small'>";
-                $prevTc = $timeCells[0];
-                foreach ($timeCells as $tc) {
-                    $style = "";
-                    if ($tc->start !== $prevTc->end
-                        && substr($tc->start, 0, 10) === substr($prevTc->start, 0, 10)
-                    ) $style = "color:red; ";
-                    if ($tc->free) $style .= "background-color:#EEE;";
-                    $prevTc = $tc;
-                    echo "<tr style='$style'><td>" . $tc->timelineId . "</td><td>" . $tc->start . "</td><td>" . $tc->end . "</td><td>" . $tc->source . "</td></tr>";
+            /*
+                if ($timeCells) {
+                    echo "<hr><table class='table small'>";
+                    $prevTc = $timeCells[0];
+                    foreach ($timeCells as $tc) {
+                        $style = "";
+                        if ($tc->start !== $prevTc->end
+                            && substr($tc->start, 0, 10) === substr($prevTc->start, 0, 10)
+                        ) $style = "color:red; ";
+                        if ($tc->free) $style .= "background-color:#EEE;";
+                        $prevTc = $tc;
+                        echo "<tr style='$style'><td>" . $tc->timelineId . "</td><td>" . $tc->start . "</td><td>" . $tc->end . "</td><td>" . $tc->source . "</td></tr>";
+                    }
+                    echo "</table>";
                 }
-                echo "</table>";
+                */
+
+
+            $timeCellIndex = [];
+            if ($timeCells) {
+                foreach ($timeCells as $tc) {
+                    $date = substr($tc->start, 0, strpos($tc->start, " "));
+                    if (!array_key_exists($date, $timeCellIndex)) {
+                        $timeCellIndex[$date] = [];
+                    }
+                    $timeCellIndex[$date][] = [
+                        "start" => substr($tc->start, strpos($tc->start, " ")),
+                        "end" => substr($tc->end, strpos($tc->end, " "))
+                    ];
+                }
+                ksort($timeCellIndex);
             }
+
+            function dayMinute(string $d)
+            {
+                if (preg_match("/([0-9]{1,2}):([0-9]{1,2}):[0-9]{1,2}/", $d, $matches)) {
+                    return (int)$matches[1] * 60 + (int)$matches[2];
+                }
+                return 0;
+            }
+
+            echo "<hr><table class='table small'>";
+            foreach ($timeCellIndex as $date => $cells) {
+                echo "<tr><td>" . $date . "</td><td><div style='width:1440px; border:solid 1px red; height:20px; position: relative;'>";
+                $odd = false;
+                foreach ($cells as $cell) {
+                    $odd = !$odd;
+                    echo "<div style='background-color: " . ($odd ? "green" : "blue") . "; height: 10px; width: " . (dayMinute($cell['end']) - dayMinute($cell['start'])) . "px; left:" . dayMinute($cell['start']) . "px; position: absolute' title='".$cell['start']."-".$cell['end']."'> </div>";
+
+                }
+                echo "</div></td></tr>";
+            }
+            echo "</table>";
 
             ?>
 
