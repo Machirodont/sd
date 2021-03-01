@@ -92,37 +92,41 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                 echo "</div>";
             }
 
-            //            $timeCells=$model->findTimeCells("2020-07-31");
+
             $timeCells = $model->timeCells;
-            /*
-                if ($timeCells) {
-                    echo "<hr><table class='table small'>";
-                    $prevTc = $timeCells[0];
-                    foreach ($timeCells as $tc) {
-                        $style = "";
-                        if ($tc->start !== $prevTc->end
-                            && substr($tc->start, 0, 10) === substr($prevTc->start, 0, 10)
-                        ) $style = "color:red; ";
-                        if ($tc->free) $style .= "background-color:#EEE;";
-                        $prevTc = $tc;
-                        echo "<tr style='$style'><td>" . $tc->timelineId . "</td><td>" . $tc->start . "</td><td>" . $tc->end . "</td><td>" . $tc->source . "</td></tr>";
-                    }
-                    echo "</table>";
-                }
-                */
-
-
             $timeCellIndex = [];
+            $minTime = "23:59:59";
+            $maxTime = "00:00:00";
+            $timeLines = [];
             if ($timeCells) {
                 foreach ($timeCells as $tc) {
+                    if (!in_array($tc->timelineId, $timeLines)) {
+                        $timeLines[] = $tc->timelineId;
+                    }
                     $date = substr($tc->start, 0, strpos($tc->start, " "));
                     if (!array_key_exists($date, $timeCellIndex)) {
                         $timeCellIndex[$date] = [];
                     }
+                    $start = substr($tc->start, strpos($tc->start, " ") + 1);
+                    $end = substr($tc->end, strpos($tc->end, " ") + 1);
+                    $crossLvl = 0;
+
+                    if ($date === "2021-01-30") {
+                        foreach ($timeCellIndex[$date] as $dateToCross) {
+                            $isForward = $start >= $dateToCross['end'] && $end >= $dateToCross['end'];
+                            $isBack = $start <= $dateToCross['start'] && $end <= $dateToCross['start'];
+                            if (($crossLvl===$dateToCross["cross"]) && !($isForward || $isBack)) {
+                                $crossLvl =max($crossLvl, ($dateToCross["cross"] + 1));
+                            }
+                        }
+                    }
                     $timeCellIndex[$date][] = [
-                        "start" => substr($tc->start, strpos($tc->start, " ")),
-                        "end" => substr($tc->end, strpos($tc->end, " "))
+                        "start" => $start,
+                        "end" => $end,
+                        "cross" => $crossLvl
                     ];
+                    $maxTime = ($end > $maxTime) ? $end : $maxTime;
+                    $minTime = ($start < $minTime) ? $start : $minTime;
                 }
                 ksort($timeCellIndex);
             }
@@ -135,14 +139,18 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                 return 0;
             }
 
+            $minuteDayStart = dayMinute($minTime);
+            $minuteDayEnd = dayMinute($maxTime);
+            echo json_encode($timeLines) . "<br>";
             echo "<hr><table class='table small'>";
             foreach ($timeCellIndex as $date => $cells) {
-                echo "<tr><td>" . $date . "</td><td><div style='width:1440px; border:solid 1px red; height:20px; position: relative;'>";
+                echo "<tr><td>" . $date . "</td><td><div style='width:" . ($minuteDayEnd - $minuteDayStart) . "px; border:solid 1px red; height:20px; position: relative;'>";
                 $odd = false;
                 foreach ($cells as $cell) {
                     $odd = !$odd;
-                    echo "<div style='background-color: " . ($odd ? "green" : "blue") . "; height: 10px; width: " . (dayMinute($cell['end']) - dayMinute($cell['start'])) . "px; left:" . dayMinute($cell['start']) . "px; position: absolute' title='".$cell['start']."-".$cell['end']."'> </div>";
-
+                    $left = dayMinute($cell['start']) - $minuteDayStart;
+                    $width = (dayMinute($cell['end']) - dayMinute($cell['start']));
+                    echo "<div style='top:" . ($cell['cross'] * 5) . "px; background-color: " . ($odd ? "green" : "blue") . "; height: 10px; width: " . $width . "px; left:" . $left . "px; position: absolute' title='" . $cell['start'] . "-" . $cell['end'] . "'> </div>";
                 }
                 echo "</div></td></tr>";
             }
