@@ -1,5 +1,6 @@
 <?php
 
+use app\models\DailyTimeline;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
@@ -115,15 +116,16 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                         foreach ($timeCellIndex[$date] as $dateToCross) {
                             $isForward = $start >= $dateToCross['end'] && $end >= $dateToCross['end'];
                             $isBack = $start <= $dateToCross['start'] && $end <= $dateToCross['start'];
-                            if (($crossLvl===$dateToCross["cross"]) && !($isForward || $isBack)) {
-                                $crossLvl =max($crossLvl, ($dateToCross["cross"] + 1));
+                            if (($crossLvl === $dateToCross["cross"]) && !($isForward || $isBack)) {
+                                $crossLvl = max($crossLvl, ($dateToCross["cross"] + 1));
                             }
                         }
                     }
                     $timeCellIndex[$date][] = [
                         "start" => $start,
                         "end" => $end,
-                        "cross" => $crossLvl
+                        "cross" => $crossLvl,
+                        "id" => $tc->id,
                     ];
                     $maxTime = ($end > $maxTime) ? $end : $maxTime;
                     $minTime = ($start < $minTime) ? $start : $minTime;
@@ -150,7 +152,7 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                     $odd = !$odd;
                     $left = dayMinute($cell['start']) - $minuteDayStart;
                     $width = (dayMinute($cell['end']) - dayMinute($cell['start']));
-                    echo "<div style='top:" . ($cell['cross'] * 5) . "px; background-color: " . ($odd ? "green" : "blue") . "; height: 10px; width: " . $width . "px; left:" . $left . "px; position: absolute' title='" . $cell['start'] . "-" . $cell['end'] . "'> </div>";
+                    echo "<div style='top:" . ($cell['cross'] * 5) . "px; background-color: " . ($odd ? "green" : "blue") . "; height: 10px; width: " . $width . "px; left:" . $left . "px; position: absolute' title='" . $cell['start'] . "-" . $cell['end'] . " [" . $cell['id'] . "]'> </div>";
                 }
                 echo "</div></td></tr>";
             }
@@ -174,6 +176,12 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
 
         </div>
     </div>
+    <?php
+    $dtl = new DailyTimeline('2021-01-30', 21);
+    $dtl->add("14:00", "15:00", true);
+    echo json_encode($dtl);
+
+    ?>
 
     <?php echo $model->htmlDescription; ?>
 </div>

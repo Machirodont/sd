@@ -360,15 +360,6 @@ LEFT JOIN sd_clinics AS cl ON wp.clinic_hash=cl.hash_id
                                     $tCell->save();
                                 }
                             }
-
-                            echo "-----\r\n";
-                            foreach ($inserts as $insert) {
-                                echo substr($insert[1], strpos($insert[1], " "));
-                                echo " - ";
-                                echo substr($insert[2], strpos($insert[2], " "));
-                                echo "\r\n";
-                            }
-
                             \Yii::$app->db->createCommand()->batchInsert('sd_timeline_cells', ["timelineId", "start", "end", "free", "source"], $inserts)->execute();
                         } else {
                             echo "Отсутствует соответствие: " . $schedule->name . " / " . $schedule_hash . " (" . $subdiv->name . ")\n";
@@ -402,7 +393,6 @@ LEFT JOIN sd_clinics AS cl ON wp.clinic_hash=cl.hash_id
                 'value' => $person->person_id,
                 'route' => 'persons/view'
             ])->execute();*/
-
         }
     }
 }
