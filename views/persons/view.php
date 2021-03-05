@@ -112,15 +112,14 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                     $end = substr($tc->end, strpos($tc->end, " ") + 1);
                     $crossLvl = 0;
 
-                    if ($date === "2021-01-30") {
-                        foreach ($timeCellIndex[$date] as $dateToCross) {
-                            $isForward = $start >= $dateToCross['end'] && $end >= $dateToCross['end'];
-                            $isBack = $start <= $dateToCross['start'] && $end <= $dateToCross['start'];
-                            if (($crossLvl === $dateToCross["cross"]) && !($isForward || $isBack)) {
-                                $crossLvl = max($crossLvl, ($dateToCross["cross"] + 1));
-                            }
+                    foreach ($timeCellIndex[$date] as $dateToCross) {
+                        $isForward = $start >= $dateToCross['end'] && $end >= $dateToCross['end'];
+                        $isBack = $start <= $dateToCross['start'] && $end <= $dateToCross['start'];
+                        if (($crossLvl === $dateToCross["cross"]) && !($isForward || $isBack)) {
+                            $crossLvl = max($crossLvl, ($dateToCross["cross"] + 1));
                         }
                     }
+
                     $timeCellIndex[$date][] = [
                         "start" => $start,
                         "end" => $end,
@@ -152,7 +151,7 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                     $odd = !$odd;
                     $left = dayMinute($cell['start']) - $minuteDayStart;
                     $width = (dayMinute($cell['end']) - dayMinute($cell['start']));
-                    echo "<div style='top:" . ($cell['cross'] * 5) . "px; background-color: " . ($odd ? "green" : "blue") . "; height: 10px; width: " . $width . "px; left:" . $left . "px; position: absolute' title='" . $cell['start'] . "-" . $cell['end'] . " [" . $cell['id'] . "]'> </div>";
+                    echo "<div style='top:" . ($cell['cross'] * 10) . "px; background-color: " . ($odd ? "green" : "blue") . "; height: 10px; width: " . $width . "px; left:" . $left . "px; position: absolute' title='" . $cell['start'] . "-" . $cell['end'] . " [" . $cell['id'] . "]'> </div>";
                 }
                 echo "</div></td></tr>";
             }
@@ -176,12 +175,6 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
 
         </div>
     </div>
-    <?php
-    $dtl = new DailyTimeline('2021-01-30', 21);
-    $dtl->add("14:00", "15:00", true);
-    echo json_encode($dtl);
-
-    ?>
 
     <?php echo $model->htmlDescription; ?>
 </div>

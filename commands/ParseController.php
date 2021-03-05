@@ -11,7 +11,9 @@ namespace app\commands;
 
 use app\helpers\Extra;
 use app\models\Clinic;
+use app\models\DailyTimeline;
 use app\models\TimelineCells;
+use Yii;
 use yii\console\Controller;
 use app\models\PriceGroup;
 use app\models\PriceItems;
@@ -289,78 +291,16 @@ LEFT JOIN sd_clinics AS cl ON wp.clinic_hash=cl.hash_id
                                 }
                             }
 
-                            $inserts = [];
+                            $dailyTimelines = [];
                             foreach ($schedule->cells as $cell) {
-
-                                $startText = $cell->date . " " . $cell->time_start . ":00";
-                                $endText = $cell->date . " " . $cell->time_end . ":00";
-                                $tCell = TimelineCells::findOne(["timelineId" => $tl->id, "start" => $startText, "end" => $endText]);
-
-                                if (!$tCell) {
-                                    if ($tl->id == 31) $log .= "\nINCOMING: " . $cell->date . "  " . $cell->time_start . "  " . $cell->time_end . " " . $cell->free . " \n";
-                                    $intersectCondition = ["and",
-                                        ["timelineId" => $tl->id],
-                                        ["not",
-                                            ["or",
-                                                ["and",
-                                                    [">=", "start", $startText],
-                                                    [">=", "start", $endText]
-                                                ],
-                                                ["and",
-                                                    ["<=", "end", $startText],
-                                                    ["<=", "end", $endText]
-                                                ]
-                                            ]
-                                        ]
-                                    ];
-
-                                    $intersectedTCells = TimelineCells::find()->where($intersectCondition)->all();
-                                    if ($intersectedTCells) {
-                                        if ($tl->id == 31) $log .= "INTERSECT\n";
-                                        echo "ПЕРЕСЕЧЕНИЕ " . $tl->id . " " . $startText . " " . $endText . " " . count($intersectedTCells) . "\n";
-                                        $newCell = new TimelineCells([
-                                            "timelineId" => $tl->id,
-                                            "start" => $startText,
-                                            "end" => $endText,
-                                            "free" => intval($cell->free),
-                                            "source" => $fName,
-                                        ]);
-                                        //Вычисление и обработка пересечений
-                                        $oldCellsLog = "[";
-                                        $newCellsLog = "[";
-                                        foreach ($intersectedTCells as $oldCell) {
-                                            /**@var $oldCell \app\models\TimelineCells */
-                                            $oldCellsLog .= date("H:i", $oldCell->startT) . " - " . date("H:i", $oldCell->endT) . ";";
-                                            if ($oldCell->startT < $newCell->startT) {
-                                                $inserts[] = [$tl->id, $oldCell->start, $newCell->start, $oldCell->free, $fName];
-                                                $newCellsLog .= $oldCell->start . " - " . $newCell->start . ";";
-                                            }
-                                            if ($oldCell->endT > $newCell->endT) {
-                                                $inserts[] = [$tl->id, $newCell->end, $oldCell->end, $oldCell->free, $fName];
-                                                $newCellsLog .= $newCell->end . " - " . $oldCell->end . ";";
-                                            }
-                                        }
-                                        $newCellsLog .= "]\n";
-                                        $oldCellsLog .= "]\n";
-                                        if ($tl->id == 31) $log .= $oldCellsLog . $newCellsLog;
-
-                                        TimelineCells::deleteAll($intersectCondition);
-                                    } else {
-                                        if ($tl->id == 31) $log .= "NEW\n";
-                                    }
-                                    $inserts[] = [$tl->id, $startText, $endText, intval($cell->free), $fName];
+                                if (!array_key_exists($cell->date, $dailyTimelines)) {
+                                    $dailyTimelines[$cell->date] = DailyTimeline::load($cell->date, $tl->id);
                                 }
-
-                                if ($tCell && intval($cell->free) !== intval($tCell->free)) {
-                                    if ($tl->id == 31) $log .= "\nINCOMING: " . $cell->date . "  " . $cell->time_start . "  " . $cell->time_end . " " . $cell->free . " \n";
-                                    if ($tl->id == 31) $log .= "UPDATE\n";
-                                    echo "ПЕРЕЗАПИСЬ\n";
-                                    $tCell->free = intval($cell->free);
-                                    $tCell->source = $fName;
-                                    $tCell->save();
-                                }
+                                $dailyTimelines[$cell->date]->add($cell->time_start, $cell->time_end, $cell->free);
                             }
-                            \Yii::$app->db->createCommand()->batchInsert('sd_timeline_cells', ["timelineId", "start", "end", "free", "source"], $inserts)->execute();
+                            foreach ($dailyTimelines as $dailyTimeline) {
+                                $dailyTimeline->save();
+                            }
                         } else {
                             echo "Отсутствует соответствие: " . $schedule->name . " / " . $schedule_hash . " (" . $subdiv->name . ")\n";
                         }

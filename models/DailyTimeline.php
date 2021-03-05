@@ -4,6 +4,8 @@
 namespace app\models;
 
 
+use Yii;
+
 class DailyTimeline
 {
 
@@ -11,18 +13,19 @@ class DailyTimeline
     public $timelineId = null;
     public $cells = [];
 
-    public function __construct($day, int $timelineId)
+    public static function load($day, int $timelineId): DailyTimeline
     {
-        $this->day = $day;
-        $this->timelineId = $timelineId;
+        $dtl = new DailyTimeline();
+        $dtl->day = $day;
+        $dtl->timelineId = $timelineId;
         //ToDo проверка на корректность $day и существование timeline
         $loadedCells = TimelineCells::find()
             ->where(['and',
-                ["timelineId" => $this->timelineId],
+                ["timelineId" => $dtl->timelineId],
                 ['>=', 'start', $day . " 00:00:00"],
                 ['<=', 'end', $day . " 23:59:59"]
             ])->all();
-        $this->cells = array_map(function (TimelineCells $cell) {
+        $dtl->cells = array_map(function (TimelineCells $cell) {
             return [
                 'id' => $cell->id,
                 'start' => substr($cell->start, strpos($cell->start, " ") + 1, -3),
@@ -31,6 +34,7 @@ class DailyTimeline
                 'removed' => false
             ];
         }, $loadedCells);
+        return $dtl;
     }
 
     /**
@@ -42,7 +46,7 @@ class DailyTimeline
     {
         //ToDo проверка на корректность входящих значений
         $newCells = [];
-        foreach ($this->cells as $i=>$cell) {
+        foreach ($this->cells as $i => $cell) {
             if ($this->cells[$i]['removed']) continue;
 
             if ($cell['start'] >= $time_start && $cell['end'] <= $time_end) {
@@ -85,6 +89,24 @@ class DailyTimeline
 
     public function save()
     {
-
+        $removes = [];
+        $inserts = [];
+        foreach ($this->cells as $cell) {
+            if ($cell['removed']) {
+                if ($cell['id']) $removes[] = $cell['id'];
+            } else {
+                if (is_null($cell['id'])) {
+                    $inserts[] = [
+                        $this->timelineId,
+                        $this->day . " " . $cell['start'],
+                        $this->day . " " . $cell['end'],
+                        $cell['free'],
+                        ""
+                    ];
+                }
+            }
+        }
+        TimelineCells::deleteAll(['id' => $removes]);
+        Yii::$app->db->createCommand()->batchInsert('sd_timeline_cells', ["timelineId", "start", "end", "free", "source"], $inserts)->execute();
     }
 }
