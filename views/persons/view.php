@@ -123,6 +123,7 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                     $timeCellIndex[$date][] = [
                         "start" => $start,
                         "end" => $end,
+                        "free" => $tc->free,
                         "cross" => $crossLvl,
                         "id" => $tc->id,
                     ];
@@ -131,6 +132,45 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
                 }
                 ksort($timeCellIndex);
             }
+
+            foreach ($timeCellIndex as $date => $cells) {
+                usort($timeCellIndex[$date], function ($a, $b) {
+                    if ($a["start"] === $b["start"]) return 0;
+                    return ($a["start"] < $b["start"]) ? -1 : 1;
+                });
+            }
+
+            $timeRangeIndex = [];
+            foreach ($timeCellIndex as $date => $cells) {
+                $rangeStart = null;
+                $rangeEnd = null;
+                $timeRangeIndex[$date] = [];
+                for ($i = 0; $i < count($cells); $i++) {
+                    if (is_null($rangeStart)) {
+                        if ($cells[$i]['free']) {
+                            $rangeStart = $cells[$i]['start'];
+                            $rangeEnd = $cells[$i]['end'];
+                        }
+                    } else {
+                        if ($cells[$i]['free']) {
+                            if ($rangeEnd === $cells[$i]['start']) {
+                                $rangeEnd = $cells[$i]['end'];
+                            } else {
+                                if (!is_null($rangeStart)) $timeRangeIndex[$date][] = ["start" => $rangeStart, "end" => $rangeEnd];
+                                $rangeStart = $cells[$i]['start'];
+                                $rangeEnd = $cells[$i]['end'];
+                            }
+                        } else {
+                            if (!is_null($rangeStart)) $timeRangeIndex[$date][] = ["start" => $rangeStart, "end" => $rangeEnd];
+                            $rangeStart = null;
+                            $rangeEnd = null;
+                        }
+                    }
+                }
+                if (!is_null($rangeStart)) $timeRangeIndex[$date][] = ["start" => $rangeStart, "end" => $rangeEnd];
+            }
+            echo json_encode($timeRangeIndex);
+
 
             function dayMinute(string $d)
             {
@@ -142,16 +182,16 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
 
             $minuteDayStart = dayMinute($minTime);
             $minuteDayEnd = dayMinute($maxTime);
-            echo json_encode($timeLines) . "<br>";
             echo "<hr><table class='table small'>";
             foreach ($timeCellIndex as $date => $cells) {
                 echo "<tr><td>" . $date . "</td><td><div style='width:" . ($minuteDayEnd - $minuteDayStart) . "px; border:solid 1px red; height:20px; position: relative;'>";
                 $odd = false;
                 foreach ($cells as $cell) {
                     $odd = !$odd;
+                    $color = "hsl(" . ($cell['free'] ? "100" : "0") . ", 100%, " . ($odd ? "60" : "70") . "%)";
                     $left = dayMinute($cell['start']) - $minuteDayStart;
                     $width = (dayMinute($cell['end']) - dayMinute($cell['start']));
-                    echo "<div style='top:" . ($cell['cross'] * 10) . "px; background-color: " . ($odd ? "green" : "blue") . "; height: 10px; width: " . $width . "px; left:" . $left . "px; position: absolute' title='" . $cell['start'] . "-" . $cell['end'] . " [" . $cell['id'] . "]'> </div>";
+                    echo "<div style='top:" . ($cell['cross'] * 10) . "px; background-color: " . $color . "; height: 10px; width: " . $width . "px; left:" . $left . "px; position: absolute' title='" . $cell['start'] . "-" . $cell['end'] . " [" . $cell['id'] . "]'> </div>";
                 }
                 echo "</div></td></tr>";
             }
