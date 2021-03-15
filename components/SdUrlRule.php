@@ -62,6 +62,11 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
             return $url;
         }
 
+        if ($route === 'site/appointment') {
+            $url .= "appointment/";
+            return $url;
+        }
+
         if ($route === 'persons/view') {
             if (!array_key_exists("id", $params)) return false;
             if ($tag = UrlTags::findOne(["route" => $route, "param" => "id", "value" => $params['id']])) {
@@ -133,7 +138,7 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
             if (array_key_exists(Yii::$app->request->hostInfo, $domainRedirects)) {
                 $urlWithMainHost = Yii::$app->params["mainHost"] . $domainRedirects[Yii::$app->request->hostInfo]["urlTag"] . Yii::$app->request->url;
                 Yii::$app->session->open();
-                Yii::$app->session["cid"] = $domainRedirects[Yii::$app->request->hostInfo]["cid"];
+                Yii::$app->session->set("cid", $domainRedirects[Yii::$app->request->hostInfo]["cid"]);
             }
             Yii::$app->response->redirect($urlWithMainHost, 301)->send();
             exit;
@@ -199,6 +204,7 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
                 if ($part === "company") $route = "clinic/company";
                 if ($part === "specialisty") $route = "persons/index";
                 if ($part === "services") $route = "services/index";
+                if ($part === "appointment") $route = "site/appointment";
                 if (preg_match('/specialist_([0-9]+)/', $part, $matches)) {
                     $route = "persons/view";
                     $params["id"] = $matches[1];
@@ -214,7 +220,7 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
             if (array_key_exists("cid", $params)) {
                 if ($params["cid"]) {
                     Yii::$app->session->open();
-                    Yii::$app->session["cid"] = $params["cid"];
+                    Yii::$app->session->set("cid", $params["cid"]);
                 } else {
                     Yii::$app->session->remove("cid");
                 }

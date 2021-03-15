@@ -57,36 +57,16 @@ class PersonsController extends Controller
     public function actionIndex()
     {
         $clinic = Clinic::findOne(Yii::$app->session->get("cid"));
-        $query = Persons::find()->where(["removed" => null]);
-        if ($clinic) {
-            $query
-                ->from([
-                    "p" => "sd_persons",
-                    "t" => "sd_timelines",
-                    "w" => "sd_workplaces",
-                    "c" => "sd_clinics",
-                ])
-                ->where(["and",
-                    "c.id = " . $clinic->id,
-                    "c.hash_id = w.clinic_hash",
-                    "c.hash_id = w.clinic_hash",
-                    "w.workplace_hash = t.workplace_hash",
-                    "t.person_id=p.person_id",
-                    "p.removed IS NULL"
-                ]);
-        }
+        $persons = $clinic ? $clinic->persons : Persons::find()->where(["removed" => null])->all();
 
-        $persons = $query->all();
         usort($persons, function (Persons $a, Persons $b) {
             return $a->primarySpec > $b->primarySpec;
         });
 
         $dataProvider = new ArrayDataProvider([
             'allModels' => $persons,
-
         ]);
         $dataProvider->pagination->pageSize = count($persons);
-
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,

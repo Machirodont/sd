@@ -484,4 +484,10 @@ class SiteController extends Controller
 
         return $ret;
     }
+
+    public function actionAppointment()
+    {
+        return $this->render("appointment", [
+        ]);
+    }
 }
