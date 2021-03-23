@@ -30,6 +30,7 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
             } else {
                 $url .= "clinic_" . $params['cid'] . "/";
             }
+            unset($params['cid']);
         }
 
         if ($route === 'site/logout') {
@@ -64,6 +65,9 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
 
         if ($route === 'site/appointment') {
             $url .= "appointment/";
+            if (count($params)) {
+                $url .= "?" . self::formatAsGet($params);
+            }
             return $url;
         }
 
@@ -234,4 +238,12 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
         return false;  // данное правило не применимо
     }
 
+    public static function formatAsGet(array $params)
+    {
+        $get = "";
+        foreach ($params as $name => $val) {
+            $get .= urlencode($name) . "=" . urlencode($val) . '&';
+        }
+        return substr($get, 0, (strlen($get) - 1));
+    }
 }
