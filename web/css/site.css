@@ -464,6 +464,22 @@ img.partner_bar {
     padding-left: 10px;
 }
 
+.appoint_clinic_block{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.appoint_clinic{
+    margin: 10px;
+    padding: 5px;
+    display: block;
+    width: 30%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    box-shadow: 3px 3px 5px 3px #E0F7FF;
+}
+
 /* DEV элементы (удалить в продакшне)*/
 /*
 
