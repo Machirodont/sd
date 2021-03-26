@@ -15,6 +15,10 @@ use yii\base\BaseObject;
 class SdUrlRule extends UrlRule implements UrlRuleInterface
 {
 
+    public const ENDPOINT=[
+        's'=>"f",
+    ];
+
     /**
      * @param \yii\web\UrlManager $manager
      * @param string $route
@@ -32,6 +36,45 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
             }
             unset($params['cid']);
         }
+
+        if ($route === 'persons/view') {
+            if (!array_key_exists("id", $params)) return false;
+            if ($tag = UrlTags::findOne(["route" => $route, "param" => "id", "value" => $params['id']])) {
+                $url .= $tag->tag . "/";
+            } else {
+                $url .= "specialist_" . $params['id'] . '/';
+            }
+            return $url;
+        }
+
+        if ($route === 'site/page') {
+            if (!array_key_exists("id", $params)) return false;
+            if ($tag = UrlTags::findOne(["route" => $route, "param" => "id", "value" => $params['id']])) {
+                $url .= $tag->tag . "/";
+            } else {
+                $url .= "page_" . $params["id"] . "/";
+            }
+            return $url;
+        }
+
+        if ($route === 'promo/view') {
+            if (!array_key_exists("id", $params)) return false;
+            $url .= "promo_" . $params["id"] . "/";
+            return $url;
+        }
+
+        if ($route === 'services/index') {
+            $url .= "services/";
+            if (array_key_exists("id", $params)) {
+                $url .= $params["id"] . "-service/";
+            }
+            return $url;
+        }
+
+        if ($route === 'site/main-page') {
+            return $url;
+        }
+
 
         if ($route === 'site/logout') {
             $url .= "logout/";
@@ -63,59 +106,13 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
             return $url;
         }
 
-        if ($route === 'site/appointment') {
-            $url .= "appointment/";
-            if (count($params)) {
-                $url .= "?" . self::formatAsGet($params);
-            }
-            return $url;
-        }
-
-        if ($route === 'persons/view') {
-            if (!array_key_exists("id", $params)) return false;
-            if ($tag = UrlTags::findOne(["route" => $route, "param" => "id", "value" => $params['id']])) {
-                $url .= $tag->tag . "/";
-            } else {
-                $url .= "specialist_" . $params['id'] . '/';
-            }
-            return $url;
-        }
-
-        if ($route === 'site/page') {
-            if (!array_key_exists("id", $params)) return false;
-            if ($tag = UrlTags::findOne(["route" => $route, "param" => "id", "value" => $params['id']])) {
-                $url .= $tag->tag . "/";
-            } else {
-                $url .= "page_" . $params["id"] . "/";
-            }
-            return $url;
-        }
-
-        if ($route === 'promo/view') {
-            if (!array_key_exists("id", $params)) return false;
-            $url .= "promo_" . $params["id"] . "/";
-            return $url;
-        }
-
-        if ($route === 'site/main-page') {
-            return $url;
-        }
-
-        if ($route === 'services/index') {
-            $url .= "services/";
-            if (array_key_exists("id", $params)) {
-                $url .= $params["id"] . "-service/";
-            }
-            return $url;
-        }
-
         if ($route === 'persons/index') {
             $url .= "specialisty/";
             return $url;
         }
 
         if ($url !== "/") {
-            return $url;
+            return $url.$route;
         }
         return false;
     }
@@ -208,7 +205,6 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
                 if ($part === "company") $route = "clinic/company";
                 if ($part === "specialisty") $route = "persons/index";
                 if ($part === "services") $route = "services/index";
-                if ($part === "appointment") $route = "site/appointment";
                 if (preg_match('/specialist_([0-9]+)/', $part, $matches)) {
                     $route = "persons/view";
                     $params["id"] = $matches[1];

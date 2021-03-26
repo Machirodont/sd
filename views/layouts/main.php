@@ -91,7 +91,7 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
                     ]);
                     ?>
 
-                    <?= Html::a("Запись к врачу", ["/site/appointment"], ['class' => "btn btn-success"]) ?>
+                    <?= Html::a("Запись к врачу", ["/appointment/create"], ['class' => "btn btn-success"]) ?>
                 </div>
             </div>
         </div>
@@ -113,13 +113,13 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-                /*
-            [
-                'label' => 'Запись к врачу',
-                'url' => ['/appointment'],
-                'options' => ["style" => "background-color:rgb(92, 184, 92);"],
-                'linkOptions' => ["style" => "color: white;"]
-            ],*/
+            /*
+        [
+            'label' => 'Запись к врачу',
+            'url' => ['/appointment'],
+            'options' => ["style" => "background-color:rgb(92, 184, 92);"],
+            'linkOptions' => ["style" => "color: white;"]
+        ],*/
             [
                 'label' => 'Услуги',
                 'items' => $pagesItems
@@ -130,7 +130,7 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
             ['label' => 'Юридическая информация', 'url' => ['/clinic/company', "cid" => Yii::$app->session->get("cid")]],
             ['label' => 'Цены', 'url' => ["services/index", "cid" => Yii::$app->session->get("cid")]],
             [
-                'label' => 'admin',
+                'label' => !Yii::$app->user->isGuest ? Yii::$app->user->identity->login : "guest",
                 'visible' => !Yii::$app->user->isGuest,
                 'items' => [
                     [
@@ -141,7 +141,17 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
                     [
                         'label' => 'Врачи',
                         'url' => ['/persons/list'],
-                        'visible' => !Yii::$app->user->isGuest,
+                        'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->is_admin,
+                    ],
+                    [
+                        'label' => 'Пользователи',
+                        'url' => ['/users/index'],
+                        'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->is_admin,
+                    ],
+                    [
+                        'label' => 'Заявки',
+                        'url' => ['/site/appointment-index'],
+                        'visible' => !Yii::$app->user->isGuest ,
                     ],
                     [
                         'label' => 'Выход',

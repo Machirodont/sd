@@ -34,15 +34,27 @@ use yii\bootstrap\ActiveForm;
             'label' => 'Статус',
             'content' => function (Appointment $appointment) {
                 switch ($appointment->status) {
-                    case Appointment::STATUS_CREATED : return "НОВОЕ";
-                    case Appointment::STATUS_IN_PROGRESS : return "В РАБОТЕ";
-                    case Appointment::STATUS_CONFIRMED : return "ПОДТВЕРЖДЕНО";
-                    case Appointment::STATUS_CANCELLED : return "ОТМЕНЕНО";
+                    case Appointment::STATUS_CREATED :
+                        return "НОВОЕ";
+                    case Appointment::STATUS_IN_PROGRESS :
+                        return "В РАБОТЕ";
+                    case Appointment::STATUS_CONFIRMED :
+                        return "ПОДТВЕРЖДЕНО";
+                    case Appointment::STATUS_CANCELLED :
+                        return "ОТМЕНЕНО";
                 }
             }
         ],
 
-        ['class' => 'yii\grid\ActionColumn'],
+        [
+            'class' => 'yii\grid\ActionColumn',
+            'template' => '{cancel}',
+            'buttons' => [
+                'cancel' => function ($url, Appointment $appointment, $key) {
+                    return Html::a("", ["/site/appointment"], ['class'=>'glyphicon glyphicon-remove-circle']);
+                }
+            ]
+        ],
     ],
 ]); ?>
 

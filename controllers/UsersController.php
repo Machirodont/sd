@@ -66,6 +66,7 @@ class UsersController extends Controller
     {
         $model = new Users();
         $model->is_admin=0;
+        $model->clinics="";
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);

@@ -1,11 +1,20 @@
 <?php
 
+use app\models\Clinic;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Users */
 /* @var $form yii\widgets\ActiveForm */
+
+$clinics = Clinic::find()->where(["not", ["phone" => null]])->all();
+$clinicListForCheckbox = [];
+foreach ($clinics as $clinic) {
+    /* @var Clinic $clinic */
+    $clinicListForCheckbox[$clinic->id] = $clinic->city;
+}
 ?>
 
 <div class="users-form">
@@ -19,7 +28,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'is_admin')->radioList(["0" => "нет", "1" => "да"]) ?>
 
-    <?= $form->field($model, 'clinics')->input("text") ?>
+
+    <?= $form->field($model, 'clinicIdList')->checkboxList($clinicListForCheckbox) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
