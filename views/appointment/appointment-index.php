@@ -51,7 +51,7 @@ use yii\bootstrap\ActiveForm;
             'template' => '{cancel}',
             'buttons' => [
                 'cancel' => function ($url, Appointment $appointment, $key) {
-                    return Html::a("", ["/site/appointment"], ['class'=>'glyphicon glyphicon-remove-circle']);
+                    return Html::a("", ["/appointment/cancel", 'id' => $appointment->id], ['class' => 'glyphicon glyphicon-remove-circle']);
                 }
             ]
         ],

@@ -15,8 +15,19 @@ use yii\base\BaseObject;
 class SdUrlRule extends UrlRule implements UrlRuleInterface
 {
 
-    public const ENDPOINT=[
-        's'=>"f",
+    public const ENDPOINT = [
+        'site/main-page' => '',
+        'site/logout' => "logout",
+        'site/login' => "login",
+        'clinic/index' => "clinics",
+        'clinic/contacts' => "contacts",
+        'clinic/company' => "company",
+        'persons/index' => "specialisty",
+        "services/index" => "services",
+        "site/parce" => "parce",
+        "appointment/appointment-index" => "appointment-index",
+        "appointment/create" => "appointment-create",
+        "appointment/cancel" => "appointment-cancel",
     ];
 
     /**
@@ -71,48 +82,14 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
             return $url;
         }
 
-        if ($route === 'site/main-page') {
-            return $url;
-        }
-
-
-        if ($route === 'site/logout') {
-            $url .= "logout/";
-            return $url;
-        }
-
-        if ($route === 'site/login') {
-            $url .= "login/";
-            return $url;
-        }
-
-        if ($route === 'clinic/index') {
-            $url .= "clinics/";
-            return $url;
-        }
-
-        if ($route === 'clinic/index') {
-            $url .= "clinics/";
-            return $url;
-        }
-
-        if ($route === 'clinic/contacts') {
-            $url .= "contacts/";
-            return $url;
-        }
-
-        if ($route === 'clinic/company') {
-            $url .= "company/";
-            return $url;
-        }
-
-        if ($route === 'persons/index') {
-            $url .= "specialisty/";
+        if (array_key_exists($route, self::ENDPOINT)) {
+            $url .= self::ENDPOINT[$route] . "/";
+            if (count($params)) $url .= '?' . http_build_query($params);
             return $url;
         }
 
         if ($url !== "/") {
-            return $url.$route;
+            return $url;
         }
         return false;
     }
@@ -188,23 +165,15 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
                     $route = "/site/main-page";
                     $params["cid"] = $matches[1];
                 }
-
                 if (preg_match('/promo_([0-9]+)/', $part, $matches)) {
                     $route = "/promo/view";
                     $params["id"] = $matches[1];
                 }
-
                 if ($route === "services/index") {
                     if (preg_match('/^([0-9]+)/', $part, $matches)) {
                         $params["id"] = $matches[1];
                     }
                 }
-
-                if ($part === "clinics") $route = "clinic/index";
-                if ($part === "contacts") $route = "clinic/contacts";
-                if ($part === "company") $route = "clinic/company";
-                if ($part === "specialisty") $route = "persons/index";
-                if ($part === "services") $route = "services/index";
                 if (preg_match('/specialist_([0-9]+)/', $part, $matches)) {
                     $route = "persons/view";
                     $params["id"] = $matches[1];
@@ -213,9 +182,10 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
                     $route = "site/page";
                     $params["id"] = $matches[1];
                 }
-                if ($part === "parce") $route = "site/parce";
-                if ($part === "login") $route = "site/login";
-                if ($part === "logout") $route = "site/logout";
+
+                if ($part && $endpointRoute = array_search($part, self::ENDPOINT)) {
+                    $route = $endpointRoute;
+                }
             }
             if (array_key_exists("cid", $params)) {
                 if ($params["cid"]) {
@@ -230,7 +200,6 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
                 return [$route, $params];
             }
         }
-
         return false;  // данное правило не применимо
     }
 
