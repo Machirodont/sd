@@ -7,6 +7,7 @@ namespace app\models;
  * @package app\models
  * @property-read Persons $person
  * @property-read Clinic $clinic
+ * @property-read Users $owner
  */
 class Appointment extends Generated\AppointmentGenerated
 {
@@ -24,5 +25,10 @@ class Appointment extends Generated\AppointmentGenerated
     public function getClinic()
     {
         return Clinic::findOne($this->clinic_id);
+    }
+
+    public function getOwner()
+    {
+        return Users::findOne($this->owner_id);
     }
 }

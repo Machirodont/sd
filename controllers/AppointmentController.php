@@ -84,4 +84,38 @@ class AppointmentController extends Controller
             'dp' => $dp
         ]);
     }
+
+    public function actionPickUp()
+    {
+        $appointment = Appointment::findOne(Yii::$app->request->post("id"));
+        if (!$appointment) throw new NotFoundHttpException('Страница не обнаружена');
+        if ($appointment->owner_id && $appointment->owner_id !== Yii::$app->user->id) {
+            Yii::$app->session->setFlash('error', 'Заявка уже в работе у ' . $appointment->owner->login);
+            $this->redirect(["/appointment/appointment-index"]);
+        }
+        if ($appointment->status === Appointment::STATUS_CREATED) {
+            $appointment->status = Appointment::STATUS_IN_PROGRESS;
+            $appointment->owner_id = Yii::$app->user->id;
+            $appointment->save();
+        }
+        $this->redirect(["/appointment/appointment-index"]);
+    }
+
+    public function actionSetStatus()
+    {
+        $appointment = Appointment::findOne(Yii::$app->request->post("id"));
+        if (!$appointment) throw new NotFoundHttpException('Страница не обнаружена');
+        $newStatus = (int)Yii::$app->request->post("status");
+        if (
+            in_array($newStatus, [Appointment::STATUS_CREATED, Appointment::STATUS_CONFIRMED, Appointment::STATUS_CANCELLED])
+            && $appointment->owner_id === Yii::$app->user->id
+        ) {
+            $appointment->status = $newStatus;
+            if ($newStatus === Appointment::STATUS_CREATED) {
+                $appointment->owner_id = null;
+            }
+            $appointment->save();
+        }
+        $this->redirect(["/appointment/appointment-index"]);
+    }
 }

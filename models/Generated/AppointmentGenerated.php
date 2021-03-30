@@ -15,6 +15,7 @@ use Yii;
  * @property string $cookie
  * @property int $status
  * @property string $created
+ * @property int $owner_id
  */
 class AppointmentGenerated extends \yii\db\ActiveRecord
 {

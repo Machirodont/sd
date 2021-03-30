@@ -4,6 +4,7 @@
 
 /* @var $content string */
 
+use app\components\SdUrlRule;
 use app\widgets\Alert;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
@@ -61,28 +62,14 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
                     <a href="tel:<?= $phone ?>"><?= $phone ?></a>
                 </div>
                 <div class="">
-                    <?php
-
-                    function urlWithCID($cid)
-                    {
-                        $route = Yii::$app->request->queryParams;
-                        $r = "/" . Yii::$app->requestedRoute;
-                        unset($route["cid"]);
-                        unset($route["r"]);
-                        array_unshift($route, $r);
-                        $route["cid"] = $cid;
-                        return \yii\helpers\Url::toRoute($route);
-                    }
-
-                    ?>
                     <?= ButtonDropdown::widget([
                         'label' => ($clinic ? 'Выбрать другую клинику' : 'Выберите клинику'),
                         'dropdown' => [
                             'items' => [
-                                ['label' => 'Все', 'url' => urlWithCID(0)],
-                                ['label' => 'Гагарин', 'url' => urlWithCID(5)],
-                                ['label' => 'Руза', 'url' => urlWithCID(2)],
-                                ['label' => 'Тучково', 'url' => urlWithCID(1)],
+                                ['label' => 'Все', 'url' => SdUrlRule::urlWithCID(0)],
+                                ['label' => 'Гагарин', 'url' => SdUrlRule::urlWithCID(5)],
+                                ['label' => 'Руза', 'url' => SdUrlRule::urlWithCID(2)],
+                                ['label' => 'Тучково', 'url' => SdUrlRule::urlWithCID(1)],
                             ],
                         ],
                         'options' => [

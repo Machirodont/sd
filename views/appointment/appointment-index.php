@@ -48,11 +48,93 @@ use yii\bootstrap\ActiveForm;
 
         [
             'class' => 'yii\grid\ActionColumn',
-            'template' => '{cancel}',
+            'template' => '{pickup} {confirm} {cancel} {discharge}',
+            'visibleButtons' => [
+                'pickup' => function (Appointment $appointment, $key) {
+                    return $appointment->status === Appointment::STATUS_CREATED;
+                },
+                'confirm' => function (Appointment $appointment, $key) {
+                    echo gettype(Appointment::STATUS_IN_PROGRESS);
+                    return $appointment->status === Appointment::STATUS_IN_PROGRESS
+                        && $appointment->owner_id === Yii::$app->user->id;
+                },
+                'cancel' => function (Appointment $appointment, $key) {
+                    return $appointment->status === Appointment::STATUS_IN_PROGRESS
+                        && $appointment->owner_id === Yii::$app->user->id;
+                },
+                'discharge' => function (Appointment $appointment, $key) {
+                    return $appointment->status === Appointment::STATUS_IN_PROGRESS
+                        && $appointment->owner_id === Yii::$app->user->id;
+                },
+            ],
             'buttons' => [
+                'pickup' => function ($url, Appointment $appointment, $key) {
+                    return Html::a("",
+                        ["/appointment/pick-up"],
+                        [
+                            'class' => 'glyphicon glyphicon-play-circle',
+                            'title' => 'Взять в работу',
+                            'data' => [
+                                'method' => 'post',
+                                'confirm' => 'Are you sure? OK to continue Retract..',
+                                'params' => [
+                                    'id' => $appointment->id,
+                                ],
+                            ]
+                        ]
+                    );
+                },
+                'confirm' => function ($url, Appointment $appointment, $key) {
+                    return Html::a("",
+                        ["/appointment/set-status"],
+                        [
+                            'class' => 'glyphicon glyphicon-ok-sign',
+                            'title' => 'Подтвердить',
+                            'data' => [
+                                'method' => 'post',
+                                'confirm' => 'Заявка подтвреждена?',
+                                'params' => [
+                                    'id' => $appointment->id,
+                                    'status' => Appointment::STATUS_CONFIRMED,
+                                ],
+                            ]
+                        ]
+                    );
+                },
                 'cancel' => function ($url, Appointment $appointment, $key) {
-                    return Html::a("", ["/appointment/cancel", 'id' => $appointment->id], ['class' => 'glyphicon glyphicon-remove-circle']);
-                }
+                    return Html::a("",
+                        ["/appointment/set-status"],
+                        [
+                            'class' => 'glyphicon glyphicon-remove-sign',
+                            'title' => 'Отменить',
+                            'data' => [
+                                'method' => 'post',
+                                'confirm' => 'Отменить заявку?',
+                                'params' => [
+                                    'id' => $appointment->id,
+                                    'status' => Appointment::STATUS_CANCELLED,
+                                ],
+                            ]
+                        ]
+                    );
+                },
+                'discharge' => function ($url, Appointment $appointment, $key) {
+                    return Html::a("",
+                        ["/appointment/set-status"],
+                        [
+                            'class' => 'glyphicon glyphicon-fast-backward',
+                            'title' => 'Отказаться от обработки заявки',
+                            'data' => [
+                                'method' => 'post',
+                                'confirm' => 'Отказаться от обработки заявки?',
+                                'params' => [
+                                    'id' => $appointment->id,
+                                    'status' => Appointment::STATUS_CREATED,
+                                ],
+                            ]
+                        ]
+                    );
+                },
             ]
         ],
     ],

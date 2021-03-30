@@ -28,6 +28,8 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
         "appointment/appointment-index" => "appointment-index",
         "appointment/create" => "appointment-create",
         "appointment/cancel" => "appointment-cancel",
+        "appointment/pick-up" => "appointment-pick_up",
+        "appointment/set-status" => "appointment-set_status",
     ];
 
     /**
@@ -210,5 +212,16 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
             $get .= urlencode($name) . "=" . urlencode($val) . '&';
         }
         return substr($get, 0, (strlen($get) - 1));
+    }
+
+    public static function urlWithCID($cid)
+    {
+        $route = Yii::$app->request->queryParams;
+        $r = "/" . Yii::$app->requestedRoute;
+        unset($route["cid"]);
+        unset($route["r"]);
+        array_unshift($route, $r);
+        $route["cid"] = $cid;
+        return \yii\helpers\Url::toRoute($route);
     }
 }
