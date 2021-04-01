@@ -30,6 +30,7 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
         "appointment/cancel" => "appointment-cancel",
         "appointment/pick-up" => "appointment-pick_up",
         "appointment/set-status" => "appointment-set_status",
+        "appointment/view" => "appointment-view",
     ];
 
     /**

@@ -2,6 +2,7 @@
 
 /* @var $this yii\web\View
  * @var $dp yii\data\ActiveDataProvider
+ * @var $ownAppointments Appointment[]
  */
 
 use app\models\Appointment;
@@ -12,6 +13,54 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
 ?>
+<?php
+if (count($ownAppointments)) {
+    ?>
+    <div class="panel panel-primary">
+        <div class="panel-heading">Заявки в работе</div>
+        <div class="panel-body">
+            <?php
+            foreach ($ownAppointments as $appointment) {
+                ?>
+                <div class="appoint_admin_block">
+                    <div>
+                        <b>+7 <?= $appointment->phone ?></b>
+                        <br>
+                        <small>
+                            <?= date_create($appointment->created)->format("H:i:s d M y") ?>
+                            [<?= $appointment->ip ?>]
+                        </small>
+                        <br>
+                        <?= $appointment->person->fullName ?>,
+                        <?= $appointment->person->primarySpec ?>,
+                        <?= $appointment->clinic->city ?>,
+                        <i><?= date_create($appointment->day)->format("d M y") ?></i>
+                    </div>
+                    <div>
+                        <?= $this->render("_set_status_button", [
+                            "id" => $appointment->id,
+                            "status" => Appointment::STATUS_CONFIRMED
+                        ]); ?>
+                        <?= $this->render("_set_status_button", [
+                            "id" => $appointment->id,
+                            "status" => Appointment::STATUS_CANCELLED
+                        ]); ?>
+                        <?= $this->render("_set_status_button", [
+                            "id" => $appointment->id,
+                            "status" => Appointment::STATUS_CREATED
+                        ]); ?>
+
+                    </div>
+                </div>
+                <?php
+            }
+            ?>
+        </div>
+    </div>
+    <?php
+}
+?>
+
 
 <?= GridView::widget([
     'dataProvider' => $dp,
@@ -54,7 +103,6 @@ use yii\bootstrap\ActiveForm;
                     return $appointment->status === Appointment::STATUS_CREATED;
                 },
                 'confirm' => function (Appointment $appointment, $key) {
-                    echo gettype(Appointment::STATUS_IN_PROGRESS);
                     return $appointment->status === Appointment::STATUS_IN_PROGRESS
                         && $appointment->owner_id === Yii::$app->user->id;
                 },
@@ -76,7 +124,7 @@ use yii\bootstrap\ActiveForm;
                             'title' => 'Взять в работу',
                             'data' => [
                                 'method' => 'post',
-                                'confirm' => 'Are you sure? OK to continue Retract..',
+                                'confirm' => 'Взять в работу?',
                                 'params' => [
                                     'id' => $appointment->id,
                                 ],

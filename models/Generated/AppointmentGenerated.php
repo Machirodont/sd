@@ -11,6 +11,7 @@ use Yii;
  * @property int $person_id
  * @property int $clinic_id
  * @property string $phone
+ * @property string $ip
  * @property string $day
  * @property string $cookie
  * @property int $status

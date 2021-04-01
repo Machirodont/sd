@@ -29,6 +29,7 @@ class AppointmentController extends Controller
 
             $appointment = new Appointment([
                 "phone" => Yii::$app->request->post("phone"),
+                "ip" => Yii::$app->request->userIP,
                 "person_id" => Yii::$app->request->get("personId"),
                 "clinic_id" => Yii::$app->session->get("cid"),
                 "day" => Yii::$app->request->get("day"),
@@ -53,14 +54,14 @@ class AppointmentController extends Controller
             }
 
             if ($appointment->save()) {
-                return $this->redirect("/appointment/view/?id=" . $appointment->id);
+                return $this->redirect(["/appointment/view", 'id' => $appointment->id]);
             }
         }
         return $this->render("create", [
         ]);
     }
 
-    public function actionAppointmentView($id)
+    public function actionView($id)
     {
         $appointment = Appointment::findOne($id);
         if (!$appointment || $appointment->cookie !== Yii::$app->request->cookies->get(Appointment::COOKIE_NAME)->value) {
@@ -79,9 +80,15 @@ class AppointmentController extends Controller
         $dp->sort->defaultOrder = ["id" => SORT_DESC];
         $dp->pagination->pageSize = 0;
 
+        $ownAppointments = Appointment::find()->where([
+            "owner_id" => Yii::$app->user->id,
+            "status" => Appointment::STATUS_IN_PROGRESS
+        ])->all();
+
 
         return $this->render("appointment-index", [
-            'dp' => $dp
+            'dp' => $dp,
+            'ownAppointments' => $ownAppointments,
         ]);
     }
 
