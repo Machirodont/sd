@@ -10,7 +10,7 @@ use yii\bootstrap\ActiveForm;
 echo "<h3>Запись на прием</h4>";;
 
 if ($clinic = Clinic::findOne(Yii::$app->session->get("cid"))) {
-    echo "<h4>Выбрана клиника: " . $clinic->city . "</h4>";;
+    echo "<h4>Выбрана клиника: " . $clinic->city . "</h4>";
     echo Html::a("Изменить выбор клиники ...", ["appointment/create", "cid" => 0]) . "<br>";
     if ($person = Persons::findOne(Yii::$app->request->get('personId'))) {
         $person->currentClinic = $clinic;
@@ -24,17 +24,20 @@ if ($clinic = Clinic::findOne(Yii::$app->session->get("cid"))) {
             <h4>Выбран день: <?= $day ?></h4>
             <?= Html::a("Изменить день ...", ["appointment/create", "personId" => $person->person_id]) ?>
             <?= Html::beginForm() ?>
-                <br><br>
+            <br><br>
             +7 <?= Html::input("tel", "phone", "", ["pattern" => "[0-9]*"]); ?>
             <button type="submit">Записаться</button>
             <?= Html::endForm() ?>
             <?php
         } else {
             ?>
+            <hr>
+            <h3>Выберите дату приема:</h3>
             <div class="appoint_clinic_block">
                 <?php
                 foreach ($person->activeDays as $day) {
-                    echo Html::a($day->day, ["appointment/create", "personId" => $person->person_id, "day" => $day->day]) . "<br>";
+                    $d=DateTime::createFromFormat('Y-m-d',$day->day);
+                    echo Html::a($d->format('d.m.Y'), ["appointment/create", "personId" => $person->person_id, "day" => $day->day], ["class" => "appoint_clinic"]) . "<br>";
                 }
                 ?>
             </div>
@@ -42,6 +45,8 @@ if ($clinic = Clinic::findOne(Yii::$app->session->get("cid"))) {
         }
     } else {
         ?>
+        <hr>
+        <h3>Выберите специалиста:</h3>
         <div class="appoint_clinic_block">
             <?php
             foreach ($clinic->persons as $person) {
@@ -53,7 +58,7 @@ if ($clinic = Clinic::findOne(Yii::$app->session->get("cid"))) {
     }
 } else {
     ?>
-    Выберите клинику:
+    <h3>Выберите клинику:</h3>
     <div class="appoint_clinic_block">
         <?php
         $clinics = Clinic::find()->where(["not", ["phone" => null]])->all();
@@ -64,9 +69,7 @@ if ($clinic = Clinic::findOne(Yii::$app->session->get("cid"))) {
         ?>
     </div>
     <?php
-
 }
-
 ?>
 
 

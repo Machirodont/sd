@@ -5,7 +5,9 @@ namespace app\controllers;
 use app\models\Appointment;
 use Yii;
 use app\models\Users;
+use yii\base\BaseObject;
 use yii\data\ActiveDataProvider;
+use yii\db\Query;
 use yii\web\Controller;
 use yii\web\Cookie;
 use yii\web\NotFoundHttpException;
@@ -75,22 +77,69 @@ class AppointmentController extends Controller
     public function actionAppointmentIndex()
     {
         $dp = new ActiveDataProvider([
-            'query' => Appointment::find(),
+            'query' => Appointment::find()->where([
+                "clinic_id" => Yii::$app->user->identity->clinicIdList,
+            ]),
         ]);
         $dp->sort->defaultOrder = ["id" => SORT_DESC];
         $dp->pagination->pageSize = 0;
 
+        /**@var Appointment[] $ownAppointments */
         $ownAppointments = Appointment::find()->where([
             "owner_id" => Yii::$app->user->id,
-            "status" => Appointment::STATUS_IN_PROGRESS
+            "status" => Appointment::STATUS_IN_PROGRESS,
+            "clinic_id" => Yii::$app->user->identity->clinicIdList,
         ])->all();
 
+        /**@var Appointment[] $ownAppointmentSegments */
+        $ownAppointmentSegments = [];
+        foreach ($ownAppointments as $appointment) {
+            if (!array_key_exists($appointment->phone, $ownAppointmentSegments)) {
+                $ownAppointmentSegments[$appointment->phone] = [];
+            }
+            $ownAppointmentSegments[$appointment->phone][] = $appointment;
+        }
+
+
+        /**@var Appointment[] $newAppointments */
+        $newAppointments = Appointment::find()->where([
+            "status" => Appointment::STATUS_CREATED,
+            "clinic_id" => Yii::$app->user->identity->clinicIdList,
+        ])->all();
+
+        /**@var Appointment[] $newAppointmentSegments */
+        $newAppointmentSegments = [];
+        foreach ($newAppointments as $appointment) {
+            if (!array_key_exists($appointment->phone, $newAppointmentSegments)) {
+                $newAppointmentSegments[$appointment->phone] = [];
+            }
+            $newAppointmentSegments[$appointment->phone][] = $appointment;
+        }
 
         return $this->render("appointment-index", [
             'dp' => $dp,
-            'ownAppointments' => $ownAppointments,
+            'ownAppointmentSegments' => $ownAppointmentSegments,
+            'newAppointmentSegments' => $newAppointmentSegments,
         ]);
     }
+
+    public function actionAppointmentsByNumber()
+    {
+        $dp = new ActiveDataProvider([
+            'query' => Appointment::find()->where([
+                "clinic_id" => Yii::$app->user->identity->clinicIdList,
+                "phone" => Yii::$app->request->get("phone"),
+            ]),
+        ]);
+        $dp->sort->defaultOrder = ["id" => SORT_DESC];
+        $dp->pagination->pageSize = 0;
+
+        return $this->render("appointments-by-number", [
+            'phone'=>Yii::$app->request->get("phone"),
+            'dp' => $dp,
+          ]);
+    }
+
 
     public function actionPickUp()
     {
@@ -104,6 +153,16 @@ class AppointmentController extends Controller
             $appointment->status = Appointment::STATUS_IN_PROGRESS;
             $appointment->owner_id = Yii::$app->user->id;
             $appointment->save();
+            /**@var Appointment[] $samePhoneAppointments */
+            $samePhoneAppointments = Appointment::find()->where([
+                'phone' => $appointment->phone,
+                'status' => Appointment::STATUS_CREATED
+            ])->all();
+            foreach ($samePhoneAppointments as $app) {
+                $app->status = Appointment::STATUS_IN_PROGRESS;
+                $app->owner_id = Yii::$app->user->id;
+                $app->save();
+            }
         }
         $this->redirect(["/appointment/appointment-index"]);
     }

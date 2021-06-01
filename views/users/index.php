@@ -20,13 +20,24 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
             'id',
             'login:ntext',
-            'hash:ntext',
-            'is_admin',
-            'clinics:ntext',
+            [
+                'label' => 'админ',
+                'content' => function (\app\models\Users $user) {
+                    return $user->is_admin ? 'да' : 'нет';
+                }
+            ],
+            [
+                'label' => 'клиники',
+                'content' => function (\app\models\Users $user) {
+                    return array_reduce($user->clinicList, function ($textList, \app\models\Clinic $clinic) {
+                        if (!$textList) return $clinic->city;
+                        return $textList . ", " . $clinic->city;
+                    }, "");
+                }
+
+            ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

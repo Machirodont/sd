@@ -2,7 +2,8 @@
 
 /* @var $this yii\web\View
  * @var $dp yii\data\ActiveDataProvider
- * @var $ownAppointments Appointment[]
+ * @var $ownAppointmentSegments Appointment[][] $ownAppointmentSegments[phoneNumber]=appointment
+ * @var $newAppointmentSegments Appointment[][] $newAppointmentSegments[phoneNumber]=appointment
  */
 
 use app\models\Appointment;
@@ -13,43 +14,55 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
 ?>
+
+
 <?php
-if (count($ownAppointments)) {
+if (count($ownAppointmentSegments)) {
     ?>
-    <div class="panel panel-primary">
+    <div class="panel panel-success">
         <div class="panel-heading">Заявки в работе</div>
         <div class="panel-body">
             <?php
-            foreach ($ownAppointments as $appointment) {
+            foreach ($ownAppointmentSegments as $phone => $appointments) {
                 ?>
                 <div class="appoint_admin_block">
                     <div>
-                        <b>+7 <?= $appointment->phone ?></b>
-                        <br>
-                        <small>
-                            <?= date_create($appointment->created)->format("H:i:s d M y") ?>
-                            [<?= $appointment->ip ?>]
-                        </small>
-                        <br>
-                        <?= $appointment->person->fullName ?>,
-                        <?= $appointment->person->primarySpec ?>,
-                        <?= $appointment->clinic->city ?>,
-                        <i><?= date_create($appointment->day)->format("d M y") ?></i>
-                    </div>
-                    <div>
-                        <?= $this->render("_set_status_button", [
-                            "id" => $appointment->id,
-                            "status" => Appointment::STATUS_CONFIRMED
-                        ]); ?>
-                        <?= $this->render("_set_status_button", [
-                            "id" => $appointment->id,
-                            "status" => Appointment::STATUS_CANCELLED
-                        ]); ?>
-                        <?= $this->render("_set_status_button", [
-                            "id" => $appointment->id,
-                            "status" => Appointment::STATUS_CREATED
-                        ]); ?>
+                        <b><?= Html::a('+7 '.$phone, ['appointments-by-number', 'phone'=>$phone]) ?></b>
+                        <?php
+                        foreach ($appointments as $appointment) {
+                            /** @var Appointment $appointment */
+                            ?>
+                            <div class="appoint_admin_block">
+                                <div>
+                                    <small>
+                                        <?= date_create($appointment->created)->format("H:i:s d M y") ?>
+                                        [<?= $appointment->ip ?>]
+                                    </small>
+                                    <br>
+                                    <?= $appointment->person->fullName ?>,
+                                    <?= $appointment->person->primarySpec ?>,
+                                    <?= $appointment->clinic->city ?>,
+                                    <i><?= date_create($appointment->day)->format("d M y") ?></i>
+                                </div>
+                                <div>
+                                    <?= $this->render("_set_status_button", [
+                                        "id" => $appointment->id,
+                                        "status" => Appointment::STATUS_CONFIRMED
+                                    ]); ?>
+                                    <?= $this->render("_set_status_button", [
+                                        "id" => $appointment->id,
+                                        "status" => Appointment::STATUS_CANCELLED
+                                    ]); ?>
+                                    <?= $this->render("_set_status_button", [
+                                        "id" => $appointment->id,
+                                        "status" => Appointment::STATUS_CREATED
+                                    ]); ?>
+                                </div>
+                            </div>
 
+                            <?php
+                        }
+                        ?>
                     </div>
                 </div>
                 <?php
@@ -61,6 +74,52 @@ if (count($ownAppointments)) {
 }
 ?>
 
+<?php
+if (count($newAppointmentSegments)) {
+    ?>
+    <div class="panel panel-danger">
+        <div class="panel-heading">Новые заявки</div>
+        <div class="panel-body">
+            <?php
+            foreach ($newAppointmentSegments as $phone => $appointments) {
+                ?>
+                <div class="appoint_admin_block">
+                    <div>
+                        <?= Html::a("Взять в работу",
+                            ["/appointment/pick-up"],
+                            [
+                                'class' => 'btn btn-primary btn-small',
+                                'title' => 'Взять в работу',
+                                'data' => [
+                                    'method' => 'post',
+                                    'confirm' => 'Взять в работу?',
+                                    'params' => [
+                                        'id' => $appointments[0]->id,
+                                    ],
+                                ]
+                            ]
+                        ); ?>
+                        <?php
+                        foreach ($appointments as $appointment) {
+                            /** @var Appointment $appointment */
+                            ?>
+                            <div>
+                                <?= $appointment->clinic->city ?>:
+                                <?= $appointment->person->fullName ?>
+                             </div>
+                            <?php
+                        }
+                        ?>
+                    </div>
+                </div>
+                <?php
+            }
+            ?>
+        </div>
+    </div>
+    <?php
+}
+?>
 
 <?= GridView::widget([
     'dataProvider' => $dp,
@@ -82,16 +141,7 @@ if (count($ownAppointments)) {
         [
             'label' => 'Статус',
             'content' => function (Appointment $appointment) {
-                switch ($appointment->status) {
-                    case Appointment::STATUS_CREATED :
-                        return "НОВОЕ";
-                    case Appointment::STATUS_IN_PROGRESS :
-                        return "В РАБОТЕ";
-                    case Appointment::STATUS_CONFIRMED :
-                        return "ПОДТВЕРЖДЕНО";
-                    case Appointment::STATUS_CANCELLED :
-                        return "ОТМЕНЕНО";
-                }
+                return Appointment::STATUS_NAME[$appointment->status];
             }
         ],
 

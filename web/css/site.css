@@ -527,3 +527,8 @@ a h4 {
 .person_card img, .portrait img {
     opacity: .3;
 }
+
+.btn-small{
+    padding:1px 3px;
+    font-size: 12px;
+}

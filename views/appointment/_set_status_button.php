@@ -12,22 +12,22 @@ $params = [
     Appointment::STATUS_CREATED => [
         'name' => 'Отказаться',
         'title' => 'Отказаться от обработки заявки',
-        'class' => 'btn btn-default',
+        'class' => 'btn btn-default btn-small',
     ],
     Appointment::STATUS_IN_PROGRESS => [
         'name' => 'Взять в работу',
         'title' => 'Взять в работу',
-        'class' => 'btn btn-primary',
+        'class' => 'btn btn-primary btn-small',
     ],
     Appointment::STATUS_CONFIRMED => [
         'name' => 'Подтвердить',
         'title' => 'Заявка подтвреждена?',
-        'class' => 'btn btn-success',
+        'class' => 'btn btn-success btn-small',
     ],
     Appointment::STATUS_CANCELLED => [
         'name' => 'Отменить',
         'title' => 'Отменить заявку?',
-        'class' => 'btn btn-danger',
+        'class' => 'btn btn-danger btn-small',
     ],
 ]
 ?>

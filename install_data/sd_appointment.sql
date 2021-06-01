@@ -23,8 +23,9 @@ CREATE TABLE IF NOT EXISTS `sd_appointment` (
   `status` tinyint NOT NULL DEFAULT '0',
   `created` datetime NOT NULL,
   `owner_id` int unsigned DEFAULT NULL,
+  `ip` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
 
 -- Экспортируемые данные не выделены.
 

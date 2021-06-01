@@ -4,12 +4,14 @@
 namespace app\models;
 
 
+use Codeception\Module\Cli;
 use Yii;
 
 /**
  * Class Users
  * @package app\models
  * @property int[] $clinicIdList
+ * @property Clinic[] $clinicList
  */
 class Users extends Generated\UsersGenerated implements \yii\web\IdentityInterface
 {
@@ -50,6 +52,11 @@ class Users extends Generated\UsersGenerated implements \yii\web\IdentityInterfa
     public function setClinicIdList($list)
     {
         $this->clinics = json_encode($list);
+    }
+
+    public function getClinicList()
+    {
+        return Clinic::find()->where(['id' => $this->clinicIdList])->all();
     }
 
 

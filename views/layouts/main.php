@@ -78,7 +78,9 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
                     ]);
                     ?>
 
-                    <?= Html::a("Запись к врачу", ["/appointment/create"], ['class' => "btn btn-success"]) ?>
+                    <?=
+                    Yii::$app->user->isGuest ? "" : Html::a("Запись к врачу", ["/appointment/create"], ['class' => "btn btn-success"])
+                    ?>
                 </div>
             </div>
         </div>
@@ -138,7 +140,7 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
                     [
                         'label' => 'Заявки',
                         'url' => ['/site/appointment-index'],
-                        'visible' => !Yii::$app->user->isGuest ,
+                        'visible' => !Yii::$app->user->isGuest,
                     ],
                     [
                         'label' => 'Выход',

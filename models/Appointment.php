@@ -17,6 +17,13 @@ class Appointment extends Generated\AppointmentGenerated
     public const STATUS_CANCELLED = 3;
     public const COOKIE_NAME = 'appointment_key';
 
+    public const STATUS_NAME = [
+        0 => 'НОВОЕ',
+        1 => "В РАБОТЕ",
+        2 => "ПОДТВЕРЖДЕНО",
+        3 => "ОТМЕНЕНО",
+    ];
+
     public function getPerson()
     {
         return Persons::findOne($this->person_id);
@@ -30,5 +37,14 @@ class Appointment extends Generated\AppointmentGenerated
     public function getOwner()
     {
         return Users::findOne($this->owner_id);
+    }
+
+    /**
+     * @param string $phone
+     * @return Appointment[]
+     */
+    public static function findByPhone(string $phone): array
+    {
+        return Appointment::find()->where(['phone' => $phone])->all();
     }
 }
