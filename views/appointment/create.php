@@ -37,7 +37,7 @@ if ($clinic = Clinic::findOne(Yii::$app->session->get("cid"))) {
             <h3>Выберите дату приема:</h3>
             <div class="appoint_clinic_block">
                 <?php
-                foreach ($person->activeDays as $day) {
+                foreach ($person->activeFutureDays as $day) {
                     $d=DateTime::createFromFormat('Y-m-d',$day->day);
                     echo Html::a($d->format('d.m.Y'), ["appointment/create", "personId" => $person->person_id, "day" => $day->day], ["class" => "appoint_clinic"]) . "<br>";
                 }

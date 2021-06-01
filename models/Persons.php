@@ -19,6 +19,7 @@ use yii\helpers\Html;
  * @property Clinic $currentClinic Выбранная клиника
  * @property TimeLines[] $timeLines Таймлайны выбранной клиники
  * @property TimelineDays[] $activeDays Дни работы в выбранной клинике (для всех Workplaces)
+ * @property TimelineDays[] $activeFutureDays Дни работы в выбранной клинике (для всех Workplaces)
  * @property string $sheduleHash Хэш-ID расписания для выбранной клиники
  * @property array $htmlBlocks
  * @property string $htmlDescription
@@ -137,6 +138,17 @@ class Persons extends PersonsGenerated
         $days = [];
         foreach ($timelines as $timeline) {
             $days = array_merge($days, $timeline->activeDays);
+        }
+        return $days;
+    }
+
+    public function getActiveFutureDays()
+    {
+        if (!$this->currentClinic instanceof Clinic) return null;
+        $timelines = $this->timeLines;
+        $days = [];
+        foreach ($timelines as $timeline) {
+            $days = array_merge($days, $timeline->activeFutureDays);
         }
         return $days;
     }

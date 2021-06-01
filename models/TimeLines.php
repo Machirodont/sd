@@ -13,6 +13,7 @@ use app\models\Generated\TimeLinesGenerated;
 /**
  * @property TimelineDays $days Дни расписания TimeLine
  * @property array $activeDays
+ * @property array $activeFutureDays
  */
 class TimeLines extends TimeLinesGenerated
 {
@@ -27,6 +28,18 @@ class TimeLines extends TimeLinesGenerated
     {
         $days = TimelineDays::find()
             ->where(["timelineId" => $this->id, "is_active" => 1])
+            ->indexBy("day")
+            ->all();
+
+        if (!is_array($days)) return [];
+        return $days;
+    }
+
+    public function getActiveFutureDays()
+    {
+        $days = TimelineDays::find()
+            ->where(["timelineId" => $this->id, "is_active" => 1])
+            ->andWhere(['>=','day', date('Y-m-d')])
             ->indexBy("day")
             ->all();
 

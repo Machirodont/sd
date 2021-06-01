@@ -489,7 +489,12 @@ img.partner_bar {
     box-shadow: 3px 3px 5px 3px #E0F7FF;
 }
 
-/* DEV элементы (удалить в продакшне)*/
+.btn-small{
+    padding:1px 3px;
+    font-size: 12px;
+}
+
+/* DEV элементы (удалить в продакшне)
 
 
 .header-a {
@@ -526,9 +531,4 @@ a h4 {
 
 .person_card img, .portrait img {
     opacity: .3;
-}
-
-.btn-small{
-    padding:1px 3px;
-    font-size: 12px;
 }

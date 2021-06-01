@@ -15,9 +15,9 @@ use yii\bootstrap\ActiveForm;
 <br>
 <?= $appointment->person->primarySpec ?>: <?= $appointment->person->fullName ?>
 <br>
-Дата записи: <?= $appointment->day ?>
+Дата записи: <?= $appointment->date->format('d.m.Y') ?>
 <br>
-Ваш телефон: <?= $appointment->phone ?>
+Ваш телефон: +7 <?= $appointment->phone ?>
 <h4>В ближайшее время мы свяжемся с Вами для уточнения времени приема. Спасибо.</h4>
 
 

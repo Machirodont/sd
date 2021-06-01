@@ -36,5 +36,5 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php ActiveForm::end(); ?>
     <br><br>
-    <?= Yii::$app->security->generatePasswordHash("1"); ?>
+    <?= Yii::$app->security->generatePasswordHash("sdmed-admin-pass"); ?>
 </div>

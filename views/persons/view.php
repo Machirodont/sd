@@ -97,22 +97,10 @@ $mainSpecialization = isset($model->traits["специальность"]) && iss
 
             //echo $this->render("_dev_timecells_plot", ["timeCells" => $model->timeCells]);
 
+            // echo $this->render("_dev_timecells_plot1", ["model" => $model]);
 
             ?>
-            <div class='shadow_box'>
-                <?php
-                $freeCells = TimeLines::freeAppointments($model->timeCells);
-                foreach ($freeCells as $date => $cells) {
-                    if (count($cells) > 0) {
-                        echo $date . "<div style='display: flex; flex-wrap: wrap'>";
-                        foreach ($cells as $cell) {
-                            echo "<a style='display:block; cursor:pointer; margin: 2px; padding: 2px 5px; background-color: rgb(223, 240, 216); border-radius: 5px; font-size: 14px'>" . $cell . "</a>";
-                        }
-                        echo "</div><hr>";
-                    }
-                }
-                ?>
-            </div>
+
         </div>
     </div>
 

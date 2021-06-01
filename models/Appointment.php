@@ -2,12 +2,15 @@
 
 namespace app\models;
 
+use DateTime;
+
 /**
  * Class Appointment
  * @package app\models
  * @property-read Persons $person
  * @property-read Clinic $clinic
  * @property-read Users $owner
+ * @property-read DateTime $date
  */
 class Appointment extends Generated\AppointmentGenerated
 {
@@ -46,5 +49,10 @@ class Appointment extends Generated\AppointmentGenerated
     public static function findByPhone(string $phone): array
     {
         return Appointment::find()->where(['phone' => $phone])->all();
+    }
+
+    public function getDate()
+    {
+        return DateTime::createFromFormat('Y-m-d', $this->day);
     }
 }
