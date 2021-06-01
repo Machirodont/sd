@@ -2,12 +2,14 @@
 
 /* @var $this yii\web\View */
 
+use app\assets\PhoneFormat;
 use app\models\Clinic;
 use app\models\Persons;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
 echo "<h3>Запись на прием</h4>";;
+PhoneFormat::register($this);
 
 if ($clinic = Clinic::findOne(Yii::$app->session->get("cid"))) {
     echo "<h4>Выбрана клиника: " . $clinic->city . "</h4>";
@@ -24,8 +26,8 @@ if ($clinic = Clinic::findOne(Yii::$app->session->get("cid"))) {
             <h4>Выбран день: <?= $day ?></h4>
             <?= Html::a("Изменить день ...", ["appointment/create", "personId" => $person->person_id]) ?>
             <?= Html::beginForm() ?>
-            <br><br>
-            +7 <?= Html::input("tel", "phone", "", ["pattern" => "[0-9]*"]); ?>
+                <br><br>
+            +7 <?= Html::input("tel", "phone", "", ["pattern" => "[0-9]*", "id"=>"phoneInput"]); ?>
             <button type="submit">Записаться</button>
             <?= Html::endForm() ?>
             <?php
