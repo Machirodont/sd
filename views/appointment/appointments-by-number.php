@@ -13,7 +13,7 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
 ?>
-<h3>Все заявки с номера <u>+7 <?= $phone ?></u>:</h3>
+<h3>Все заявки с номером <u>+7 <?= $phone ?></u>:</h3>
 <?= GridView::widget([
     'dataProvider' => $dp,
     'columns' => [

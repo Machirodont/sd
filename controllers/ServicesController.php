@@ -13,8 +13,8 @@ class ServicesController extends \yii\web\Controller
     {
         $id = \Yii::$app->request->get("id");
         $group = PriceGroup::findOne($id);
-        $groups = PriceGroup::find()->where(["parentId" => $id])->all();
-        $items = PriceItems::find()->where(["groupId" => $id])->all();
+        $groups = PriceGroup::find()->where(["parentId" => $id, 'removed'=>null])->orderBy(['groupName'=>SORT_ASC])->all();
+        $items = PriceItems::find()->where(["groupId" => $id, 'removed'=>null])->all();
         if (!Yii::$app->session->get("cid")) {
             return $this->render('clinic_list');
         }

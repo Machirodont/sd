@@ -26,8 +26,8 @@ if ($clinic = Clinic::findOne(Yii::$app->session->get("cid"))) {
             <h4>Выбран день: <?= $day ?></h4>
             <?= Html::a("Изменить день ...", ["appointment/create", "personId" => $person->person_id]) ?>
             <?= Html::beginForm() ?>
-                <br><br>
-            +7 <?= Html::input("tel", "phone", "", ["pattern" => "[0-9]*", "id"=>"phoneInput"]); ?>
+            <br><br>
+            +7 <?= Html::input("tel", "phone", "", ["pattern" => "[0-9]*", "id" => "phoneInput"]); ?>
             <button type="submit">Записаться</button>
             <?= Html::endForm() ?>
             <?php
@@ -38,7 +38,7 @@ if ($clinic = Clinic::findOne(Yii::$app->session->get("cid"))) {
             <div class="appoint_clinic_block">
                 <?php
                 foreach ($person->activeFutureDays as $day) {
-                    $d=DateTime::createFromFormat('Y-m-d',$day->day);
+                    $d = DateTime::createFromFormat('Y-m-d', $day->day);
                     echo Html::a($d->format('d.m.Y'), ["appointment/create", "personId" => $person->person_id, "day" => $day->day], ["class" => "appoint_clinic"]) . "<br>";
                 }
                 ?>
@@ -51,8 +51,12 @@ if ($clinic = Clinic::findOne(Yii::$app->session->get("cid"))) {
         <h3>Выберите специалиста:</h3>
         <div class="appoint_clinic_block">
             <?php
+            $currentClinic = Clinic::findOne(Yii::$app->session->get("cid"));
             foreach ($clinic->persons as $person) {
-                echo Html::a($person->fullName . "<br>" . $person->primarySpec, ["appointment/create", "personId" => $person->person_id], ["class" => "appoint_clinic"]);
+                $person->currentClinic = $currentClinic;
+                if (is_array($person->activeFutureDays) && count($person->activeFutureDays)) {
+                    echo Html::a($person->fullName . "<br>" . $person->primarySpec, ["appointment/create", "personId" => $person->person_id], ["class" => "appoint_clinic"]);
+                }
             }
             ?>
         </div>

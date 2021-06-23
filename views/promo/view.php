@@ -13,7 +13,7 @@ $this->title = $model->title;
 if (!Yii::$app->user->isGuest) {
     ?>
     <div class="align-right">
-        <?= Html::a("Редактировать", ["promo/update", "id" => $model->id], ["class"=>"btn btn-success"]) ?>
+        <?= Html::a("Редактировать", ["promo/update", "id" => $model->id], ["class" => "btn btn-success"]) ?>
 
     </div>
     <hr>
@@ -34,7 +34,9 @@ if (!Yii::$app->user->isGuest) {
             echo "Действует до " . $model->endDate;
 
         } else {
-            echo "Ограничения по срокам не указаны";
+            if (!Yii::$app->user->isGuest) {
+                echo "Ограничения по срокам не указаны";
+            }
         }
         ?>
     </div>

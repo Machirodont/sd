@@ -12,6 +12,7 @@ use Yii;
  * @property int $clinic_id
  * @property string $phone
  * @property string $ip
+ * @property string $comment
  * @property string $day
  * @property string $cookie
  * @property int $status
@@ -36,7 +37,7 @@ class AppointmentGenerated extends \yii\db\ActiveRecord
         return [
             [['person_id', 'clinic_id'], 'integer'],
             [['phone', 'cookie'], 'required'],
-            [['phone', 'cookie'], 'string'],
+            [['phone', 'cookie','comment'], 'string'],
         ];
     }
 
@@ -51,6 +52,7 @@ class AppointmentGenerated extends \yii\db\ActiveRecord
             'clinic_id' => 'Clinic ID',
             'phone' => 'Phone',
             'cookie' => 'Cookie',
+            'comment' => 'Примечание',
         ];
     }
 }

@@ -8,7 +8,8 @@
 use yii\helpers\Html;
 
 ?>
-<h1><?= $group ? $group->groupName : "Прайс-лист - цены на услуги" ?></h1>
+Прайс-лист - цены на услуги*
+<h1><?= $group ? $group->groupName : '' ?></h1>
 <ul>
     <?php
     foreach ($groups as $group) {
@@ -28,3 +29,9 @@ use yii\helpers\Html;
     }
     ?>
 </ul>
+<small>
+    *Информация представлена в ознакомительных целях и не является публичной офертой.
+    Обратите внимание, что актуальные цены могут отличаться от представленных на сайте из-за задержки синхронизации. <br>
+    <?= file_exists('../stage/load_price_time.txt') ? 'Последняя проверка '.date("H:i d.m.Y", file_get_contents('../stage/load_price_time.txt')+3*60*60/*+3 МСК*/) : "" ?>.
+    <?= file_exists('../stage/parse_price_time.txt') ? 'Последнее обновление '.date("H:i d.m.Y", file_get_contents('../stage/parse_price_time.txt')+3*60*60/*+3 МСК*/) : "" ?>.
+</small>

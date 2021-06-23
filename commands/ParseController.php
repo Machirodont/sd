@@ -26,8 +26,75 @@ use app\models\TimelineDays;
 class ParseController extends Controller
 {
 
-    public function actionPrice()
+    public function actionPriceLoad()
     {
+        $file_path = __DIR__ . "/../data/gz_tmp.gz";
+        $time_file = __DIR__ . "/../stage/" . "load_price_time.txt";
+        $url = "https://smartclinic.ms/506732/api.php?cmd=get_services_all&key=wj9et6piuKQ12itogh98ai4ax76Rex0p";
+        $status = 0;
+        if (!file_exists($time_file)) {
+            file_put_contents($time_file, 0);
+        }
+        $last_load_time = intval(file_get_contents($time_file));
+        if ((time() - $last_load_time) > (60 * 60 * 24)) {
+            echo "Пытаюсь грузить<br>";
+            $c = curl_init();
+            curl_setopt($c, CURLOPT_URL, $url);
+            curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($c, CURLOPT_HEADER, true);
+            curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
+            // curl_setopt($c, CURLOPT_SSLVERSION, 3);
+            $result = curl_exec($c);
+            $status = curl_getinfo($c, CURLINFO_HTTP_CODE);
+            $headerSize = curl_getinfo($c, CURLINFO_HEADER_SIZE);
+            curl_close($c);
+        } else {
+            echo "Не время еще";
+            exit;
+        }
+        if ($status == 200) {
+            $content_gz = substr($result, $headerSize);
+            if(file_exists($file_path)){
+                unlink($file_path);
+            }
+            $f = fopen($file_path, 'w');
+            if ($f === false) {
+                echo "Не могу сохранить загруженный файл";
+                exit;
+            }
+            fwrite($f, $content_gz);
+            fclose($f);
+            file_put_contents($time_file, time());
+        } else {
+            echo "Ошибка чет " . $status;
+            exit;
+        }
+        echo "Все вроде ок";
+        exit;
+    }
+
+    public function actionPriceParse()
+    {
+        $lockfile = "lockfile-parse-price.txt";
+        self::singletonLock($lockfile);
+
+        $load_time_file = __DIR__ . "/../stage/" . "load_price_time.txt";
+        $parse_time_file = __DIR__ . "/../stage/" . "parse_price_time.txt";
+        $fName = __DIR__ . "/../data/gz_tmp.gz";
+        if (!file_exists($load_time_file)) {
+            file_put_contents($load_time_file, 0);
+        }
+        if (!file_exists($parse_time_file)) {
+            file_put_contents($parse_time_file, 0);
+        }
+        $last_load_time = intval(file_get_contents($load_time_file));
+        $last_parse_time = intval(file_get_contents($parse_time_file));
+        if (($last_parse_time + 30) > $last_load_time) {
+            echo "Новый файл не загружался";
+            self::singletonUnlock($lockfile);
+            exit;
+        }
+
         $clinicId = [
             "Гагарин" => 5,
             "Руза" => 2,
@@ -35,10 +102,9 @@ class ParseController extends Controller
         ];
 
         echo "\n";
-        $fName = __DIR__ . "/../data/gz_tmp.gz";
         if (!file_exists($fName)) {
             echo "File not found\n";
-            echo __DIR__;
+            self::singletonUnlock($lockfile);
             exit;
         }
         $zp = gzopen($fName, "r");
@@ -98,6 +164,8 @@ class ParseController extends Controller
                 $sql = "";
             }
         }
+        file_put_contents($parse_time_file, time());
+        self::singletonUnlock($lockfile);
         exit;
     }
 
@@ -179,13 +247,8 @@ class ParseController extends Controller
             return;
         }
 
-        $lockfile = __DIR__ . "/../stage/" . "lockfile-parse-schedules.txt";
-        if (file_exists($lockfile)) exit;
-        file_put_contents($lockfile, getmypid(), LOCK_EX);
-        if (file_get_contents($lockfile) != getmypid()) {
-            echo "Уже выполняется";
-            exit;
-        }
+        $lockfile = "lockfile-parse-schedules.txt";
+        self::singletonLock($lockfile);
 
         /*
 SELECT tch.*, tc.start, tl.person_id, p.lastname, lsh.loadTime, cl.city FROM sd_timeline_changelog AS tch
@@ -203,6 +266,7 @@ LEFT JOIN sd_clinics AS cl ON wp.clinic_hash=cl.hash_id
             ->all();
         if (count($files) === 0) {
             echo "Парсить нечего";
+            self::singletonUnlock($lockfile);
             return 0;
         }
 
@@ -215,7 +279,7 @@ LEFT JOIN sd_clinics AS cl ON wp.clinic_hash=cl.hash_id
             Extra::writeLog("Парсим файл " . $fName);
             if (!file_exists(__DIR__ . "/../data/" . $fName)) {
                 Extra::writeLog("Не найден файл " . $fName);
-                echo "Ошибка файла";
+                self::singletonUnlock($lockfile);
                 return 0;
             }
             $s = json_decode(file_get_contents(__DIR__ . "/../data/" . $fName));
@@ -309,7 +373,7 @@ LEFT JOIN sd_clinics AS cl ON wp.clinic_hash=cl.hash_id
             }
             \Yii::$app->db->createCommand("UPDATE sd_loaded_schedules SET  parsed=1 WHERE fileName=\"" . $fName . "\";")->execute();
         }
-        unlink($lockfile);
+        self::singletonUnlock($lockfile);
         echo microtime(true) - $t . "\n";
         echo "END\n\n";
         echo $log;
@@ -334,5 +398,22 @@ LEFT JOIN sd_clinics AS cl ON wp.clinic_hash=cl.hash_id
                 'route' => 'persons/view'
             ])->execute();*/
         }
+    }
+
+    public static function singletonLock(string $lockfile)
+    {
+        $lockFilePath = __DIR__ . "/../stage/" . $lockfile;
+        if (file_exists($lockFilePath)) exit;
+        file_put_contents($lockFilePath, getmypid(), LOCK_EX);
+        if (file_get_contents($lockFilePath) != getmypid()) {
+            echo "Уже выполняется";
+            exit;
+        }
+    }
+
+    public static function singletonUnlock(string $lockfile)
+    {
+        $lockFilePath = __DIR__ . "/../stage/" . $lockfile;
+        unlink($lockFilePath);
     }
 }

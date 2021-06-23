@@ -3,11 +3,13 @@
 namespace app\controllers;
 
 use app\models\Appointment;
+use app\models\AppointmentSettingsForm;
 use Yii;
 use app\models\Users;
 use yii\base\BaseObject;
 use yii\data\ActiveDataProvider;
 use yii\db\Query;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Cookie;
 use yii\web\NotFoundHttpException;
@@ -16,6 +18,37 @@ use yii\filters\VerbFilter;
 
 class AppointmentController extends Controller
 {
+
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'actions' => ['appointment-index', 'appointments-by-number', 'pick-up', 'set-status'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['create', 'view'],
+                        'allow' => true,
+                        'roles' => ['@', '?'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    public function beforeAction($action)
+    {
+        if ($action->id === 'create' || $action->id === 'view') {
+            if (Yii::$app->user->isGuest && !file_exists(AppointmentSettingsForm::FILE_APPOINTMENT_ENABLE)) {
+                return $this->redirect('/');
+            }
+        }
+        return parent::beforeAction($action);
+    }
 
     public function actionCreate()
     {
@@ -76,10 +109,15 @@ class AppointmentController extends Controller
 
     public function actionAppointmentIndex()
     {
+        $query = Appointment::find()->where([
+            "clinic_id" => Yii::$app->user->identity->clinicIdList,
+        ]);
+        if (!Yii::$app->user->identity->is_admin) {
+            $query->andWhere(['owner_id' => Yii::$app->user->id]);
+        }
+
         $dp = new ActiveDataProvider([
-            'query' => Appointment::find()->where([
-                "clinic_id" => Yii::$app->user->identity->clinicIdList,
-            ]),
+            'query' => $query,
         ]);
         $dp->sort->defaultOrder = ["id" => SORT_DESC];
         $dp->pagination->pageSize = 0;
@@ -116,10 +154,17 @@ class AppointmentController extends Controller
             $newAppointmentSegments[$appointment->phone][] = $appointment;
         }
 
+        $settingsFormModel = new AppointmentSettingsForm();
+        if ($settingsFormModel->load(Yii::$app->request->post())) {
+            $settingsFormModel->save();
+            $this->redirect(['appointment-index']);
+        }
+
         return $this->render("appointment-index", [
             'dp' => $dp,
             'ownAppointmentSegments' => $ownAppointmentSegments,
             'newAppointmentSegments' => $newAppointmentSegments,
+            'settingsFormModel' => $settingsFormModel,
         ]);
     }
 
@@ -135,9 +180,9 @@ class AppointmentController extends Controller
         $dp->pagination->pageSize = 0;
 
         return $this->render("appointments-by-number", [
-            'phone'=>Yii::$app->request->get("phone"),
+            'phone' => Yii::$app->request->get("phone"),
             'dp' => $dp,
-          ]);
+        ]);
     }
 
 
@@ -177,6 +222,7 @@ class AppointmentController extends Controller
             && $appointment->owner_id === Yii::$app->user->id
         ) {
             $appointment->status = $newStatus;
+            $appointment->comment = Yii::$app->request->post("comment");
             if ($newStatus === Appointment::STATUS_CREATED) {
                 $appointment->owner_id = null;
             }

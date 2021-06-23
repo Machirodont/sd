@@ -250,38 +250,9 @@ class SiteController extends Controller
 
     public function actionLoadPrice()
     {
-        $file_path = __DIR__ . "/../data/gz_tmp.gz";
-        $time_file = __DIR__ . "/../stage/" . "load_price_time.txt";
-        $url = "https://smartclinic.ms/506732/api.php?cmd=get_services_all&key=wj9et6piuKQ12itogh98ai4ax76Rex0p";
-        $status = 0;
-        $last_load_time = intval(file_get_contents($time_file));
-        if ((time() - $last_load_time) > (60 * 60 * 24)) {
-            echo "Пытаюсь грузить<br>";
-            $c = curl_init();
-            curl_setopt($c, CURLOPT_URL, $url);
-            curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($c, CURLOPT_HEADER, true);
-            curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
-            // curl_setopt($c, CURLOPT_SSLVERSION, 3);
-            $result = curl_exec($c);
-            $status = curl_getinfo($c, CURLINFO_HTTP_CODE);
-            $headerSize = curl_getinfo($c, CURLINFO_HEADER_SIZE);
-            curl_close($c);
-        } else {
-            echo "Не время еще";
-            exit;
-        }
-        if ($status == 200) {
-            $content_gz = substr($result, $headerSize);
-            $f = fopen($file_path, 'w');
-            fwrite($f, $content_gz);
-            fclose($f);
-            file_put_contents($time_file, time());
-        } else {
-            echo "Ошибка чет " . $status;
-            exit;
-        }
-        echo "Все вроде ок";
+        echo "start";
+        shell_exec("php ../yii parse/price-load");
+        echo "end";
         exit;
     }
 
@@ -289,7 +260,7 @@ class SiteController extends Controller
     public function actionParsePrice()
     {
         echo "start";
-        shell_exec("php ../yii parse/price");
+        shell_exec("php ../yii parse/price-parse");
         echo "end";
         exit;
     }
@@ -301,7 +272,7 @@ class SiteController extends Controller
         {
             if (is_null($fName)) $fName = __DIR__ . "/../stage/" . "error_log.txt";
             $f = fopen($fName, 'a');
-            $s = date("Y-m-d H:i:s " . $_SERVER["REMOTE_ADDR"]) . " " . $text . "\n";
+            $s = date("Y-m-d H:i:s") ." ". $_SERVER["REMOTE_ADDR"] . " " . $text . "\n";
             fwrite($f, $s);
         }
 
@@ -487,7 +458,6 @@ class SiteController extends Controller
 
         return $ret;
     }
-
 
 
 }

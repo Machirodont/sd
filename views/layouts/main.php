@@ -5,6 +5,7 @@
 /* @var $content string */
 
 use app\components\SdUrlRule;
+use app\models\AppointmentSettingsForm;
 use app\widgets\Alert;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
@@ -78,8 +79,11 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
                     ]);
                     ?>
 
+                    <?php
+                    $showAppointmentButton = !Yii::$app->user->isGuest || file_exists(AppointmentSettingsForm::FILE_APPOINTMENT_ENABLE);
+                    ?>
                     <?=
-                    Yii::$app->user->isGuest ? "" : Html::a("Запись к врачу", ["/appointment/create"], ['class' => "btn btn-success"])
+                    $showAppointmentButton ? Html::a("Запись к врачу", ["/appointment/create"], ['class' => "btn btn-success"]) : ""
                     ?>
                 </div>
             </div>
@@ -125,7 +129,7 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
                     [
                         'label' => 'Промо',
                         'url' => ['/promo/index'],
-                        'visible' => !Yii::$app->user->isGuest,
+                        'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->is_admin,
                     ],
                     [
                         'label' => 'Врачи',

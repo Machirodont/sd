@@ -38,8 +38,10 @@ class Clinic extends ClinicsGenerated
 
     public function getPersons(): array
     {
-        $query = Persons::find()->where(["removed" => null]);
+        $query = Persons::find();
         $query
+            ->select('p.*')
+            ->distinct()
             ->from([
                 "p" => "sd_persons",
                 "t" => "sd_timelines",
