@@ -268,47 +268,39 @@ class SiteController extends Controller
 
     public function actionLoadSchedule($code)
     {
-        function writeLog($text, $fName = null)
-        {
-            if (is_null($fName)) $fName = __DIR__ . "/../stage/" . "error_log.txt";
-            $f = fopen($fName, 'a');
-            $s = date("Y-m-d H:i:s") ." ". $_SERVER["REMOTE_ADDR"] . " " . $text . "\n";
-            fwrite($f, $s);
-        }
-
         if ($code !== "41445463905c0ed3ebb1e694a8d7ab") {
-            writeLog("ERROR: wrong GET code");
+            Extra::writeLog("ERROR: wrong GET code");
             return 'FALSE';
         }
 
         $postRaw = file_get_contents("php://input");
         if ($postRaw === false) {
-            writeLog("ERROR: wrong php://input");
+            Extra::writeLog("ERROR: wrong php://input");
             return 'FALSE';
         }
 
         try {
             $postDecompressStr = gzdecode($postRaw);
         } catch (\Exception $e) {
-            writeLog("ERROR: GZip exception " . $e->getCode());
+            Extra::writeLog("ERROR: GZip exception " . $e->getCode());
             return 'FALSE';
         }
 
         if ($postDecompressStr === false) {
-            writeLog("ERROR: GZip (false returned)");
+            Extra::writeLog("ERROR: GZip (false returned)");
             return 'FALSE';
         }
         $postData = array();
         parse_str($postDecompressStr, $postData);
 
         if (!array_key_exists('json', $postData)) {
-            writeLog("ERROR: no json key in URL data");
+            Extra::writeLog("ERROR: no json key in URL data");
             return 'FALSE';
         }
 
         $json = json_decode($postData['json'], true);
         if (!is_array($json)) {
-            writeLog("ERROR: data is not json");
+            Extra::writeLog("ERROR: data is not json");
             return 'FALSE';
         }
 

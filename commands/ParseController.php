@@ -37,7 +37,7 @@ class ParseController extends Controller
         }
         $last_load_time = intval(file_get_contents($time_file));
         if ((time() - $last_load_time) > (60 * 60 * 24)) {
-            echo "Пытаюсь грузить<br>";
+            Extra::writeLog("Попытка загрузки файла прайса");
             $c = curl_init();
             curl_setopt($c, CURLOPT_URL, $url);
             curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
@@ -66,7 +66,7 @@ class ParseController extends Controller
             fclose($f);
             file_put_contents($time_file, time());
         } else {
-            echo "Ошибка чет " . $status;
+            Extra::writeLog("Ошибка загрузки файла прайса, ответ " . $status);
             exit;
         }
         echo "Все вроде ок";

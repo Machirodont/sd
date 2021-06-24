@@ -37,7 +37,7 @@ if (count($ownAppointmentSegments)) {
                             <div class="appoint_admin_block">
                                 <div>
                                     <small>
-                                        <?= date_create($appointment->created)->format("H:i:s d M y") ?>
+                                        <?= date_create($appointment->created)->setTimezone(new DateTimeZone('Europe/Moscow'))->format("H:i:s d M y") ?>
                                         [<?= $appointment->ip ?>]
                                     </small>
                                     <br>
