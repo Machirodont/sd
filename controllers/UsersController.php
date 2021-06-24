@@ -65,8 +65,8 @@ class UsersController extends Controller
     public function actionCreate()
     {
         $model = new Users();
-        $model->is_admin=0;
-        $model->clinics="";
+        $model->is_admin = 0;
+        $model->clinics = "";
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['index']);
@@ -106,7 +106,9 @@ class UsersController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $user = $this->findModel($id);
+        $user->removed = date("Y-m-d H:i:s");
+        $user->save();
 
         return $this->redirect(['index']);
     }

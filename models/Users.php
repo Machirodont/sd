@@ -62,7 +62,7 @@ class Users extends Generated\UsersGenerated implements \yii\web\IdentityInterfa
 
     public static function findIdentity($id)
     {
-        return self::findOne($id);
+        return self::find()->where(['id' => $id, 'removed' => null])->one();
     }
 
     public static function findIdentityByAccessToken($token, $type = null)

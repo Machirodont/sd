@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
 
             ],
-
+            'removed',
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

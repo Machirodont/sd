@@ -11,6 +11,7 @@ use Yii;
  * @property string $login
  * @property string $hash
  * @property int $is_admin
+ * @property string $removed
  * @property string $clinics
  */
 class UsersGenerated extends \yii\db\ActiveRecord
@@ -46,6 +47,7 @@ class UsersGenerated extends \yii\db\ActiveRecord
             'hash' => 'Hash',
             'is_admin' => 'Is Admin',
             'clinics' => 'Clinics',
+            'removed' => 'Удален',
         ];
     }
 }
