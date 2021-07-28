@@ -5,10 +5,10 @@
         input.on('input', () => {
             let raw = input.val();
             raw = raw.replaceAll(/[^0-9]+/g, '');
-            if (raw.length > 10) {
-                raw = raw.substr(0, 10);
+            if (raw.length > 11) {
+                raw = raw.substr(0, 11);
             }
-            $('button[type=submit]').attr({disabled: (raw.length !== 10)})
+            $('button[type=submit]').attr({disabled: (raw.length < 10)})
             input.val(raw);
         })
     });

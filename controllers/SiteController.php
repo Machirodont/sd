@@ -317,6 +317,9 @@ class SiteController extends Controller
             //Обрабока данных - дергаем через сокет скрипт, который дергает команду Yii (потому что скрипт сдохнет через 30 секунд, а команда отработает сколько надо)
             Extra::socketAsyncCall(["/site/schedule-parse"]);
         }
+        else{
+            Extra::writeLog("ERROR: can't write file ".$fName);
+        }
 
         return 'TRUE';
     }

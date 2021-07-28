@@ -2,7 +2,12 @@
     font-family: 'Benguiat Rus';
     font-style: normal;
     font-weight: 400;
+    /*
     src: local('Benguiat Rus'), local('BenguiatRus-Regular'), url("/images/benguiat-rus.woff") format('woff')
+     */
+    src: local('Benguiat Rus'), local('BenguiatRus-Regular'), url("/images/agopushighresolution-bold.ttf") format('truetype')
+
+
 }
 
 html,
