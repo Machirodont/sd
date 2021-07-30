@@ -493,6 +493,11 @@ img.partner_bar {
     text-overflow: ellipsis;
     box-shadow: 3px 3px 5px 3px #E0F7FF;
 }
+.appointment_bottom_note{
+    font-size: 12px;
+    padding-top: 0;
+    margin-top: 0;
+}
 
 .btn-small{
     padding:1px 3px;

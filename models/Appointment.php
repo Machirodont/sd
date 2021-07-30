@@ -11,6 +11,7 @@ use DateTime;
  * @property-read Clinic $clinic
  * @property-read Users $owner
  * @property-read DateTime $date
+ * @property-read string $semanticHowLongAgo
  */
 class Appointment extends Generated\AppointmentGenerated
 {
@@ -54,5 +55,26 @@ class Appointment extends Generated\AppointmentGenerated
     public function getDate()
     {
         return DateTime::createFromFormat('Y-m-d', $this->day);
+    }
+
+    public function getSemanticHowLongAgo()
+    {
+        $appoitmentUtcTime = date_create($this->created)
+            ->format("U");
+        $howLongAgoSec = time()
+            - (int)$appoitmentUtcTime
+            + (new \DateTimeZone('Europe/Moscow'))->getOffset(date_create($this->created));
+        $result = "Получено ";
+        if ($howLongAgoSec > 60 * 60 * 24) {
+            $result .= "больше суток назад";
+        } elseif ($howLongAgoSec >= 60 * 60) {
+            $result .= floor($howLongAgoSec / 3600) . " часов " . floor($howLongAgoSec % 3600 / 60) . " минут назад";
+        } else {
+            $result .= floor($howLongAgoSec / 60) . " минут назад";
+        }
+
+
+        return $result;
+
     }
 }

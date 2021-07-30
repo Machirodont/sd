@@ -111,6 +111,8 @@ if (count($newAppointmentSegments)) {
                             <div>
                                 <?= $appointment->clinic->city ?>:
                                 <?= $appointment->person->fullName ?>
+                                <br>
+                                <div class="appointment_bottom_note"><?= $appointment->semanticHowLongAgo ?></div>
                             </div>
                             <?php
                         }
