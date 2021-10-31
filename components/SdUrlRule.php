@@ -15,143 +15,23 @@ use yii\base\BaseObject;
 class SdUrlRule extends UrlRule implements UrlRuleInterface
 {
 
-    public const ENDPOINT = [
-        'site/main-page' => '',
-        'site/logout' => "logout",
-        'site/login' => "login",
-        'clinic/index' => "clinics",
-        'clinic/contacts' => "contacts",
-        'clinic/company' => "company",
-        'persons/index' => "specialisty",
-        "services/index" => "services",
-        "site/parce" => "parce",
-        "appointment/appointment-index" => "appointment-index",
-        "appointment/create" => "appointment-create",
-        "appointment/cancel" => "appointment-cancel",
-        "appointment/pick-up" => "appointment-pick_up",
-        "appointment/set-status" => "appointment-set_status",
-        "appointment/view" => "appointment-view",
-        "appointment/appointments-by-number" => "appointments-by-number",
-    ];
-
-    /**
-     * @param \yii\web\UrlManager $manager
-     * @param string $route
-     * @param array $params
-     * @return bool|string
-     */
     public function createUrl($manager, $route, $params)
     {
-        $url = "/";
-        if (isset($params['cid'])) {
-            if ($tag = UrlTags::findOne(["param" => "cid", "value" => $params['cid']])) {
-                $url .= $tag->tag . "/";
-            } else {
-                $url .= "clinic_" . $params['cid'] . "/";
-            }
-            unset($params['cid']);
-        }
-
-        if ($route === 'persons/view') {
-            if (!array_key_exists("id", $params)) return false;
-            if ($tag = UrlTags::findOne(["route" => $route, "param" => "id", "value" => $params['id']])) {
-                $url .= $tag->tag . "/";
-            } else {
-                $url .= "specialist_" . $params['id'] . '/';
-            }
-            return $url;
-        }
-
-        if ($route === 'site/page') {
-            if (!array_key_exists("id", $params)) return false;
-            if ($tag = UrlTags::findOne(["route" => $route, "param" => "id", "value" => $params['id']])) {
-                $url .= $tag->tag . "/";
-            } else {
-                $url .= "page_" . $params["id"] . "/";
-            }
-            return $url;
-        }
-
-        if ($route === 'promo/view') {
-            if (!array_key_exists("id", $params)) return false;
-            $url .= "promo_" . $params["id"] . "/";
-            return $url;
-        }
-
-        if ($route === 'services/index') {
-            $url .= "services/";
-            if (array_key_exists("id", $params)) {
-                $url .= $params["id"] . "-service/";
-            }
-            return $url;
-        }
-
-        if (array_key_exists($route, self::ENDPOINT)) {
-            $url .= self::ENDPOINT[$route] . "/";
-            if (count($params)) $url .= '?' . http_build_query($params);
-            return $url;
-        }
-
-        if ($url !== "/") {
-            return $url;
-        }
-        return false;
+        return (new UrlConstructor($route, $params))->buildUrl();
     }
 
-    /**
-     * @param \yii\web\UrlManager $manager
-     * @param \yii\web\Request $request
-     * @return array|bool
-     * @throws \yii\base\InvalidConfigException
-     */
     public function parseRequest($manager, $request)
     {
         $pathInfo = $request->getPathInfo();
 
-        $domainRedirects = [
-            "http://gagarin.sd-med.ru" => ["urlTag" => "/gagarin", "cid" => 5],
-            "http://gagarin-med.ru" => ["urlTag" => "/gagarin", "cid" => 5],
-            "http://ruza.sd-med.ru" => ["urlTag" => "/ruza", "cid" => 2],
-            "http://ruza-uzi.ru" => ["urlTag" => "/ruza", "cid" => 2],
-        ];
-
-        if (Yii::$app->request->hostInfo !== Yii::$app->params["mainHost"] && Yii::$app->request->hostInfo !== "http://tech.sd-med.ru") {
-            $urlWithMainHost = Yii::$app->params["mainHost"] . Yii::$app->request->url;
-            if (array_key_exists(Yii::$app->request->hostInfo, $domainRedirects)) {
-                $urlWithMainHost = Yii::$app->params["mainHost"] . $domainRedirects[Yii::$app->request->hostInfo]["urlTag"] . Yii::$app->request->url;
-                Yii::$app->session->open();
-                Yii::$app->session->set("cid", $domainRedirects[Yii::$app->request->hostInfo]["cid"]);
-            }
-            Yii::$app->response->redirect($urlWithMainHost, 301)->send();
-            exit;
-        }
-
-
         //---- 301 редиректы
-        if ($pathInfo === "price_sdmed.php") {
-            if (Yii::$app->request->get("filial") == 1) Yii::$app->response->redirect("ruza/contacts/", 301)->send();
-            if (Yii::$app->request->get("filial") == 2) Yii::$app->response->redirect("tuchkovo/contacts/", 301)->send();
-            if (Yii::$app->request->get("filial") == 3) Yii::$app->response->redirect("gagarin/contacts/", 301)->send();
-            Yii::$app->response->redirect("contacts/", 301)->send();
-            exit;
-        };
-
-        $redirects = (new Query())
-            ->select("*")
-            ->from("sd_redirect")
-            ->where(
-                "\"" . htmlspecialchars($pathInfo) . "\" LIKE CONCAT(\"%\",`from`, \"%\")"
-            )
-            ->all();
-        if (count($redirects) > 0) {
-            Yii::$app->response->redirect("/" . $redirects[0]["to"], 301)->send();
-            exit;
-        }
+        self::executeOldDomainsRedirect();
+        self::executeOldPricePageRedirect($pathInfo);
+        self::executePresetRedirect($pathInfo);
         //--/- 301 редиректы
 
 
         $params = [];
-        $route = Yii::$app->defaultRoute;
         $route = "";
 
         if ($pathInfo === "/" || $pathInfo === "") {
@@ -187,7 +67,7 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
                     $params["id"] = $matches[1];
                 }
 
-                if ($part && $endpointRoute = array_search($part, self::ENDPOINT)) {
+                if ($part && $endpointRoute = array_search($part, UrlConstructor::ENDPOINT)) {
                     $route = $endpointRoute;
                 }
             }
@@ -207,15 +87,6 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
         return false;  // данное правило не применимо
     }
 
-    public static function formatAsGet(array $params)
-    {
-        $get = "";
-        foreach ($params as $name => $val) {
-            $get .= urlencode($name) . "=" . urlencode($val) . '&';
-        }
-        return substr($get, 0, (strlen($get) - 1));
-    }
-
     public static function urlWithCID($cid)
     {
         $route = Yii::$app->request->queryParams;
@@ -225,5 +96,52 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
         array_unshift($route, $r);
         $route["cid"] = $cid;
         return \yii\helpers\Url::toRoute($route);
+    }
+
+    private static function executePresetRedirect(string $pathInfo)
+    {
+        $redirects = (new Query())
+            ->select("*")
+            ->from("sd_redirect")
+            ->where(
+                "\"" . htmlspecialchars($pathInfo) . "\" LIKE CONCAT(\"%\",`from`, \"%\")"
+            )
+            ->all();
+        if (count($redirects) > 0) {
+            Yii::$app->response->redirect("/" . $redirects[0]["to"], 301)->send();
+            exit;
+        }
+    }
+
+    private static function executeOldPricePageRedirect(string $pathInfo)
+    {
+        if ($pathInfo === "price_sdmed.php") {
+            if (Yii::$app->request->get("filial") == 1) Yii::$app->response->redirect("ruza/contacts/", 301)->send();
+            if (Yii::$app->request->get("filial") == 2) Yii::$app->response->redirect("tuchkovo/contacts/", 301)->send();
+            if (Yii::$app->request->get("filial") == 3) Yii::$app->response->redirect("gagarin/contacts/", 301)->send();
+            Yii::$app->response->redirect("contacts/", 301)->send();
+            exit;
+        };
+    }
+
+    private static function executeOldDomainsRedirect()
+    {
+        $domainRedirects = [
+            "http://gagarin.sd-med.ru" => ["urlTag" => "/gagarin", "cid" => 5],
+            "http://gagarin-med.ru" => ["urlTag" => "/gagarin", "cid" => 5],
+            "http://ruza.sd-med.ru" => ["urlTag" => "/ruza", "cid" => 2],
+            "http://ruza-uzi.ru" => ["urlTag" => "/ruza", "cid" => 2],
+        ];
+
+        if (Yii::$app->request->hostInfo !== Yii::$app->params["mainHost"] && Yii::$app->request->hostInfo !== "http://tech.sd-med.ru") {
+            $urlWithMainHost = Yii::$app->params["mainHost"] . Yii::$app->request->url;
+            if (array_key_exists(Yii::$app->request->hostInfo, $domainRedirects)) {
+                $urlWithMainHost = Yii::$app->params["mainHost"] . $domainRedirects[Yii::$app->request->hostInfo]["urlTag"] . Yii::$app->request->url;
+                Yii::$app->session->open();
+                Yii::$app->session->set("cid", $domainRedirects[Yii::$app->request->hostInfo]["cid"]);
+            }
+            Yii::$app->response->redirect($urlWithMainHost, 301)->send();
+            exit;
+        }
     }
 }
