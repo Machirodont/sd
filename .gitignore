@@ -46,3 +46,5 @@ gz_tmp.gz
 error_log.txt
 /stop_parsing.txt
 stage/*
+yii
+yii.bat
