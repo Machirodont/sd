@@ -47,7 +47,7 @@ class UrlConstructor
         $this->route = $route;
     }
 
-    public function buildUrl(): string
+    public function buildUrl()
     {
         $this->url = "/";
         $this->addClinicTag();
@@ -58,7 +58,7 @@ class UrlConstructor
             $this->servicesEndpoint();
         } elseif (array_key_exists($this->route, self::ENDPOINT)) {
             $this->simpleEndpoint();
-        }
+        } else return false;
 
         return $this->url;
     }

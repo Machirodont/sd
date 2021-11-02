@@ -72,9 +72,6 @@ class Appointment extends Generated\AppointmentGenerated
         } else {
             $result .= floor($howLongAgoSec / 60) . " минут назад";
         }
-
-
         return $result;
-
     }
 }
