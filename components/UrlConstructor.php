@@ -5,6 +5,8 @@ namespace app\components;
 
 
 use app\models\UrlTags;
+use Yii;
+use yii\helpers\Url;
 
 class UrlConstructor
 {
@@ -52,13 +54,9 @@ class UrlConstructor
 
         if (array_key_exists($this->route, self::P_ENDPOINT)) {
             $this->parametrizedEndpoint(self::P_ENDPOINT[$this->route]["pName"], self::P_ENDPOINT[$this->route]["defaultTag"]);
-        }
-
-        if ($this->route === 'services/index') {
+        } elseif ($this->route === 'services/index') {
             $this->servicesEndpoint();
-        }
-
-        if (array_key_exists($this->route, self::ENDPOINT)) {
+        } elseif (array_key_exists($this->route, self::ENDPOINT)) {
             $this->simpleEndpoint();
         }
 
@@ -67,7 +65,7 @@ class UrlConstructor
 
     private function addClinicTag()
     {
-        if (array_key_exists('cid', $this->params)) {
+        if (array_key_exists('cid', $this->params) && !is_null($this->params['cid'])) {
             $this->url .= self::getTag("site/main-page", "cid", $this->params['cid'], "clinic") . "/";
             unset($this->params['cid']);
         }
@@ -99,4 +97,14 @@ class UrlConstructor
         return $tag ? $tag->tag : $prefix . "_" . $value;
     }
 
+    public static function urlWithCID($cid)
+    {
+        $route = Yii::$app->request->queryParams;
+        $r = "/" . Yii::$app->requestedRoute;
+        unset($route["cid"]);
+        unset($route["r"]);
+        array_unshift($route, $r);
+        $route["cid"] = $cid;
+        return Url::toRoute($route);
+    }
 }

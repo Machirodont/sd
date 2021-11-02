@@ -5,6 +5,7 @@
 /* @var $content string */
 
 use app\components\SdUrlRule;
+use app\components\UrlConstructor;
 use app\models\AppointmentSettingsForm;
 use app\widgets\Alert;
 use yii\helpers\Html;
@@ -67,10 +68,10 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
                         'label' => ($clinic ? 'Выбрать другую клинику' : 'Выберите клинику'),
                         'dropdown' => [
                             'items' => [
-                                ['label' => 'Все', 'url' => SdUrlRule::urlWithCID(0)],
-                                ['label' => 'Гагарин', 'url' => SdUrlRule::urlWithCID(5)],
-                                ['label' => 'Руза', 'url' => SdUrlRule::urlWithCID(2)],
-                                ['label' => 'Тучково', 'url' => SdUrlRule::urlWithCID(1)],
+                                ['label' => 'Все', 'url' => UrlConstructor::urlWithCID(0)],
+                                ['label' => 'Гагарин', 'url' => UrlConstructor::urlWithCID(5)],
+                                ['label' => 'Руза', 'url' => UrlConstructor::urlWithCID(2)],
+                                ['label' => 'Тучково', 'url' => UrlConstructor::urlWithCID(1)],
                             ],
                         ],
                         'options' => [

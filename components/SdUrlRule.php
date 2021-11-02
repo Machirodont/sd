@@ -30,72 +30,24 @@ class SdUrlRule extends UrlRule implements UrlRuleInterface
         self::executePresetRedirect($pathInfo);
         //--/- 301 редиректы
 
+        $route = (new RouteConstructor($pathInfo))->buildRoute();
 
-        $params = [];
-        $route = "";
+        self::setClinicFromRoute($route);
 
-        if ($pathInfo === "/" || $pathInfo === "") {
-            return ["/site/main-page", []];
-        }
-        if (preg_match_all('/([^\\/]+)/', $pathInfo, $matches)) {
-            foreach ($matches[1] as $part) {
-                $tag = UrlTags::findOne(["tag" => $part]);
-                if ($tag) {
-                    $params[$tag->param] = $tag->value;
-                    if ($tag->route) $route = $tag->route;
-                }
-
-                if (preg_match('/clinic_([0-9]+)/', $part, $matches)) {
-                    $route = "/site/main-page";
-                    $params["cid"] = $matches[1];
-                }
-                if (preg_match('/promo_([0-9]+)/', $part, $matches)) {
-                    $route = "/promo/view";
-                    $params["id"] = $matches[1];
-                }
-                if ($route === "services/index") {
-                    if (preg_match('/^([0-9]+)/', $part, $matches)) {
-                        $params["id"] = $matches[1];
-                    }
-                }
-                if (preg_match('/specialist_([0-9]+)/', $part, $matches)) {
-                    $route = "persons/view";
-                    $params["id"] = $matches[1];
-                }
-                if (preg_match('/page_([0-9]+)/', $part, $matches)) {
-                    $route = "site/page";
-                    $params["id"] = $matches[1];
-                }
-
-                if ($part && $endpointRoute = array_search($part, UrlConstructor::ENDPOINT)) {
-                    $route = $endpointRoute;
-                }
-            }
-            if (array_key_exists("cid", $params)) {
-                if ($params["cid"]) {
-                    Yii::$app->session->open();
-                    Yii::$app->session->set("cid", $params["cid"]);
-                } else {
-                    Yii::$app->session->remove("cid");
-                }
-            }
-
-            if ($route !== "") {
-                return [$route, $params];
-            }
-        }
-        return false;  // данное правило не применимо
+        return is_array($route) ? $route : false;
     }
 
-    public static function urlWithCID($cid)
+
+    private static function setClinicFromRoute($route)
     {
-        $route = Yii::$app->request->queryParams;
-        $r = "/" . Yii::$app->requestedRoute;
-        unset($route["cid"]);
-        unset($route["r"]);
-        array_unshift($route, $r);
-        $route["cid"] = $cid;
-        return \yii\helpers\Url::toRoute($route);
+        if (is_array($route) && count($route) > 0 && array_key_exists("cid", $route[1])) {
+            if ($route[1]["cid"]) {
+                Yii::$app->session->open();
+                Yii::$app->session->set("cid", $route[1]["cid"]);
+            } else {
+                Yii::$app->session->remove("cid");
+            }
+        }
     }
 
     private static function executePresetRedirect(string $pathInfo)
