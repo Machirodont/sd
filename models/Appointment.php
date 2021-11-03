@@ -3,6 +3,9 @@
 namespace app\models;
 
 use DateTime;
+use Yii;
+use yii\base\BaseObject;
+use yii\web\Cookie;
 
 /**
  * Class Appointment
@@ -50,6 +53,23 @@ class Appointment extends Generated\AppointmentGenerated
     public static function findByPhone(string $phone): array
     {
         return Appointment::find()->where(['phone' => $phone])->all();
+    }
+
+    private static function findDouble(Appointment $origin)
+    {
+        return Appointment::find()->where([
+            "phone" => $origin->phone,
+            "person_id" => $origin->person_id,
+            "clinic_id" => $origin->clinic_id,
+            "status" => $origin->status,
+            "cookie" => $origin->cookie,
+        ])->one();
+    }
+
+    public function mergeDouble(): Appointment
+    {
+        $double = Appointment::findDouble($this);
+        return $double ? $double : $this;
     }
 
     public function getDate()

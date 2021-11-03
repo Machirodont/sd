@@ -43,57 +43,56 @@ class AppointmentController extends Controller
     public function beforeAction($action)
     {
         if ($action->id === 'create' || $action->id === 'view') {
-            if (Yii::$app->user->isGuest && !file_exists(AppointmentSettingsForm::FILE_APPOINTMENT_ENABLE)) {
+            if (Yii::$app->user->isGuest && !self::bookingEnabled()) {
                 return $this->redirect('/');
             }
         }
         return parent::beforeAction($action);
     }
 
+    private static function bookingEnabled(): bool
+    {
+        return file_exists(AppointmentSettingsForm::FILE_APPOINTMENT_ENABLE);
+    }
+
+    public static function appointmentCookieSign()
+    {
+        $cookie = Yii::$app->request->cookies->getValue(Appointment::COOKIE_NAME);
+        if (!$cookie) {
+            $cookie = bin2hex(random_bytes(32));
+            Yii::$app->response->cookies->add(new Cookie(['name' => Appointment::COOKIE_NAME, 'value' => $cookie]));
+        }
+        return $cookie;
+    }
+
     public function actionCreate()
     {
-        if (Yii::$app->request->post("phone")) {
-            $cookie = Yii::$app->request->cookies->getValue(Appointment::COOKIE_NAME);
-            if (!$cookie) {
-                $cookie = bin2hex(random_bytes(32));
-                Yii::$app->response->cookies->add(new Cookie(['name' => Appointment::COOKIE_NAME, 'value' => $cookie]));
-            }
 
-            $phone = Yii::$app->request->post("phone");
-            $personId = Yii::$app->request->get("personId");
-
-            $appointment = new Appointment([
-                "phone" => Yii::$app->request->post("phone"),
-                "ip" => Yii::$app->request->userIP,
-                "person_id" => Yii::$app->request->get("personId"),
-                "clinic_id" => Yii::$app->session->get("cid"),
-                "day" => Yii::$app->request->get("day"),
-                "status" => Appointment::STATUS_CREATED,
-                "cookie" => $cookie,
-                "created" => date("Y-m-d H:i:s"),
-            ]);
-
-            $doubleAppointment = Appointment::find()->where([
-                "phone" => $appointment->phone,
-                "person_id" => $appointment->person_id,
-                "clinic_id" => $appointment->clinic_id,
-                "status" => $appointment->status,
-                "cookie" => $appointment->cookie,
-            ])->one();
-
-
-            if (!$doubleAppointment) {
-                $appointment->save();
-            } else {
-                $appointment = $doubleAppointment;
-            }
-
-            if ($appointment->save()) {
-                return $this->redirect(["/appointment/view", 'id' => $appointment->id]);
-            }
+        if (!Yii::$app->request->post("phone")) {
+            return $this->render("create", []);
         }
-        return $this->render("create", [
+
+        $cookie = self::appointmentCookieSign();
+
+        $appointment = new Appointment([
+            "phone" => Yii::$app->request->post("phone"),
+            "ip" => Yii::$app->request->userIP,
+            "person_id" => Yii::$app->request->get("personId"),
+            "clinic_id" => Yii::$app->session->get("cid"),
+            "day" => Yii::$app->request->get("day"),
+            "status" => Appointment::STATUS_CREATED,
+            "cookie" => $cookie,
+            "created" => date("Y-m-d H:i:s"),
         ]);
+
+        //Если клиент пытается долбать эндпоинт одинаковыми запросами
+        $appointment = $appointment->mergeDouble();
+
+        if ($appointment->save()) {
+            return $this->redirect(["/appointment/view", 'id' => $appointment->id]);
+        }
+
+        return $this->render("create", []);
     }
 
     public function actionView($id)
