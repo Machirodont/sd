@@ -36,7 +36,7 @@ class ParseController extends Controller
         Extra::writeLog("parse-controller/price-load");
         $file_path = __DIR__ . "/../data/gz_tmp.gz";
         $time_file = __DIR__ . "/../stage/" . "load_price_time.txt";
-        $url = "https://smartclinic.ms/506732/api.php?cmd=get_services_all&key=wj9et6piuKQ12itogh98ai4ax76Rex0p";
+        $url = Yii::$app->params['priceSourceUrl'];
         $status = 0;
         if (!file_exists($time_file)) {
             file_put_contents($time_file, 0);

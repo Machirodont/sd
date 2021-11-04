@@ -11,14 +11,6 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
      */
     public static function findIdentity($id)
     {
-        /*
-        if (isset(self::$users[$id])) {
-            $user = new static(self::$users[$id]);
-            $user->password = \Yii::$app->params['adminpass'];
-            return $user;
-        }
-        */
-
         return Users::findOne($id);
     }
 
