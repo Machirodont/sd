@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\components\actions\MainPageAction;
 use app\helpers\Extra;
 use app\models\Appointment;
 use app\models\Clinic;
@@ -69,6 +70,9 @@ class SiteController extends Controller
                 'class' => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
+            'main-page'=>[
+                'class' => MainPageAction::class,
+            ]
         ];
     }
 
@@ -124,73 +128,6 @@ class SiteController extends Controller
         $page = Pages::findOne($pageId);
         return $this->render('page', [
             'page' => $page,
-        ]);
-    }
-
-    public function actionMainPage()
-    {
-        $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
-
-        $allPersons = Persons::find()->
-        select("p.*")->distinct()
-            ->from(["p" => "sd_persons"])
-            ->leftJoin(["t" => "sd_traits"], "p.person_id = t.person_id")
-            ->where(["and",
-                ["not", ["p.education" => null]],
-                ["p.removed" => null],
-                ["t.title" => "Основное место работы"]
-
-            ])->all();
-        $persons = [];
-        if (count($allPersons) <= 3) {
-            $persons = $allPersons;
-        } else {
-            $loopGuard = 0;
-            while (count($persons) < 3 && $loopGuard < 1000) {
-                $addedPerson = $allPersons[mt_rand(0, count($allPersons) - 1)];
-                if (!in_array($addedPerson, $persons)) {
-                    $persons[] = $addedPerson;
-                }
-                $loopGuard++;
-            }
-        }
-
-        $promos = Promo::find()->where(['and',
-            ["or",
-                ['<=', 'startDate', date("Y-m-d")],
-                ['startDate' => null],
-            ],
-            ["or",
-                ['>=', 'endDate', date("Y-m-d")],
-                ['endDate' => null],
-            ],
-        ])->all();
-        $promoList = array_values(array_filter($promos, function (Promo $promo) use ($clinic) {
-            if (!$promo->doShowWithClinic($clinic)) return false;
-            return $promo->fileName;
-        }));
-
-
-        $promoList = array_map(function (Promo $promo) {
-            $content = $promo->html
-                ? Html::a(
-                    Html::img("/images/promo/" . $promo->fileName),
-                    ["promo/view", "id" => $promo->id]
-                )
-                : Html::img("/images/promo/" . $promo->fileName);
-            return [
-                "content" => Html::a(
-                    Html::img("/images/promo/" . $promo->fileName),
-                    ["promo/view", "id" => $promo->id]
-                ),
-                "caption" => null//$promo->startDate . " - " . $promo->endDate
-            ];
-        }, $promoList);
-
-
-        return $this->render('main-page', [
-            "persons" => $persons,
-            "promoList" => $promoList,
         ]);
     }
 
@@ -262,9 +199,8 @@ class SiteController extends Controller
 
             //Обрабока данных - дергаем через сокет скрипт, который дергает команду Yii (потому что скрипт сдохнет через 30 секунд, а команда отработает сколько надо)
             Extra::socketAsyncCall(["/site/schedule-parse"]);
-        }
-        else{
-            Extra::writeLog("ERROR: can't write file ".$fName);
+        } else {
+            Extra::writeLog("ERROR: can't write file " . $fName);
         }
 
         return 'TRUE';

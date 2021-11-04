@@ -6,6 +6,7 @@ namespace app\models;
 
 use app\models\Generated\PromoGenerated;
 use phpDocumentor\Reflection\Types\Boolean;
+use yii\helpers\Html;
 use yii\web\UploadedFile;
 
 /**
@@ -85,7 +86,7 @@ class Promo extends PromoGenerated
     /**
      * @param Clinic|int $clinic
      */
-    public function doShowWithClinic($clinic)
+    public function doShowWithClinic($clinic): bool
     {
         $clinicsList = $this->clinicList;
         if (!is_array($clinicsList)) return true;
@@ -100,5 +101,35 @@ class Promo extends PromoGenerated
         }
         if (in_array($clinicId, $clinicsList)) return true;
         return false;
+    }
+
+    public static function getListForClinic($clinic): array
+    {
+        $promos = Promo::find()->where(['and',
+            ["or",
+                ['<=', 'startDate', date("Y-m-d")],
+                ['startDate' => null],
+            ],
+            ["or",
+                ['>=', 'endDate', date("Y-m-d")],
+                ['endDate' => null],
+            ],
+        ])->orderBy(["id" => SORT_DESC])->all();
+
+        $promoList = array_values(array_filter($promos, function (Promo $promo) use ($clinic) {
+            if (!$promo->doShowWithClinic($clinic)) return false;
+            return $promo->fileName;
+        }));
+
+        $promoList = array_map(function (Promo $promo) {
+            return [
+                "content" => Html::a(
+                    Html::img("/images/promo/" . $promo->fileName),
+                    ["promo/view", "id" => $promo->id]
+                ),
+                "caption" => null//$promo->startDate . " - " . $promo->endDate
+            ];
+        }, $promoList);
+        return $promoList;
     }
 }

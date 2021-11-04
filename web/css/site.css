@@ -426,6 +426,16 @@ img.partner_bar {
     .top_wrapper {
         flex-wrap: wrap;
     }
+    .carousel_wrapper{
+        max-width: 100%;
+    }
+    .carousel_wrapper img{
+        min-width: auto;
+    }
+    .carousel_wrapper .carousel-indicators{
+        display: none;
+    }
+
 }
 
 .promo_dates {
