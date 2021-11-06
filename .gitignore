@@ -33,6 +33,7 @@ tests/_support/_generated
 /.vagrant
 
 web/assets/*
+!web/assets/.gitkeep
 web/uploads
 web/images/sources
 web/images/promo
