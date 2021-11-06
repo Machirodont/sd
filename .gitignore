@@ -32,7 +32,7 @@ tests/_support/_generated
 #vagrant folder
 /.vagrant
 
-web/assets
+web/assets/*
 web/uploads
 web/images/sources
 web/images/promo
