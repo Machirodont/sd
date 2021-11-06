@@ -4,13 +4,14 @@
 
 /* @var $content string */
 
-use app\components\SdUrlRule;
 use app\components\UrlConstructor;
 use app\models\AppointmentSettingsForm;
+use app\models\Pages;
 use app\widgets\Alert;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
+use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 use yii\bootstrap\ButtonDropdown;
@@ -18,10 +19,15 @@ use app\models\Clinic;
 
 AppAsset::register($this);
 $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
+
+//Праздничное лого к юбилею 10 лет клиники в рузе
+$ruzaAnniversary10 = date("m Y") === "11 2021";
+$logoImg = $ruzaAnniversary10 ? "/images/logo_ anniversary_ruza10.png" : "/images/logo100_0.jpg";
+$logoUrl = $ruzaAnniversary10 ? Url::toRoute(["/promo/view", "id" => 3]) : "/";
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -49,8 +55,10 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
     <div class="container">
         <div class="row">
             <div class="col-sm-8 header-logo">
+                <a href="<?= $logoUrl ?>">
+                    <img src="<?= $logoImg ?>">
+                </a>
                 <a href="/">
-                    <img src="/images/logo100_0.jpg">
                     <div class="head-name">
                         <?= $clinic ? "Медицинский центр" : "Сеть медицинских центров" ?><br>
                         &laquo;СТОЛИЧНАЯ ДИАГНОСТИКА&raquo;<br>
@@ -99,7 +107,7 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
             'class' => 'navbar navbar-default',
         ],
     ]);
-    $pages = \app\models\Pages::find()->where("id > 4")->orderBy("title")->all();
+    $pages = Pages::find()->where("id > 4")->orderBy("title")->all();
     $pagesItems = [];
     foreach ($pages as $page) {
         $pagesItems[] = ["label" => $page->title, "url" => ['/site/page', "id" => $page->id]];
@@ -107,13 +115,6 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            /*
-        [
-            'label' => 'Запись к врачу',
-            'url' => ['/appointment'],
-            'options' => ["style" => "background-color:rgb(92, 184, 92);"],
-            'linkOptions' => ["style" => "color: white;"]
-        ],*/
             [
                 'label' => 'Услуги',
                 'items' => $pagesItems
@@ -169,7 +170,7 @@ $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
         <?= Breadcrumbs::widget([
             'homeLink' => [
                 'label' => 'Главная',
-                'url' => \yii\helpers\Url::toRoute(["/site/main-page"]),
+                'url' => Url::toRoute(["/site/main-page"]),
             ],
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>

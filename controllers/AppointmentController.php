@@ -217,7 +217,7 @@ class AppointmentController extends Controller
         if (!$appointment) throw new NotFoundHttpException('Страница не обнаружена');
         $newStatus = (int)Yii::$app->request->post("status");
         if (
-            in_array($newStatus, [Appointment::STATUS_CREATED, Appointment::STATUS_CONFIRMED, Appointment::STATUS_CANCELLED])
+            Appointment::statusIsValid($newStatus)
             && $appointment->owner_id === Yii::$app->user->id
         ) {
             $appointment->status = $newStatus;

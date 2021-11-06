@@ -85,10 +85,15 @@ header img {
     padding: 3px;
 }
 
-.header-logo a {
+.header-logo{
     display: flex;
     color: white;
 }
+
+.header-logo a{
+     color: white;
+}
+
 
 .head-phone-number {
     font-size: 22px;

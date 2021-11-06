@@ -3,9 +3,6 @@
 namespace app\models;
 
 use DateTime;
-use Yii;
-use yii\base\BaseObject;
-use yii\web\Cookie;
 
 /**
  * Class Appointment
@@ -30,6 +27,11 @@ class Appointment extends Generated\AppointmentGenerated
         2 => "ПОДТВЕРЖДЕНО",
         3 => "ОТМЕНЕНО",
     ];
+
+    public static function statusIsValid($status): bool
+    {
+        return in_array((int)$status, [Appointment::STATUS_CREATED, Appointment::STATUS_CONFIRMED, Appointment::STATUS_CANCELLED]);
+    }
 
     public function getPerson()
     {
