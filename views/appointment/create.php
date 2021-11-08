@@ -8,6 +8,8 @@ use app\models\Persons;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
+$this->registerMetaTag(['name' => 'robots', 'content' => 'noindex']);
+
 echo "<h3>Запись на прием</h4>";;
 PhoneFormat::register($this);
 

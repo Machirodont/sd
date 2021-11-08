@@ -11,6 +11,7 @@ use app\models\Persons;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+$this->registerMetaTag(['name' => 'robots', 'content' => 'noindex']);
 
 ?>
 <h3>Все заявки с номером <u>+7 <?= $phone ?></u>:</h3>

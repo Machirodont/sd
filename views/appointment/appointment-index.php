@@ -15,6 +15,8 @@ use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
+$this->registerMetaTag(['name' => 'robots', 'content' => 'noindex']);
+
 ?>
 
 

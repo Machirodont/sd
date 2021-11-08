@@ -8,6 +8,8 @@
 use yii\helpers\Html;
 
 $this->title = $name;
+$this->registerMetaTag(['name' => 'robots', 'content' => 'noindex']);
+
 ?>
 <div class="site-error">
 

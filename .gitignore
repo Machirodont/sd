@@ -32,7 +32,8 @@ tests/_support/_generated
 #vagrant folder
 /.vagrant
 
-web/assets
+web/assets/*
+!web/assets/.gitkeep
 web/uploads
 web/images/sources
 web/images/promo
@@ -46,5 +47,4 @@ gz_tmp.gz
 error_log.txt
 /stop_parsing.txt
 stage/*
-yii
 yii.bat
