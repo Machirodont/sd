@@ -1,6 +1,6 @@
 <?php
 $params = require __DIR__ . '/params.php';
-$db = require __DIR__ . '/test_db.php';
+$db = require __DIR__ . '/db.php';
 
 /**
  * Application configuration shared by all test types
@@ -22,7 +22,15 @@ return [
             'basePath' => __DIR__ . '/../web/assets',
         ],
         'urlManager' => [
-            'showScriptName' => true,
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'rules' => [
+                [
+                    'pattern' => '.+',
+                    'route' => '*',
+                    'class' => 'app\components\SdUrlRule',
+                ],
+            ],
         ],
         'user' => [
             'identityClass' => 'app\models\User',

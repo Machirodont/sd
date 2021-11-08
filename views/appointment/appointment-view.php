@@ -9,6 +9,9 @@ use app\models\Clinic;
 use app\models\Persons;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+
+$this->registerMetaTag(['name' => 'robots', 'content' => 'noindex']);
+
 ?>
 <h3>Вы отправили заявку на прием</h3>
 Филиал: <?= $appointment->clinic->city ?>
