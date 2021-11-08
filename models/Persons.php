@@ -34,6 +34,8 @@ class Persons extends PersonsGenerated
 
     public $loadedTraits = [];
 
+    private $_activeFutureDays = null;
+
     public function rules()
     {
         return [
@@ -145,12 +147,15 @@ class Persons extends PersonsGenerated
     public function getActiveFutureDays()
     {
         if (!$this->currentClinic instanceof Clinic) return null;
-        $timelines = $this->timeLines;
-        $days = [];
-        foreach ($timelines as $timeline) {
-            $days = array_merge($days, $timeline->activeFutureDays);
+        if (is_null($this->_activeFutureDays)) {
+            $timelines = $this->timeLines;
+            $days = [];
+            foreach ($timelines as $timeline) {
+                $days = array_merge($days, $timeline->activeFutureDays);
+            }
+            $this->_activeFutureDays = $days;
         }
-        return $days;
+        return $this->_activeFutureDays;
     }
 
 

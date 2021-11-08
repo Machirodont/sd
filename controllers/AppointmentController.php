@@ -4,6 +4,8 @@ namespace app\controllers;
 
 use app\models\Appointment;
 use app\models\AppointmentSettingsForm;
+use app\models\Clinic;
+use app\models\Persons;
 use Yii;
 use app\models\Users;
 use yii\base\BaseObject;
@@ -65,11 +67,41 @@ class AppointmentController extends Controller
         return $cookie;
     }
 
+
+    private function createViewBlocks(?Clinic $clinic, ?Persons $person, ?string $day): array
+    {
+        $blocks = [];
+        if ($clinic) {
+            $blocks[] = ["view" => "_selected_clinic", "params" => ["clinic" => $clinic]];
+        } else {
+            $blocks[] = ["view" => "_select_clinic", "params" => []];
+            return $blocks;
+        }
+
+        if ($person) {
+            $person->currentClinic = $clinic;
+            $blocks[] = ["view" => "_selected_person", "params" => ["person" => $person]];
+        } else {
+            $blocks[] = ["view" => "_select_person", "params" => ["clinic" => $clinic]];
+            return $blocks;
+        }
+
+        if ($day) {
+            $blocks[] = ["view" => "_selected_day", "params" => ["person" => $person, "day" => $day]];
+        } else {
+            $blocks[] = ["view" => "_select_day", "params" => ["person" => $person]];
+        }
+        return $blocks;
+    }
+
     public function actionCreate()
     {
+        $clinic = Clinic::findOne(Yii::$app->session->get("cid"));
+        $person = Persons::findOne(Yii::$app->request->get('personId'));
+        $day = Yii::$app->request->get('day');
 
         if (!Yii::$app->request->post("phone")) {
-            return $this->render("create", []);
+            return $this->render("create", ["blocks" => self::createViewBlocks($clinic, $person, $day)]);
         }
 
         $cookie = self::appointmentCookieSign();

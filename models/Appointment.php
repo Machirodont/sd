@@ -84,8 +84,8 @@ class Appointment extends Generated\AppointmentGenerated
         $appoitmentUtcTime = date_create($this->created)
             ->format("U");
         $howLongAgoSec = time()
-            - (int)$appoitmentUtcTime
-            + (new \DateTimeZone('Europe/Moscow'))->getOffset(date_create($this->created));
+            - (int)$appoitmentUtcTime;
+  //          + (new \DateTimeZone('Europe/Moscow'))->getOffset(date_create($this->created));
         $result = "Получено ";
         if ($howLongAgoSec > 60 * 60 * 24) {
             $result .= "больше суток назад";
