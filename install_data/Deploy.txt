@@ -25,6 +25,12 @@ yii parse/schedule-list
 Добавляет все файлы /data/schedule_*.json в таблицу sd_loaded_schedules
 		
 ДЕПЛОЙ:
+Создать файлы db.php и params.php в папке config
+Выдать права на папки
+chmod 777 runtime
+chmod 777 web/assets
+chmod 777 stage
+
 Запустить php ./yii parse/clear-old-schedules
 	удаляет все файлы /data/schedule_*.json старее 1(?) суток (считая с даты последнего загруженного файла) из /data/ и из sd_loaded_schedules
 	удаляет все дни расписания старее 4 суток (на момент запуска скрипта) из sd_timeline_days
@@ -58,8 +64,8 @@ php ./yii dump/clear-generated
 
 прайсы:
 Проверить наличие свежего файла /data/gz_tmp.gz
-При необходимости загрузить его с локала или запустить site/load-price/
-Запустить /site/parse-price/ (или php ./yii parse/price )
+При необходимости загрузить его с локала или запустить php ./yii parse/price-load
+Запустить /site/parse-price/ (или php ./yii parse/price-parse )
 
 расписания:
 Запустить

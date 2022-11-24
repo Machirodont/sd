@@ -2,6 +2,10 @@
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
+if (isset($db['dsn_console'])) {
+    $db['dsn'] = $db['dsn_console'];
+    unset($db['dsn_console']);
+}
 
 $config = [
     'id' => 'basic-console',
@@ -10,7 +14,7 @@ $config = [
     'controllerNamespace' => 'app\commands',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
+        '@npm' => '@vendor/npm-asset',
     ],
     'components' => [
         'cache' => [

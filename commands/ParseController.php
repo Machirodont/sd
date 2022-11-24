@@ -22,6 +22,7 @@ use app\models\Workplaces;
 use app\models\Persons;
 use app\models\TimeLines;
 use app\models\TimelineDays;
+use yii\helpers\ArrayHelper;
 
 class ParseController extends Controller
 {
@@ -60,7 +61,7 @@ class ParseController extends Controller
         }
         if ($status == 200) {
             $content_gz = substr($result, $headerSize);
-            if(file_exists($file_path)){
+            if (file_exists($file_path)) {
                 unlink($file_path);
             }
             $f = fopen($file_path, 'w');
@@ -102,11 +103,8 @@ class ParseController extends Controller
             exit;
         }
 
-        $clinicId = [
-            "Гагарин" => 5,
-            "Руза" => 2,
-            "Тучково" => 1,
-        ];
+        $clinicList = Clinic::find()->where(["not", ["phone" => null]])->all();
+        $clinicId = ArrayHelper::map($clinicList, "city", "id");
 
         echo "\n";
         if (!file_exists($fName)) {
@@ -120,10 +118,10 @@ class ParseController extends Controller
         $arr = json_decode($data_links, true);
         $arrCount = count($arr);
 
-        \Yii::$app->db->createCommand("UPDATE sd_price_group SET removed=\"" . date("Y-m-d H-i-s") . "\"")->execute();
-        \Yii::$app->db->createCommand("UPDATE sd_price_items SET removed=\"" . date("Y-m-d H-i-s") . "\"")->execute();
-        \Yii::$app->db->createCommand("DELETE FROM sd_price_local")->execute();
-        \Yii::$app->db->createCommand("ALTER TABLE `sd_price_local` 	AUTO_INCREMENT=0;")->execute();
+        Yii::$app->db->createCommand("UPDATE sd_price_group SET removed=\"" . date("Y-m-d H-i-s") . "\"")->execute();
+        Yii::$app->db->createCommand("UPDATE sd_price_items SET removed=\"" . date("Y-m-d H-i-s") . "\"")->execute();
+        Yii::$app->db->createCommand("DELETE FROM sd_price_local")->execute();
+        Yii::$app->db->createCommand("ALTER TABLE `sd_price_local` 	AUTO_INCREMENT=0;")->execute();
         $sqlStackCount = 0;
         $sql = "";
         for ($i = 0; $i < count($arr); $i++) {
@@ -166,7 +164,7 @@ class ParseController extends Controller
                 }
             }
             if ($sqlStackCount > 20) {
-                \Yii::$app->db->createCommand($sql)->execute();
+                Yii::$app->db->createCommand($sql)->execute();
                 $sqlStackCount = 0;
                 $sql = "";
             }
@@ -194,29 +192,29 @@ class ParseController extends Controller
         echo count($files) . "\n";
         foreach ($files as $f) {
             $fName = __DIR__ . "/../data/" . $f["fileName"];
-            \Yii::$app->db->createCommand("DELETE FROM sd_loaded_schedules WHERE fileName=\"" . $f["fileName"] . "\" ")->execute();
+            Yii::$app->db->createCommand("DELETE FROM sd_loaded_schedules WHERE fileName=\"" . $f["fileName"] . "\" ")->execute();
             if (file_exists($fName)) unlink($fName);
             echo $f["fileName"] . "\n";
         }
 
-        \Yii::$app->db->createCommand("DELETE FROM sd_timeline_days WHERE day< DATE_SUB(\"" . date("Y-m-d") . "\", INTERVAL 4 DAY)")->execute();
+        Yii::$app->db->createCommand("DELETE FROM sd_timeline_days WHERE day< DATE_SUB(\"" . date("Y-m-d") . "\", INTERVAL 4 DAY)")->execute();
         return 0;
     }
 
     public function actionResetSchedule()
     {
-        \Yii::$app->db->createCommand("DELETE FROM sd_loaded_schedules")->execute();
-        \Yii::$app->db->createCommand("ALTER TABLE `sd_loaded_schedules` AUTO_INCREMENT=0;")->execute();
-        \Yii::$app->db->createCommand("DELETE FROM sd_timeline_days")->execute();
-        \Yii::$app->db->createCommand("ALTER TABLE `sd_timeline_days` AUTO_INCREMENT=0;")->execute();
-        \Yii::$app->db->createCommand("DELETE FROM sd_timeline_cells")->execute();
-        \Yii::$app->db->createCommand("ALTER TABLE `sd_timeline_cells` AUTO_INCREMENT=0;")->execute();
-        \Yii::$app->db->createCommand("DELETE FROM sd_timeline_changelog")->execute();
-        \Yii::$app->db->createCommand("ALTER TABLE `sd_timeline_changelog` AUTO_INCREMENT=0;")->execute();
-        \Yii::$app->db->createCommand("DELETE FROM sd_timelines")->execute();
-        \Yii::$app->db->createCommand("ALTER TABLE `sd_timelines` AUTO_INCREMENT=0;")->execute();
-        \Yii::$app->db->createCommand("DELETE FROM sd_workplaces")->execute();
-        \Yii::$app->db->createCommand("ALTER TABLE `sd_workplaces` AUTO_INCREMENT=0;")->execute();
+        Yii::$app->db->createCommand("DELETE FROM sd_loaded_schedules")->execute();
+        Yii::$app->db->createCommand("ALTER TABLE `sd_loaded_schedules` AUTO_INCREMENT=0;")->execute();
+        Yii::$app->db->createCommand("DELETE FROM sd_timeline_days")->execute();
+        Yii::$app->db->createCommand("ALTER TABLE `sd_timeline_days` AUTO_INCREMENT=0;")->execute();
+        Yii::$app->db->createCommand("DELETE FROM sd_timeline_cells")->execute();
+        Yii::$app->db->createCommand("ALTER TABLE `sd_timeline_cells` AUTO_INCREMENT=0;")->execute();
+        Yii::$app->db->createCommand("DELETE FROM sd_timeline_changelog")->execute();
+        Yii::$app->db->createCommand("ALTER TABLE `sd_timeline_changelog` AUTO_INCREMENT=0;")->execute();
+        Yii::$app->db->createCommand("DELETE FROM sd_timelines")->execute();
+        Yii::$app->db->createCommand("ALTER TABLE `sd_timelines` AUTO_INCREMENT=0;")->execute();
+        Yii::$app->db->createCommand("DELETE FROM sd_workplaces")->execute();
+        Yii::$app->db->createCommand("ALTER TABLE `sd_workplaces` AUTO_INCREMENT=0;")->execute();
     }
 
     public function actionScheduleList()
@@ -232,12 +230,12 @@ class ParseController extends Controller
             echo " > " . $fileLoadDateTime . "\n";
             $inserts[] = [basename($file), $fileLoadDateTime];
             if (count($inserts) > 30) {
-                \Yii::$app->db->createCommand()->batchInsert('sd_loaded_schedules', ["fileName", "loadTime"], $inserts)->execute();
+                Yii::$app->db->createCommand()->batchInsert('sd_loaded_schedules', ["fileName", "loadTime"], $inserts)->execute();
                 $inserts = [];
             }
 
         }
-        \Yii::$app->db->createCommand()->batchInsert('sd_loaded_schedules', ["fileName", "loadTime"], $inserts)->execute();
+        Yii::$app->db->createCommand()->batchInsert('sd_loaded_schedules', ["fileName", "loadTime"], $inserts)->execute();
         echo microtime(true) - $t;
     }
 
@@ -327,7 +325,7 @@ LEFT JOIN sd_clinics AS cl ON wp.clinic_hash=cl.hash_id
                                     if (count($r) === 1) $person = $r[0];
                                     if ($person) {
                                         echo $schedule->name . " -> " . $person->fullname . "\n";
-                                        \Yii::$app->db->createCommand("INSERT INTO sd_shedule_assign SET personId=" . $person->person_id . ", shedule_hash=\"" . $schedule_hash . "\" , schedule_fio=\"" . $personName . "\" ")->execute();
+                                        Yii::$app->db->createCommand("INSERT INTO sd_shedule_assign SET personId=" . $person->person_id . ", shedule_hash=\"" . $schedule_hash . "\" , schedule_fio=\"" . $personName . "\" ")->execute();
                                         $person = Persons::findBySheduleHash($schedule_hash);
                                     }
                                 }
@@ -378,7 +376,7 @@ LEFT JOIN sd_clinics AS cl ON wp.clinic_hash=cl.hash_id
                     }
                 }
             }
-            \Yii::$app->db->createCommand("UPDATE sd_loaded_schedules SET  parsed=1 WHERE fileName=\"" . $fName . "\";")->execute();
+            Yii::$app->db->createCommand("UPDATE sd_loaded_schedules SET  parsed=1 WHERE fileName=\"" . $fName . "\";")->execute();
         }
         self::singletonUnlock($lockfile);
         echo microtime(true) - $t . "\n";

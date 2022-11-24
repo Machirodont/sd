@@ -23,7 +23,7 @@ class MainPageAction extends Action
 
     /**
      * @param int $limit
-     * @return []Persons
+     * @return Persons[]
      */
     private static function selectRandomPersons(int $limit)
     {

@@ -1,32 +1,23 @@
 <?php
-/**
- * @link http://www.yiiframework.com/
- * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
- */
 
 namespace app\commands;
 
+use Yii;
 use yii\console\Controller;
 use yii\console\ExitCode;
 
-/**
- * This command echoes the first argument that you have entered.
- *
- * This command is provided as an example for you to learn how to create console commands.
- *
- * @author Qiang Xue <qiang.xue@gmail.com>
- * @since 2.0
- */
 class DumpController extends Controller
 {
 
+    private const DUMP_FILE_STATIC = "install_data/sql_seeds/static.sql";
+    private const DUMP_FILE_GENERATED = "install_data/sql_seeds/generated.sql";
+
     public function actionSaveStatic()
     {
-        if (preg_match('/dbname=([^;]*)/', \Yii::$app->db->dsn, $match)) {
+        if (preg_match('/dbname=([^;]*)/', Yii::$app->db->dsn, $match)) {
             $dbname = $match[1];
-            $dbuser = \Yii::$app->db->username;
-            $dbpass = \Yii::$app->db->password;
+            $dbuser = Yii::$app->db->username;
+            $dbpass = Yii::$app->db->password;
             echo "\n";
             shell_exec("del static.sql");
             echo "\n";
@@ -51,10 +42,10 @@ class DumpController extends Controller
 
     public function actionSaveGenerated()
     {
-        if (preg_match('/dbname=([^;]*)/', \Yii::$app->db->dsn, $match)) {
+        if (preg_match('/dbname=([^;]*)/', Yii::$app->db->dsn, $match)) {
             $dbname = $match[1];
-            $dbuser = \Yii::$app->db->username;
-            $dbpass = \Yii::$app->db->password;
+            $dbuser = Yii::$app->db->username;
+            $dbpass = Yii::$app->db->password;
             echo "\n";
             shell_exec("del generated.sql");
             echo "\n";
@@ -85,18 +76,22 @@ class DumpController extends Controller
 
     public function actionLoadStatic()
     {
-        if (preg_match('/dbname=([^;]*)/', \Yii::$app->db->dsn, $match)) {
-            $dbname = $match[1];
-            $dbuser = \Yii::$app->db->username;
-            $dbpass = \Yii::$app->db->password;
-            if (!file_exists("static.sql")) {
-                echo "Error: dump file isn't exists (sql.sql)";
-                return ExitCode::DATAERR;
-            }
-            echo "\n";
-//            \Yii::$app->db->createCommand("DROP DATABASE IF EXISTS $dbname;")->execute();
-//            \Yii::$app->db->createCommand("CREATE DATABASE $dbname CHARACTER SET utf8 COLLATE utf8_general_ci;")->execute();
-            shell_exec("mysql -u " . $dbuser . " -p" . $dbpass . " " . $dbname . " < static.sql");
+        return $this->loadDump(self::DUMP_FILE_STATIC);
+    }
+
+    public function actionClearGenerated()
+    {
+        return $this->loadDump(self::DUMP_FILE_GENERATED);
+    }
+
+    private function loadDump(string $dumpFileName): int
+    {
+        if (!file_exists($dumpFileName)) {
+            echo "Error: dump file isn't exists (" . $dumpFileName . ")";
+            return ExitCode::DATAERR;
+        }
+        if ($command = $this->mysqlLoadDumpCommand($dumpFileName)) {
+            shell_exec($command);
         } else {
             echo "Error: can't get DB name: p." . __LINE__ . " f." . __FILE__;
             return ExitCode::DATAERR;
@@ -104,23 +99,22 @@ class DumpController extends Controller
         return ExitCode::OK;
     }
 
-    public function actionClearGenerated()
+    private function mysqlLoadDumpCommand(string $dumpFileName): string
     {
-        if (preg_match('/dbname=([^;]*)/', \Yii::$app->db->dsn, $match)) {
-            $dbname = $match[1];
-            $dbuser = \Yii::$app->db->username;
-            $dbpass = \Yii::$app->db->password;
-            if (!file_exists("generated.sql")) {
-                echo "Error: dump file isn't exists (sql.sql)";
-                return ExitCode::DATAERR;
-            }
-            echo "\n";
-            shell_exec("mysql -u " . $dbuser . " -p" . $dbpass . " " . $dbname . " < generated.sql");
+        if (preg_match('/mysql:host=(.+):([0-9]+);dbname=([^;]*)/', Yii::$app->db->dsn, $match)) {
+            $dbHost = $match[1];
+            $dbPort = $match[2];
+            $dbname = $match[3];
+            $dbuser = Yii::$app->db->username;
+            $dbpass = Yii::$app->db->password;
+            return "mysql "
+                . "-h" . $dbHost . " "
+                . "-u" . $dbuser . " "
+                . "-p" . $dbpass . " "
+                . $dbname . " < " . $dumpFileName;
         } else {
-            echo "Error: can't get DB name: p." . __LINE__ . " f." . __FILE__;
-            return ExitCode::DATAERR;
+            return "";
         }
-        return ExitCode::OK;
     }
 
 }

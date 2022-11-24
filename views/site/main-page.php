@@ -2,10 +2,13 @@
 
 /* @var $this yii\web\View */
 
-/* @var \app\models\Pages $page
+/* @var Pages $page
+ * @var Persons[] $persons
  * @var array $promoList
  */
 
+use app\models\Pages;
+use app\models\Persons;
 use yii\helpers\Html;
 use yii\bootstrap\Carousel;
 
@@ -51,6 +54,7 @@ $this->registerMetaTag(["name" => "keywords", "content" => "Сеть медиц�
 
 <?php $cid = Yii::$app->session->get("cid"); ?>
 <div class="mainpage">
+    <?= Html::a("Медицинский центр в Москве", ["/clinic/contacts", "cid" => 10], ["class" => "person_row spec_button" . (intval($cid) === 10 ? " current" : "")]) ?>
     <?= Html::a("Медицинский центр в Гагарине", ["/clinic/contacts", "cid" => 5], ["class" => "person_row spec_button" . (intval($cid) === 5 ? " current" : "")]) ?>
     <?= Html::a("Медицинский центр в Рузе", ["/clinic/contacts", "cid" => 2], ["class" => "person_row spec_button" . (intval($cid) === 2 ? " current" : "")]) ?>
     <?= Html::a("Медицинский центр в Тучково", ["/clinic/contacts", "cid" => 1], ["class" => "person_row spec_button" . (intval($cid) === 1 ? " current" : "")]) ?>
@@ -79,7 +83,7 @@ $this->registerMetaTag(["name" => "keywords", "content" => "Сеть медиц�
     <section class="person_row">
         <?php
         foreach ($persons as $person) {
-            /**@var $person \app\models\Persons */
+            /**@var $person Persons */
             echo $this->render("/persons/_card_ext", ["model" => $person]);
         }
         ?>

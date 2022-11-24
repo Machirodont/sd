@@ -1,1 +1,0 @@
-php ./yii dump/save-static

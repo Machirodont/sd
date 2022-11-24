@@ -2,6 +2,7 @@
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
+unset($db['dsn_console']);
 
 $config = [
     'id' => 'basic',

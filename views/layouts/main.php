@@ -80,6 +80,7 @@ $logoUrl = $ruzaAnniversary10 ? Url::toRoute(["/promo/view", "id" => 3]) : "/";
                                 ['label' => 'Гагарин', 'url' => UrlConstructor::urlWithCID(5)],
                                 ['label' => 'Руза', 'url' => UrlConstructor::urlWithCID(2)],
                                 ['label' => 'Тучково', 'url' => UrlConstructor::urlWithCID(1)],
+                                ['label' => 'Москва', 'url' => UrlConstructor::urlWithCID(10)],
                             ],
                         ],
                         'options' => [
