@@ -1,8 +1,6 @@
 <?php
 /* @var $this yii\web\View
- * @var $groups array
- * @var $items array
- * @var $group \app\models\PriceGroup
+ * @var $clinicList \app\models\Clinic[]
  */
 
 use yii\helpers\Html;
@@ -10,7 +8,11 @@ use yii\helpers\Html;
 ?>
 <h1>Выберите клинику:</h1>
 <ul>
-    <li><?= Html::a("Гагарин", ["/services/index", "cid" => 5]) ?></li>
-    <li><?= Html::a("Руза", ["/services/index", "cid" => 2]) ?></li>
-    <li><?= Html::a("Тучково", ["/services/index", "cid" => 1]) ?></li>
+    <?php
+    foreach ($clinicList as $clinic) {
+        ?>
+        <li><?= Html::a($clinic->city, ["/services/index", "cid" => $clinic->id]) ?></li>
+        <?php
+    }
+    ?>
 </ul>

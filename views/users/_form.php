@@ -9,7 +9,7 @@ use yii\widgets\ActiveForm;
 /* @var $model app\models\Users */
 /* @var $form yii\widgets\ActiveForm */
 
-$clinics = Clinic::find()->where(["not", ["phone" => null]])->all();
+$clinics = Clinic::getActiveList();
 $clinicListForCheckbox = [];
 foreach ($clinics as $clinic) {
     /* @var Clinic $clinic */

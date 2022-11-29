@@ -18,6 +18,7 @@ class MainPageAction extends Action
         return $this->controller->render('main-page', [
             "persons" => self::selectRandomPersons(3),
             "promoList" => Promo::getListForClinic($clinic),
+            'clinicList' => Clinic::getActiveList()
         ]);
     }
 

@@ -85,13 +85,13 @@ header img {
     padding: 3px;
 }
 
-.header-logo{
+.header-logo {
     display: flex;
     color: white;
 }
 
-.header-logo a{
-     color: white;
+.header-logo a {
+    color: white;
 }
 
 
@@ -431,13 +431,16 @@ img.partner_bar {
     .top_wrapper {
         flex-wrap: wrap;
     }
-    .carousel_wrapper{
+
+    .carousel_wrapper {
         max-width: 100%;
     }
-    .carousel_wrapper img{
+
+    .carousel_wrapper img {
         min-width: auto;
     }
-    .carousel_wrapper .carousel-indicators{
+
+    .carousel_wrapper .carousel-indicators {
         display: none;
     }
 
@@ -484,12 +487,12 @@ img.partner_bar {
     padding-left: 10px;
 }
 
-.appoint_clinic_block{
+.appoint_clinic_block {
     display: flex;
     flex-wrap: wrap;
 }
 
-.appoint_clinic{
+.appoint_clinic {
     margin: 10px;
     padding: 5px;
     display: block;
@@ -500,7 +503,7 @@ img.partner_bar {
     box-shadow: 3px 3px 5px 3px #E0F7FF;
 }
 
-.appoint_admin_block{
+.appoint_admin_block {
     margin: 10px;
     padding: 5px;
     display: flex;
@@ -508,15 +511,23 @@ img.partner_bar {
     text-overflow: ellipsis;
     box-shadow: 3px 3px 5px 3px #E0F7FF;
 }
-.appointment_bottom_note{
+
+.appointment_bottom_note {
     font-size: 12px;
     padding-top: 0;
     margin-top: 0;
 }
 
-.btn-small{
-    padding:1px 3px;
+.btn-small {
+    padding: 1px 3px;
     font-size: 12px;
+}
+
+.contact-img-line {
+    display: flex;
+    justify-content: space-around;
+    padding-top:20px;
+    flex-wrap: wrap;
 }
 
 /* DEV элементы (удалить в продакшне)

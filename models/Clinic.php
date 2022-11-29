@@ -60,4 +60,12 @@ class Clinic extends ClinicsGenerated
         return $query->all();
     }
 
+    /**
+     * @return Clinic[]
+     */
+    public static function getActiveList(): array
+    {
+        return Clinic::find()->where(["not", ["phone" => null]])->orderBy(["city" => SORT_ASC])->all();
+    }
+
 }

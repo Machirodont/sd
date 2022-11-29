@@ -4,9 +4,11 @@
 
 /* @var Pages $page
  * @var Persons[] $persons
+ * @var Clinic[] $clinicList
  * @var array $promoList
  */
 
+use app\models\Clinic;
 use app\models\Pages;
 use app\models\Persons;
 use yii\helpers\Html;
@@ -54,10 +56,10 @@ $this->registerMetaTag(["name" => "keywords", "content" => "Сеть медиц�
 
 <?php $cid = Yii::$app->session->get("cid"); ?>
 <div class="mainpage">
-    <?= Html::a("Медицинский центр в Москве", ["/clinic/contacts", "cid" => 10], ["class" => "person_row spec_button" . (intval($cid) === 10 ? " current" : "")]) ?>
-    <?= Html::a("Медицинский центр в Гагарине", ["/clinic/contacts", "cid" => 5], ["class" => "person_row spec_button" . (intval($cid) === 5 ? " current" : "")]) ?>
-    <?= Html::a("Медицинский центр в Рузе", ["/clinic/contacts", "cid" => 2], ["class" => "person_row spec_button" . (intval($cid) === 2 ? " current" : "")]) ?>
-    <?= Html::a("Медицинский центр в Тучково", ["/clinic/contacts", "cid" => 1], ["class" => "person_row spec_button" . (intval($cid) === 1 ? " current" : "")]) ?>
+    <?php foreach ($clinicList as $clinic) {
+        echo Html::a("Медицинский центр " . $clinic->in, ["/clinic/contacts", "cid" => $clinic->id], ["class" => "person_row spec_button" . (intval($cid) ===  $clinic->id ? " current" : "")]);
+    }
+    ?>
 </div>
 
 <div class="mainpage">

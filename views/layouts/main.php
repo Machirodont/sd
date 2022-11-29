@@ -18,12 +18,22 @@ use yii\bootstrap\ButtonDropdown;
 use app\models\Clinic;
 
 AppAsset::register($this);
+
+$clinicDropdownList=[['label' => 'Все', 'url' => UrlConstructor::urlWithCID(0)] ];
+$clinicList=Clinic::getActiveList();
+foreach ($clinicList as $clinic){
+    $clinicDropdownList[]=['label'=>$clinic->city, 'url' => UrlConstructor::urlWithCID($clinic->id)];
+}
+
 $clinic = Clinic::findOne(\Yii::$app->session->get("cid"));
 
 //Праздничное лого к юбилею 10 лет клиники в рузе
 $ruzaAnniversary10 = date("m Y") === "11 2021";
 $logoImg = $ruzaAnniversary10 ? "/images/logo_ anniversary_ruza10.png" : "/images/logo100_0.jpg";
 $logoUrl = $ruzaAnniversary10 ? Url::toRoute(["/promo/view", "id" => 3]) : "/";
+
+
+
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -75,13 +85,7 @@ $logoUrl = $ruzaAnniversary10 ? Url::toRoute(["/promo/view", "id" => 3]) : "/";
                     <?= ButtonDropdown::widget([
                         'label' => ($clinic ? 'Выбрать другую клинику' : 'Выберите клинику'),
                         'dropdown' => [
-                            'items' => [
-                                ['label' => 'Все', 'url' => UrlConstructor::urlWithCID(0)],
-                                ['label' => 'Гагарин', 'url' => UrlConstructor::urlWithCID(5)],
-                                ['label' => 'Руза', 'url' => UrlConstructor::urlWithCID(2)],
-                                ['label' => 'Тучково', 'url' => UrlConstructor::urlWithCID(1)],
-                                ['label' => 'Москва', 'url' => UrlConstructor::urlWithCID(10)],
-                            ],
+                            'items' => $clinicDropdownList,
                         ],
                         'options' => [
                             'class' => ($clinic ? "btn-info" : "btn-danger")

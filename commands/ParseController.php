@@ -103,7 +103,7 @@ class ParseController extends Controller
             exit;
         }
 
-        $clinicList = Clinic::find()->where(["not", ["phone" => null]])->all();
+        $clinicList = Clinic::getActiveList();
         $clinicId = ArrayHelper::map($clinicList, "city", "id");
 
         echo "\n";
